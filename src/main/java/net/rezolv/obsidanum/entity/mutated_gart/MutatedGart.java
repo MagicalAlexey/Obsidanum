@@ -53,9 +53,7 @@ public class MutatedGart extends Monster {
             setupAnimationStates();
         }
     }
-    public int getAttackAnimationMagicArrowTimeout() {
-        return this.attackAnimationMagicArrowTimeout;
-    }
+
     private void setupAnimationStates() {
         if (this.idleAnimationTimeout <= 0) {
             this.idleAnimationTimeout = this.random.nextInt(40) + 80;
@@ -98,10 +96,12 @@ public class MutatedGart extends Monster {
         super.stopSeenByPlayer(player);
         this.BOSS_INFO.removePlayer(player);
     }
+
     @Override
     public boolean fireImmune() {
         return true;
     }
+
     @Override
     public void customServerAiStep() {
         super.customServerAiStep();
@@ -135,7 +135,7 @@ public class MutatedGart extends Monster {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(1, new MutatedGartAttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(3, new MutatedGartRangedAttackGoal(this,7));       // Дальняя атака, если дальше 7 блоков
+        this.goalSelector.addGoal(3, new MutatedGartRangedAttackGoal(this, 7));       // Дальняя атака, если дальше 7 блоков
 
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 15.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -181,6 +181,7 @@ public class MutatedGart extends Monster {
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.3)
                 .add(Attributes.ARMOR, 0.0);
     }
+
     @Override
     protected void dropExperience() {
         super.dropExperience();

@@ -12,7 +12,7 @@ import java.util.EnumSet;
 public class MutatedGartRangedAttackGoal extends Goal {
     private final MutatedGart entity;
     private final double minDistance;
-    private double attackCooldown = 17.5;
+    private double attackCooldown = 25;
 
     public MutatedGartRangedAttackGoal(MutatedGart entity, double minDistance) {
         this.entity = entity;
@@ -46,11 +46,12 @@ public class MutatedGartRangedAttackGoal extends Goal {
 
         // Decrease cooldown
         if (--attackCooldown <= 0) {
-            attackCooldown = 17.5;
+            attackCooldown = 25;
 
             MagicArrow magicArrow = new MagicArrow(ModItemEntities.MAGIC_ARROW_NETHER_FLAME_ENTITY.get(), level);
+
             magicArrow.setOwner(this.entity);
-            magicArrow.setTarget(target); // Target for homing
+            magicArrow.setTarget(target);
             magicArrow.setPos(this.entity.getX(), this.entity.getEyeY() - 0.2, this.entity.getZ());
             magicArrow.shoot(target.getX() - this.entity.getX(),
                     target.getEyeY() - magicArrow.getY(),
