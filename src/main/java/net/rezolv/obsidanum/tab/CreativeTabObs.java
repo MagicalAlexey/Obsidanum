@@ -178,6 +178,10 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_D.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.OBSIDIAN.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_STAIRS.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_SLAB.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_WALL.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_FENCE.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_D.get());
                         pOutput.accept(BlocksObs.LOCKED_CHEST_RUNIC.get());
                         pOutput.accept(BlocksObs.DECORATIVE_URN.get());
@@ -230,9 +234,13 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(BlocksObs.RIGHT_FORGE_SCROLL.get());
                         pOutput.accept(BlocksObs.FORGE_CRUCIBLE.get());
                         pOutput.accept(BlocksObs.LEFT_CORNER_LEVEL.get());
-                        pOutput.accept(BlocksObs.WALL_FORGE.get());
+                        pOutput.accept(BlocksObs.WALL_FORGE_L_CORNER.get());
+                        pOutput.accept(BlocksObs.WALL_FORGE_R_CORNER.get());
                         pOutput.accept(BlocksObs.HAMMER_FORGE.get());
                         pOutput.accept(BlocksObs.BAGEL_ANVIL_BLOCK.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_LECTERN.get());
+                        pOutput.accept(BlocksObs.LARGE_ALCHEMICAL_TANK.get());
+                        pOutput.accept(BlocksObs.LARGE_ALCHEMICAL_TANK_BROKEN.get());
 
                     })
                     .build());

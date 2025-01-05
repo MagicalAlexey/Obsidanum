@@ -324,11 +324,7 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
         // Например, сбросить другие флаги или переменные
         this.output = ItemStack.EMPTY; // Очистить output
     }
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+
     public void setPersistentData(CompoundTag tag) {
         this.getPersistentData().put("ingredients", tag.getList("ingredients", Tag.TAG_COMPOUND));
         this.getPersistentData().put("output", tag.getCompound("output"));
@@ -344,5 +340,9 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     public void handleUpdateTag(CompoundTag tag) {
         load(tag);
     }
-
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
 }

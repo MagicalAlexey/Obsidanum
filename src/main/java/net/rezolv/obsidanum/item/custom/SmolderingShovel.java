@@ -74,14 +74,7 @@ public class SmolderingShovel extends ShovelItem {
         // Определяем уровень сервера
         ServerLevel serverLevel = (world instanceof ServerLevel) ? (ServerLevel) world : null;
         // Добавляем огненные частицы
-        if (world instanceof ServerLevel) {
-            for (int i = 0; i < 5; i++) {
-                double offsetX = world.random.nextDouble() * 0.5 - 0.25;
-                double offsetY = world.random.nextDouble() * 0.5 - 0.25;
-                double offsetZ = world.random.nextDouble() * 0.5 - 0.25;
-                serverLevel.sendParticles(ParticlesObs.NETHER_FLAME2_PARTICLES.get(), pos.getX() + 0.5 + offsetX, pos.getY() + 0.5 + offsetY, pos.getZ() + 0.5 + offsetZ, 1, 0.0, 0.0, 0.0, 0.0);
-            }
-        }
+
         // Получаем дропы с учетом инструмента и зачарования удачи
         List<ItemStack> drops = Block.getDrops(blockstate, serverLevel, pos, world.getBlockEntity(pos), entity, itemstack);
 
@@ -97,6 +90,14 @@ public class SmolderingShovel extends ShovelItem {
 
             if (recipeOpt.isPresent()) {
                 // Получаем результат переплавки
+                if (world instanceof ServerLevel) {
+                    for (int i = 0; i < 5; i++) {
+                        double offsetX = world.random.nextDouble() * 0.5 - 0.25;
+                        double offsetY = world.random.nextDouble() * 0.5 - 0.25;
+                        double offsetZ = world.random.nextDouble() * 0.5 - 0.25;
+                        serverLevel.sendParticles(ParticlesObs.NETHER_FLAME2_PARTICLES.get(), pos.getX() + 0.5 + offsetX, pos.getY() + 0.5 + offsetY, pos.getZ() + 0.5 + offsetZ, 1, 0.0, 0.0, 0.0, 0.0);
+                    }
+                }
                 ItemStack smeltedResult = recipeOpt.get().getResultItem(serverLevel.registryAccess()).copy();
                 smeltedResult.setCount(drop.getCount());  // Сохраняем количество исходного дропа
                 results.add(smeltedResult);

@@ -7,6 +7,14 @@
       }
     ]
   },
+  "obsidian_tablet_active": {
+    "sounds": [
+      {
+        "name": "obsidanum:obsidian_tablet_active",
+        "stream": true
+      }
+    ]
+  },
   "close_obsidian_door": {
     "sounds": [
       {

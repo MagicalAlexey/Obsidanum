@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -137,9 +138,11 @@ public class NetherFireBlock extends BaseFireBlock {
     }
     public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
         BlockPos blockpos = pPos.below();
-        return pLevel.getBlockState(blockpos).isFaceSturdy(pLevel, blockpos, Direction.UP) || this.isValidFireLocation(pLevel, pPos);
+        return pLevel.getBlockState(blockpos).isFaceSturdy(pLevel, blockpos, Direction.UP) || this.isValidFireLocation(pLevel, pPos) || canSurviveOnBlock(pLevel.getBlockState(pPos.below()));
     }
-
+    public static boolean canSurviveOnBlock(BlockState pState) {
+        return pState.is(BlockTags.SOUL_FIRE_BASE_BLOCKS);
+    }
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
         pLevel.scheduleTick(pPos, this, getFireTickDelay(pLevel.random));
         if (pLevel.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
@@ -305,7 +308,7 @@ public class NetherFireBlock extends BaseFireBlock {
     public static BlockState getState(BlockGetter pReader, BlockPos pPos) {
         BlockPos blockpos = pPos.below();
         BlockState blockstate = pReader.getBlockState(blockpos);
-        return SoulFireBlock.canSurviveOnBlock(blockstate) ? Blocks.SOUL_FIRE.defaultBlockState() : ((NetherFireBlock)BlocksObs.NETHER_FIRE.get()).getStateForPlacement(pReader, pPos);
+        return NetherFireBlock.canSurviveOnBlock(blockstate) ? BlocksObs.NETHER_FIRE.get().defaultBlockState() : ((NetherFireBlock)BlocksObs.NETHER_FIRE.get()).getStateForPlacement(pReader, pPos);
     }
     private void setFlammable(Block pBlock, int pEncouragement, int pFlammability) {
         if (pBlock == Blocks.AIR) {

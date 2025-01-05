@@ -43,6 +43,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.rezolv.obsidanum.item.ItemsObs;
+import net.rezolv.obsidanum.particle.ParticlesObs;
+import net.rezolv.obsidanum.sound.SoundsObs;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -58,13 +60,16 @@ public class ObsidianTablet extends Block {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
     public static final BooleanProperty EXPERIENCED = BooleanProperty.create("experienced");
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
-
-
+    public static final BooleanProperty ENCHANTER = BooleanProperty.create("enchanter");
 
 
     public ObsidianTablet(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(EXPERIENCED, false).setValue(ACTIVE,false)); // Устанавливаем начальное состояние блока: активность = false
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(EXPERIENCED, false)
+                .setValue(ENCHANTER, false)
+                .setValue(ACTIVE, false)); // Устанавливаем начальное состояние блока: активность = false
 
     }
 
@@ -73,26 +78,28 @@ public class ObsidianTablet extends Block {
         Direction direction = state.getValue(FACING);
         return direction == Direction.NORTH || direction == Direction.SOUTH ? SHAPE_NORTH_SOUTH : SHAPE_EAST_WEST;
     }
+
     private static final Random random = new Random();
+
     @Override
     public void attack(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer) {
         super.attack(pState, pLevel, pPos, pPlayer);
 
         if (!pState.getValue(EXPERIENCED)) {
-            ((Level)pLevel).explode(null, pPos.getX(), pPos.getY(), pPos.getZ(), 3, Level.ExplosionInteraction.TNT);
+            ((Level) pLevel).explode(null, pPos.getX(), pPos.getY(), pPos.getZ(), 3, Level.ExplosionInteraction.TNT);
 
             int lightningCount = 1 + random.nextInt(6); // Number of lightning bolts (1 to 4)
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
             for (int i = 0; i < lightningCount; i++) {
                 final int index = i;
-                long initialDelay = (index == 0? random.nextInt(10) : 10) * 50L; // Delay in milliseconds
+                long initialDelay = (index == 0 ? random.nextInt(10) : 10) * 50L; // Delay in milliseconds
                 executor.schedule(() -> spawnLightning(pLevel, pPos), initialDelay, TimeUnit.MILLISECONDS);
-                long initialDelay2 = (index == 0? random.nextInt(10) : 20) * 50L; // Delay in milliseconds
+                long initialDelay2 = (index == 0 ? random.nextInt(10) : 20) * 50L; // Delay in milliseconds
                 executor.schedule(() -> spawnLightning(pLevel, pPos), initialDelay2, TimeUnit.MILLISECONDS);
-                long initialDelay3 = (index == 0? random.nextInt(10) : 25) * 50L; // Delay in milliseconds
+                long initialDelay3 = (index == 0 ? random.nextInt(10) : 25) * 50L; // Delay in milliseconds
                 executor.schedule(() -> spawnLightning(pLevel, pPos), initialDelay3, TimeUnit.MILLISECONDS);
-                long initialDelay4 = (index == 0? random.nextInt(10) : 35) * 50L; // Delay in milliseconds
+                long initialDelay4 = (index == 0 ? random.nextInt(10) : 35) * 50L; // Delay in milliseconds
                 executor.schedule(() -> spawnLightning(pLevel, pPos), initialDelay4, TimeUnit.MILLISECONDS);
             }
             // Break the block
@@ -101,7 +108,6 @@ public class ObsidianTablet extends Block {
             executor.shutdown();
         }
     }
-
 
 
     private void spawnLightning(Level pLevel, BlockPos pPos) {
@@ -113,6 +119,7 @@ public class ObsidianTablet extends Block {
         lightning.moveTo(offsetX, offsetY, offsetZ);
         pLevel.addFreshEntity(lightning);
     }
+
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         // Получаем предмет, который будет установлен
@@ -124,13 +131,15 @@ public class ObsidianTablet extends Block {
             int customModelData = tag.getInt("CustomModelData");
 
             // Проверяем значение тега CustomModelData
-            boolean experienced = customModelData == 1 || customModelData == 2;
+            boolean experienced = customModelData == 1 || customModelData == 2 || customModelData == 3;
             boolean active = customModelData == 2;
+            boolean enchanter = customModelData == 3;
 
             // Создаем новое состояние блока с учетом переданных тегов
             return this.defaultBlockState()
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
                     .setValue(EXPERIENCED, experienced)
+                    .setValue(ENCHANTER, enchanter)
                     .setValue(ACTIVE, active);
         }
 
@@ -140,7 +149,7 @@ public class ObsidianTablet extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, EXPERIENCED, ACTIVE);
+        builder.add(FACING, EXPERIENCED, ACTIVE, ENCHANTER);
     }
 
     @Override
@@ -159,21 +168,32 @@ public class ObsidianTablet extends Block {
             itemStack.setTag(compoundTag);
 
             // Set CustomModelData based on the block state
-            if (state.getValue(EXPERIENCED) && state.getValue(ACTIVE) && hasSilkTouch) {
+            if (state.getValue(EXPERIENCED) && state.getValue(ACTIVE) && !state.getValue(ENCHANTER) && hasSilkTouch) {
                 compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
                 compoundTag.putBoolean("active", state.getValue(EXPERIENCED));
 
                 itemStack.getOrCreateTag().putInt("CustomModelData", 2);
-            }
-            else if (state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && hasSilkTouch){
+            } else if (state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && !state.getValue(ENCHANTER) && hasSilkTouch) {
                 compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
                 itemStack.getOrCreateTag().putInt("CustomModelData", 1);
-            }
-            else if (state.getValue(EXPERIENCED) && state.getValue(ACTIVE) && !hasSilkTouch){
+            } else if (state.getValue(EXPERIENCED) && state.getValue(ACTIVE) && !state.getValue(ENCHANTER) && !hasSilkTouch) {
                 compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
                 itemStack.getOrCreateTag().putInt("CustomModelData", 1);
-            }
-            else if (state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && !hasSilkTouch){
+            } else if (state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && !state.getValue(ENCHANTER) && !hasSilkTouch) {
+                compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
+                itemStack.getOrCreateTag().putInt("CustomModelData", 1);
+            } else if (state.getValue(EXPERIENCED) && state.getValue(ENCHANTER) && !state.getValue(ACTIVE) && hasSilkTouch) {
+                compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
+                compoundTag.putBoolean("enchanter", state.getValue(ENCHANTER));
+
+                itemStack.getOrCreateTag().putInt("CustomModelData", 3);
+            } else if (state.getValue(EXPERIENCED) && !state.getValue(ENCHANTER) && !state.getValue(ACTIVE) && hasSilkTouch) {
+                compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
+                itemStack.getOrCreateTag().putInt("CustomModelData", 1);
+            } else if (state.getValue(EXPERIENCED) && state.getValue(ENCHANTER) && !state.getValue(ACTIVE) && !hasSilkTouch) {
+                compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
+                itemStack.getOrCreateTag().putInt("CustomModelData", 1);
+            } else if (state.getValue(EXPERIENCED) && !state.getValue(ENCHANTER) && !state.getValue(ACTIVE) && !hasSilkTouch) {
                 compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
                 itemStack.getOrCreateTag().putInt("CustomModelData", 1);
             }
@@ -185,6 +205,7 @@ public class ObsidianTablet extends Block {
 
         return result;
     }
+
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         ItemStack itemStack = new ItemStack(this.asItem());
@@ -194,18 +215,22 @@ public class ObsidianTablet extends Block {
         itemStack.setTag(compoundTag);
         itemStack.getOrCreateTag().putInt("CustomModelData", 0);
         // Устанавливаем CustomModelData на основе состояния блока
-        if (state.getValue(EXPERIENCED) && state.getValue(ACTIVE)) {
+        if (state.getValue(EXPERIENCED) && state.getValue(ACTIVE) && !state.getValue(ENCHANTER)) {
             compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
             compoundTag.putBoolean("active", state.getValue(ACTIVE));
             itemStack.getOrCreateTag().putInt("CustomModelData", 2);
-        } else if (state.getValue(EXPERIENCED)) {
+        } else if (state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && state.getValue(ENCHANTER)) {
+            compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
+            compoundTag.putBoolean("enchanter", state.getValue(ENCHANTER));
+
+            itemStack.getOrCreateTag().putInt("CustomModelData", 3);
+        } else if (state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && !state.getValue(ENCHANTER)) {
             compoundTag.putBoolean("experienced", state.getValue(EXPERIENCED));
             itemStack.getOrCreateTag().putInt("CustomModelData", 1);
         }
 
         return itemStack;
     }
-
 
 
     @Override
@@ -226,20 +251,40 @@ public class ObsidianTablet extends Block {
             ItemStack itemInHand = player.getItemInHand(hand);
 
             // Check if player is using the Obsidian Tear and the block is in the correct state
-            if (itemInHand.getItem() == ItemsObs.OBSIDIAN_TEAR.get() && state.getValue(EXPERIENCED) && !state.getValue(ACTIVE)) {
+            if (itemInHand.getItem() == ItemsObs.OBSIDIAN_TEAR.get() && state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && !state.getValue(ENCHANTER)) {
                 world.setBlock(pos, state.setValue(ACTIVE, true), 3);
 
                 // Play activation sound
-                world.playSound(null, pos, SoundEvents.END_PORTAL_SPAWN, player.getSoundSource(), 1.0F, 1.0F);
+                world.playSound(null, pos, SoundsObs.OBSIDIAN_TABLET_ACTIVE.get(), player.getSoundSource(), 1.0F, 1.0F);
 
                 // Spawn happy villager particles
                 if (world instanceof ServerLevel) {
                     ServerLevel serverWorld = (ServerLevel) world;
                     for (int i = 0; i < 10; i++) {
-                        double offsetX = world.random.nextGaussian() * 0.5D;
-                        double offsetY = world.random.nextGaussian() * 0.5D;
-                        double offsetZ = world.random.nextGaussian() * 0.5D;
-                        serverWorld.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D, 5, offsetX, offsetY, offsetZ, 1.0D);
+                        double offsetX = world.random.nextGaussian() * 0.2D;
+                        double offsetY = world.random.nextGaussian() * 0.2D;
+                        double offsetZ = world.random.nextGaussian() * 0.2D;
+                        serverWorld.sendParticles(ParticlesObs.GLINT_PURPLE_PARTICLES.get(), pos.getX() + 0.2D, pos.getY() + 1.0D, pos.getZ() + 0.2D, 5, offsetX, offsetY, offsetZ, 1.0D);
+                    }
+                }
+                // Consume one Obsidian Tear
+                itemInHand.shrink(1);
+                return InteractionResult.SUCCESS;
+            }
+            if (itemInHand.getItem() == ItemsObs.FLAME_BOLT.get() && state.getValue(EXPERIENCED) && !state.getValue(ACTIVE) && !state.getValue(ENCHANTER)) {
+                world.setBlock(pos, state.setValue(ENCHANTER, true), 3);
+
+                // Play activation sound
+                world.playSound(null, pos, SoundsObs.OBSIDIAN_TABLET_ACTIVE.get(), player.getSoundSource(), 1.0F, 1.0F);
+
+                // Spawn happy villager particles
+                if (world instanceof ServerLevel) {
+                    ServerLevel serverWorld = (ServerLevel) world;
+                    for (int i = 0; i < 10; i++) {
+                        double offsetX = world.random.nextGaussian() * 0.2D;
+                        double offsetY = world.random.nextGaussian() * 0.2D;
+                        double offsetZ = world.random.nextGaussian() * 0.2D;
+                        serverWorld.sendParticles(ParticlesObs.GLINT_BLUE_PARTICLES.get(), pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D, 5, offsetX, offsetY, offsetZ, 1.0D);
                     }
                 }
                 // Consume one Obsidian Tear
@@ -273,11 +318,12 @@ public class ObsidianTablet extends Block {
     public float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
         return state.getValue(ACTIVE) ? 6 : 0;
     }
+
     @Override
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
         BlockPos blockpos = pos.below();
         BlockState blockBelow = world.getBlockState(blockpos);
-        return Block.isFaceFull(blockBelow.getCollisionShape(world, blockpos), Direction.UP) ;
+        return Block.isFaceFull(blockBelow.getCollisionShape(world, blockpos), Direction.UP);
     }
 
     @Override
@@ -285,24 +331,30 @@ public class ObsidianTablet extends Block {
         super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
 
         // Проверка на наличие и значение тега "experienced"
-        if (pStack.hasTag() && pStack.getTag().getBoolean("experienced") && pStack.getTag().getBoolean("active")) {
-            if(Screen.hasShiftDown()) {
+        if (pStack.hasTag() && pStack.getTag().getBoolean("experienced") && pStack.getTag().getBoolean("active")&& !pStack.getTag().getBoolean("enchanter")) {
+            if (Screen.hasShiftDown()) {
                 pTooltip.add(Component.translatable("obsidanum.press_shift2").withStyle(ChatFormatting.DARK_GRAY));
                 pTooltip.add(Component.translatable("item.obsidian_tablet.description.active").withStyle(ChatFormatting.DARK_GRAY));
             } else {
                 pTooltip.add(Component.translatable("obsidanum.press_shift").withStyle(ChatFormatting.DARK_GRAY));
             }
-        }
-       else if (pStack.hasTag() && pStack.getTag().getBoolean("experienced") && !pStack.getTag().getBoolean("active")){
-            if(Screen.hasShiftDown()) {
+        } else if (pStack.hasTag() && pStack.getTag().getBoolean("experienced") && !pStack.getTag().getBoolean("active")&& !pStack.getTag().getBoolean("enchanter")) {
+            if (Screen.hasShiftDown()) {
                 pTooltip.add(Component.translatable("obsidanum.press_shift2").withStyle(ChatFormatting.DARK_GRAY));
                 pTooltip.add(Component.translatable("item.obsidian_tablet.description.crashed").withStyle(ChatFormatting.DARK_GRAY));
             } else {
                 pTooltip.add(Component.translatable("obsidanum.press_shift").withStyle(ChatFormatting.DARK_GRAY));
             }
-       }
-       else {
-            if(Screen.hasShiftDown()) {
+        }
+        else if (pStack.hasTag() && pStack.getTag().getBoolean("experienced") && !pStack.getTag().getBoolean("active")&& pStack.getTag().getBoolean("enchanter")) {
+            if (Screen.hasShiftDown()) {
+                pTooltip.add(Component.translatable("obsidanum.press_shift2").withStyle(ChatFormatting.DARK_GRAY));
+                pTooltip.add(Component.translatable("item.obsidian_tablet.description.enchanter").withStyle(ChatFormatting.DARK_GRAY));
+            } else {
+                pTooltip.add(Component.translatable("obsidanum.press_shift").withStyle(ChatFormatting.DARK_GRAY));
+            }
+        } else {
+            if (Screen.hasShiftDown()) {
                 pTooltip.add(Component.translatable("obsidanum.press_shift2").withStyle(ChatFormatting.DARK_GRAY));
                 pTooltip.add(Component.translatable("item.obsidian_tablet.description.ancient").withStyle(ChatFormatting.DARK_GRAY));
             } else {

@@ -34,7 +34,9 @@ public class BlocksObs {
     public static final RegistryObject<Block> LEFT_CORNER_LEVEL = registerBlock("left_corner_level",
             () -> new LeftCornerLevel(BlockBehaviour.Properties.of()
                     .noOcclusion().strength(-1.0F, 3600000.0F).randomTicks().sound(SoundType.STONE).requiresCorrectToolForDrops()));
-    public static final RegistryObject<Block> WALL_FORGE = registerBlock("wall_forge",
+    public static final RegistryObject<Block> WALL_FORGE_L_CORNER = registerBlock("wall_forge_l_corner",
+            () -> new WallForge(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> WALL_FORGE_R_CORNER = registerBlock("wall_forge_r_corner",
             () -> new WallForge(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> HAMMER_FORGE = registerBlock("hammer_forge",
             () -> new HammerForge(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
@@ -230,7 +232,18 @@ public class BlocksObs {
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> OBSIDIAN = registerBlock("obsidian",
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
-
+    public static final RegistryObject<Block> OBSIDIAN_STAIRS = registerBlock("obsidian_stairs",
+            () -> new StairBlock(() -> BlocksObs.OBSIDIAN.get().defaultBlockState(),BlockBehaviour.Properties.of()
+                    .strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> OBSIDIAN_SLAB = registerBlock("obsidian_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> OBSIDIAN_WALL = registerBlock("obsidian_wall",
+            () -> new WallBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> OBSIDIAN_FENCE = registerBlock("obsidian_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> MOLDY_CARVED_OBSIDIAN_BRICKS_D = registerBlock("moldy_carved_obsidian_bricks_d",
             () -> new Block(BlockBehaviour.Properties.of().strength(40.0F, 1200.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> CRACKED_CARVED_OBSIDIAN_BRICKS_D = registerBlock("cracked_carved_obsidian_bricks_d",
@@ -282,6 +295,18 @@ public class BlocksObs {
     public static final RegistryObject<Block> FLAME_BANNER_BAGGEL = registerBlock("flame_banner_baggel",
             () -> new FlameBannerBaggel(BlockBehaviour.Properties.of().noOcclusion().noCollission().instabreak()
                     .sound(SoundType.WOOL)));
+
+    public static final RegistryObject<Block> OBSIDIAN_LECTERN = registerBlock("obsidian_lectern",
+            () -> new ObsidianLectern(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(20F, 10000.0F)
+                    .sound(SoundType.STONE)));
+
+
+    public static final RegistryObject<Block> LARGE_ALCHEMICAL_TANK = registerBlock("large_alchemical_tank",
+            () -> new LargeAlchemicalTank(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(20F, 10000.0F)
+                    .sound(SoundType.STONE)));
+    public static final RegistryObject<Block> LARGE_ALCHEMICAL_TANK_BROKEN = registerBlock("large_alchemical_tank_broken",
+            () -> new LargeAlchemicalTankBroken(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(20F, 10000.0F)
+                    .sound(SoundType.STONE)));
 
     public static final RegistryObject<Block> LOCKED_CHEST_RUNIC = registerBlock("locked_chest_runic",
             () -> new LockedRunicChest(BlockBehaviour.Properties.of().noOcclusion()

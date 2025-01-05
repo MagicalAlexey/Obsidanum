@@ -77,7 +77,7 @@ public class ObsidanPickaxe extends PickaxeItem {
                 pLevel.destroyBlock(pPos, false);
 
                 // Шанс выпадения алмаза
-                if (pLevel.random.nextFloat() < 0.15f) {
+                if (pLevel.random.nextFloat() < 0.2f) {
                     ItemStack diamond = new ItemStack(Items.DIAMOND);
                     Block.popResource(pLevel, pPos, diamond);
                 }

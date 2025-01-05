@@ -11,12 +11,15 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.rezolv.obsidanum.block.custom.FlameDispenser;
 import net.rezolv.obsidanum.entity.ModItemEntities;
 import net.rezolv.obsidanum.entity.projectile_entity.NetherFlameEntityMini;
 import net.rezolv.obsidanum.item.projectile_functions.StrikeNetherFlame;
@@ -45,6 +48,20 @@ public class NetherFlame extends Item {
         }
         return retval;
     }
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        // Получаем информацию о блоке, на который кликают
+        Block block = context.getLevel().getBlockState(context.getClickedPos()).getBlock();
+
+        // Проверяем, является ли блок стеклом
+        if (block instanceof FlameDispenser) {
+            return InteractionResult.FAIL; // Возвращаем FAIL, если это стекло
+        }
+
+        // В остальных случаях вызываем реализацию родительского метода
+        return super.useOn(context);
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player entity, InteractionHand hand) {
         entity.startUsingItem(hand);

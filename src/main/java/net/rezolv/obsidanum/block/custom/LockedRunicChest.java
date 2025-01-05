@@ -2,8 +2,10 @@ package net.rezolv.obsidanum.block.custom;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -13,6 +15,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -58,23 +61,42 @@ public class LockedRunicChest extends Block {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        // Check if the player is using the right hand and if the item in hand is the obsidian shard key
+        // Проверяем, использует ли игрок основной рукой и является ли предмет в руке ключом из обсаидиановых осколков
         if (pHand == InteractionHand.MAIN_HAND && pPlayer.getItemInHand(pHand).is(ItemsObs.OBSIDIAN_SHARD_KEY.get())) {
-            // Get the current block's facing direction
+            // Получаем текущее направление блока
             Direction currentFacing = pState.getValue(LockedRunicChest.FACING);
 
-            // Change the block to RUNIC with the same facing direction
+            // Меняем блок на RUNIC с тем же направлением
             BlockState newState = SCRegistry.chests[EnumStoneChest.RUNIC.ordinal()].get().defaultBlockState()
                     .setValue(LockedRunicChest.FACING, currentFacing);
 
+            // Устанавливаем новый блок на месте старого сундука
             pLevel.setBlock(pPos, newState, 3);
 
-            // Play the beacon activation sound
+            // Добавляем лут, аналогичный сундуку крепости Незера
+            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            if (blockEntity instanceof ChestBlockEntity) {
+                ChestBlockEntity chestEntity = (ChestBlockEntity) blockEntity;
+
+                // Получаем источник случайных чисел
+                RandomSource randomSource = pLevel.getRandom();
+
+                // Получаем случайное число в виде long для использования в таблице лута
+                long lootSeed = randomSource.nextLong();
+
+                // Устанавливаем таблицу лута для сундука крепости Незера
+                chestEntity.setLootTable(new ResourceLocation("minecraft", "chests/nether_bridge"), lootSeed);
+
+                // Синхронизируем состояние сундука
+                chestEntity.setChanged();
+            }
+
+            // Воспроизводим звук активации маяка
             pLevel.playSound(null, pPos, SoundsObs.LOCK.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 
-            // Remove one obsidian shard key from the player's inventory
+            // Уменьшаем количество ключей в инвентаре игрока
             if (!pPlayer.isCreative()) {
-                pPlayer.getItemInHand(pHand).shrink(1); // Remove one key
+                pPlayer.getItemInHand(pHand).shrink(1); // Удаляем один ключ
             }
 
             return InteractionResult.SUCCESS;
