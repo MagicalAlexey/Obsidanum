@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.rezolv.obsidanum.item.ItemsObs;
+import net.rezolv.obsidanum.item.item_entity.arrows.flame_arrow.FlameArrow;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -222,7 +223,7 @@ public class FlameCrossbowItem extends CrossbowItem implements Vanishable {
             } else {
                 projectile = getArrow(pLevel, pShooter, pCrossbowStack, pAmmoStack);
                 if (pIsCreativeMode || pProjectileAngle != 0.0F) {
-                    ((AbstractArrow)projectile).pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+                    ((FlameArrow)projectile).pickup = FlameArrow.Pickup.CREATIVE_ONLY;
                 }
             }
 
@@ -246,7 +247,7 @@ public class FlameCrossbowItem extends CrossbowItem implements Vanishable {
 
     }
     private static AbstractArrow getArrow(Level pLevel, LivingEntity pLivingEntity, ItemStack pCrossbowStack, ItemStack pAmmoStack) {
-        ArrowItem arrowitem = (ArrowItem)(pAmmoStack.getItem() instanceof ArrowItem ? pAmmoStack.getItem() :ItemsObs.FLAME_BOLT.get());
+        FlameArrowItem arrowitem = (FlameArrowItem)(pAmmoStack.getItem() instanceof FlameArrowItem ? pAmmoStack.getItem() :ItemsObs.FLAME_BOLT.get());
         AbstractArrow abstractarrow = arrowitem.createArrow(pLevel, pAmmoStack, pLivingEntity);
         if (pLivingEntity instanceof Player) {
             abstractarrow.setCritArrow(true);

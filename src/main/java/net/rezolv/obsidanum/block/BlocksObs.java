@@ -244,6 +244,20 @@ public class BlocksObs {
     public static final RegistryObject<Block> OBSIDIAN_FENCE = registerBlock("obsidian_fence",
             () -> new FenceBlock(BlockBehaviour.Properties.of()
                     .strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+
+    public static final RegistryObject<Block> OBSIDIAN_STAIRS_D = registerBlock("obsidian_stairs_d",
+            () -> new StairBlock(() -> BlocksObs.OBSIDIAN.get().defaultBlockState(),BlockBehaviour.Properties.of()
+                    .strength(35.0F, 1200.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> OBSIDIAN_SLAB_D = registerBlock("obsidian_slab_d",
+            () -> new SlabBlock(BlockBehaviour.Properties.of()
+                    .strength(35.0F, 1200.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> OBSIDIAN_WALL_D = registerBlock("obsidian_wall_d",
+            () -> new WallBlock(BlockBehaviour.Properties.of()
+                    .strength(35.0F, 1200.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> OBSIDIAN_FENCE_D = registerBlock("obsidian_fence_d",
+            () -> new FenceBlock(BlockBehaviour.Properties.of()
+                    .strength(35.0F, 1200.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+
     public static final RegistryObject<Block> MOLDY_CARVED_OBSIDIAN_BRICKS_D = registerBlock("moldy_carved_obsidian_bricks_d",
             () -> new Block(BlockBehaviour.Properties.of().strength(40.0F, 1200.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> CRACKED_CARVED_OBSIDIAN_BRICKS_D = registerBlock("cracked_carved_obsidian_bricks_d",
