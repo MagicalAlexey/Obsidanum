@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.block.entity.FlameDispenserEntity;
 import net.rezolv.obsidanum.block.entity.ForgeCrucibleEntity;
 import net.rezolv.obsidanum.block.entity.RightForgeScrollEntity;
@@ -93,6 +94,23 @@ public class FlameDispenser extends BaseEntityBlock {
 
                 // Запланировать возврат состояния в false
                 level.scheduleTick(pos, this, 40);  // 10 тиков = ~0.5 секунд
+            }
+            int currentStage = state.getValue(STAGE);
+            if (!state.getValue(IS_PRESSED)
+                    &&level.getBlockState(pos.below()).getBlock() != BlocksObs.NETHER_FLAME_BLOCK.get()
+                    &&currentStage == 3){
+                level.playSound(null, pos, SoundEvents.BUCKET_FILL_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+                level.playSound(null, pos, SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+                level.setBlock(pos, state.setValue(IS_PRESSED, true), 2);
+                level.setBlock(pos.below(), BlocksObs.NETHER_FLAME_BLOCK.get().defaultBlockState(), 3);
+                // Анимация взмаха рукой
+                player.swing(InteractionHand.MAIN_HAND, true);
+
+                // Запланировать возврат состояния в false
+                level.scheduleTick(pos, this, 40);  // 10 тиков = ~0.5 секунд
+
             }
         }
 

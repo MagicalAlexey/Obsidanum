@@ -169,6 +169,7 @@ public class ForgeCrucible extends BaseEntityBlock {
 
         Direction facing = state.getValue(FACING);
 
+        // Проверяем ожидаемую позицию справа
         BlockPos expectedRightPos = switch (facing) {
             case NORTH -> pos.west();
             case SOUTH -> pos.east();
@@ -178,14 +179,19 @@ public class ForgeCrucible extends BaseEntityBlock {
         };
 
         if (expectedRightPos != null && expectedRightPos.equals(fromPos)) {
-            BlockEntity rightEntity = level.getBlockEntity(expectedRightPos);
-            if (rightEntity instanceof RightForgeScrollEntity rightForgeScrollEntity) {
-                CompoundTag scrollNBT = rightForgeScrollEntity.getScrollNBT();
-                getNbtScroll(level, pos, state, scrollNBT);
-                return;
+            BlockState rightBlockState = level.getBlockState(expectedRightPos);
+            if (rightBlockState.hasProperty(RightForgeScroll.TYPE_SCROLL)
+                    && rightBlockState.getValue(RightForgeScroll.TYPE_SCROLL) != null) {
+                BlockEntity rightEntity = level.getBlockEntity(expectedRightPos);
+                if (rightEntity instanceof RightForgeScrollEntity rightForgeScrollEntity) {
+                    CompoundTag scrollNBT = rightForgeScrollEntity.getScrollNBT();
+                    getNbtScroll(level, pos, state, scrollNBT);
+                    return;
+                }
             }
         }
 
+        // Проверяем ожидаемую позицию слева
         BlockPos expectedLeftPos = switch (facing) {
             case NORTH -> pos.east();
             case SOUTH -> pos.west();
@@ -207,11 +213,13 @@ public class ForgeCrucible extends BaseEntityBlock {
                     totalIngredientCount += currentNBT.getInt("count");
                 }
 
+                // Добавлено новое условие с проверкой блока ниже и свойства TYPE_SCROLL
                 if (leftBlockState.is(BlocksObs.LEFT_CORNER_LEVEL.get())
                         && leftBlockState.getValue(LeftCornerLevel.IS_PRESSED)
-                        && totalIngredientCount == 0) {
+                        && totalIngredientCount == 0
+                        && level.getBlockState(pos.below(2)).is(BlocksObs.NETHER_FLAME_BLOCK.get())) {
 
-                    getClearedItems(level,pos,state,crucibleNBT);
+                    getClearedItems(level, pos, state, crucibleNBT);
 
                     if (crucibleNBT.contains("originalIngredients", Tag.TAG_LIST)) {
                         ListTag originalList = crucibleNBT.getList("originalIngredients", Tag.TAG_COMPOUND);
@@ -236,7 +244,6 @@ public class ForgeCrucible extends BaseEntityBlock {
                     } else {
                         System.out.println("No original ingredients found to restore.");
                     }
-
                 }
             }
         }

@@ -11,14 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.rezolv.obsidanum.block.enum_blocks.DispenserStage;
-import net.rezolv.obsidanum.block.enum_blocks.ScrollType;
 import org.jetbrains.annotations.Nullable;
 
-public class FlameDispenserEntity extends BaseContainerBlockEntity implements WorldlyContainer {
-    public FlameDispenserEntity(BlockPos pPos, BlockState pBlockState) {
-        super(ModBlockEntities.FLAME_DISPENSER.get(), pPos, pBlockState);
+public class FlamePipeEntity extends BaseContainerBlockEntity implements WorldlyContainer {
+    public FlamePipeEntity(BlockPos pPos, BlockState pBlockState) {
+        super(ModBlockEntities.FLAME_PIPE.get(), pPos, pBlockState);
 
     }
 

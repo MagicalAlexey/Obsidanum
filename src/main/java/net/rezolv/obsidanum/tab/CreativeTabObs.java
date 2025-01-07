@@ -105,6 +105,7 @@ public class CreativeTabObs extends CreativeModeTab {
                         //Blocks
                         pOutput.accept(BlocksObs.OBSIDAN_PLANKS.get());
                         pOutput.accept(BlocksObs.FLAME_DISPENSER.get());
+                        pOutput.accept(BlocksObs.FLAME_PIPE.get());
                         pOutput.accept(BlocksObs.FLAME_BANNER_BAGGEL.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_TABLET.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_INLAID_COLUMN.get());
