@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.rezolv.obsidanum.block.BlocksObs;
 
 public class LeftCornerLevel extends Block {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -46,7 +47,7 @@ public class LeftCornerLevel extends Block {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide) { // Выполняется только на серверной стороне
-            if (!pState.getValue(IS_PRESSED)) { // Проверяем текущее состояние
+            if (!pState.getValue(IS_PRESSED)&&pLevel.getBlockState(pPos.below(2)).is(BlocksObs.NETHER_FLAME_BLOCK.get())) { // Проверяем текущее состояние
                 // Устанавливаем IS_PRESSED в true
                 pLevel.setBlock(pPos, pState.setValue(IS_PRESSED, true), 3);
 

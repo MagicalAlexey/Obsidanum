@@ -24,8 +24,13 @@ import java.util.function.Supplier;
 public class BlocksObs {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, Obsidanum.MOD_ID);
+
+
     public static final RegistryObject<Block> FLAME_DISPENSER = registerBlock("flame_dispenser",
             () -> new FlameDispenser(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> FLAME_PIPE = registerBlock("flame_pipe",
+            () -> new FlamePipe(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+
 
     public static final RegistryObject<Block> RIGHT_FORGE_SCROLL = registerBlock("right_forge_scroll",
             () -> new RightForgeScroll(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
@@ -316,8 +321,8 @@ public class BlocksObs {
 
 
     public static final RegistryObject<Block> LARGE_ALCHEMICAL_TANK = registerBlock("large_alchemical_tank",
-            () -> new LargeAlchemicalTank(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(20F, 10000.0F)
-                    .sound(SoundType.STONE)));
+            () -> new LargeAlchemicalTank(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(4F, 10000.0F)
+                    .sound(SoundType.GLASS)));
     public static final RegistryObject<Block> LARGE_ALCHEMICAL_TANK_BROKEN = registerBlock("large_alchemical_tank_broken",
             () -> new LargeAlchemicalTankBroken(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(20F, 10000.0F)
                     .sound(SoundType.STONE)));

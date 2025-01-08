@@ -1,6 +1,7 @@
 package net.rezolv.obsidanum.block.entity;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -35,8 +36,13 @@ public class ModBlockEntities {
 
 
 
-    public static final RegistryObject<BlockEntityType<ForgeCrucibleEntity>> FLAME_DISPENSER =
+    public static final RegistryObject<BlockEntityType<DispenserBlockEntity>> FLAME_DISPENSER =
             BLOCK_ENTITIES.register("flame_dispenser", () ->
-                    BlockEntityType.Builder.of(ForgeCrucibleEntity::new,
+                    BlockEntityType.Builder.of(DispenserBlockEntity::new,
                             BlocksObs.FLAME_DISPENSER.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<FlamePipeEntity>> FLAME_PIPE =
+            BLOCK_ENTITIES.register("flame_pipe", () ->
+                    BlockEntityType.Builder.of(FlamePipeEntity::new,
+                            BlocksObs.FLAME_PIPE.get()).build(null));
 }
