@@ -15,7 +15,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.rezolv.obsidanum.Obsidanum;
 import net.rezolv.obsidanum.effect.EffectsObs;
-import net.rezolv.obsidanum.effect.effects.effect_overlay.ConfusionOverlay;
 
 @Mod.EventBusSubscriber(modid = Obsidanum.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventBusEvents {

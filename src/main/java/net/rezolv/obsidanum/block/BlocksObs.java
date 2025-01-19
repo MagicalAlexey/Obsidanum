@@ -321,10 +321,10 @@ public class BlocksObs {
 
 
     public static final RegistryObject<Block> LARGE_ALCHEMICAL_TANK = registerBlock("large_alchemical_tank",
-            () -> new LargeAlchemicalTank(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(4F, 10000.0F)
+            () -> new LargeAlchemicalTank(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(1F, 10000.0F)
                     .sound(SoundType.GLASS)));
     public static final RegistryObject<Block> LARGE_ALCHEMICAL_TANK_BROKEN = registerBlock("large_alchemical_tank_broken",
-            () -> new LargeAlchemicalTankBroken(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(20F, 10000.0F)
+            () -> new LargeAlchemicalTankBroken(BlockBehaviour.Properties.of().randomTicks().noOcclusion().strength(-1F, 3600000.0F)
                     .sound(SoundType.STONE)));
 
     public static final RegistryObject<Block> LOCKED_CHEST_RUNIC = registerBlock("locked_chest_runic",

@@ -152,11 +152,12 @@ public class NetherFireBlock extends BaseFireBlock {
             BlockState blockstate = pLevel.getBlockState(pPos.below());
             boolean flag = blockstate.isFireSource(pLevel, pPos, Direction.UP);
             int i = (Integer)pState.getValue(AGE);
-            if (!flag && pLevel.isRaining() && this.isNearRain(pLevel, pPos) && pRandom.nextFloat() < 0.2F + (float)i * 0.03F) {
+            if (!flag && pLevel.isRaining() && this.isNearRain(pLevel, pPos) && pRandom.nextFloat() < 0.1F + (float)i * 0.03F) {
                 pLevel.removeBlock(pPos, false);
-                pLevel.removeBlock(pPos, false);
+                return;
             } else {
-                int j = Math.min(15, i + pRandom.nextInt(3) / 2);
+                // Увеличиваем шанс роста огня
+                int j = Math.min(15, i + pRandom.nextInt(4) / 2);  // Увеличиваем шанс роста
                 if (i != j) {
                     pState = (BlockState)pState.setValue(AGE, j);
                     pLevel.setBlock(pPos, pState, 4);
@@ -180,12 +181,12 @@ public class NetherFireBlock extends BaseFireBlock {
 
                 boolean flag1 = pLevel.getBiome(pPos).is(BiomeTags.INCREASED_FIRE_BURNOUT);
                 int k = flag1 ? -50 : 0;
-                this.tryCatchFire(pLevel, pPos.east(), 300 + k, pRandom, i, Direction.WEST);
-                this.tryCatchFire(pLevel, pPos.west(), 300 + k, pRandom, i, Direction.EAST);
-                this.tryCatchFire(pLevel, pPos.below(), 250 + k, pRandom, i, Direction.UP);
-                this.tryCatchFire(pLevel, pPos.above(), 250 + k, pRandom, i, Direction.DOWN);
-                this.tryCatchFire(pLevel, pPos.north(), 300 + k, pRandom, i, Direction.SOUTH);
-                this.tryCatchFire(pLevel, pPos.south(), 300 + k, pRandom, i, Direction.NORTH);
+                this.tryCatchFire(pLevel, pPos.east(), 250 + k, pRandom, i, Direction.WEST);
+                this.tryCatchFire(pLevel, pPos.west(), 250 + k, pRandom, i, Direction.EAST);
+                this.tryCatchFire(pLevel, pPos.below(), 200 + k, pRandom, i, Direction.UP);
+                this.tryCatchFire(pLevel, pPos.above(), 200 + k, pRandom, i, Direction.DOWN);
+                this.tryCatchFire(pLevel, pPos.north(), 250 + k, pRandom, i, Direction.SOUTH);
+                this.tryCatchFire(pLevel, pPos.south(), 250 + k, pRandom, i, Direction.NORTH);
                 BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 
                 for(int l = -1; l <= 1; ++l) {
@@ -200,13 +201,13 @@ public class NetherFireBlock extends BaseFireBlock {
                                 blockpos$mutableblockpos.setWithOffset(pPos, l, j1, i1);
                                 int l1 = this.getIgniteOdds(pLevel, blockpos$mutableblockpos);
                                 if (l1 > 0) {
-                                    int i2 = (l1 + 40 + pLevel.getDifficulty().getId() * 7) / (i + 30);
+                                    int i2 = (l1 + 40 + pLevel.getDifficulty().getId() * 7) / (i + 20);  // Уменьшаем делитель для увеличения вероятности
                                     if (flag1) {
                                         i2 /= 2;
                                     }
 
                                     if (i2 > 0 && pRandom.nextInt(k1) <= i2 && (!pLevel.isRaining() || !this.isNearRain(pLevel, blockpos$mutableblockpos))) {
-                                        int j2 = Math.min(15, i + pRandom.nextInt(5) / 4);
+                                        int j2 = Math.min(15, i + pRandom.nextInt(6) / 4);  // Увеличиваем шанс на рост
                                         pLevel.setBlock(blockpos$mutableblockpos, this.getStateWithAge(pLevel, blockpos$mutableblockpos, j2), 3);
                                     }
                                 }
@@ -216,7 +217,6 @@ public class NetherFireBlock extends BaseFireBlock {
                 }
             }
         }
-
     }
 
     protected boolean isNearRain(Level pLevel, BlockPos pPos) {
@@ -235,19 +235,26 @@ public class NetherFireBlock extends BaseFireBlock {
         return pState.hasProperty(BlockStateProperties.WATERLOGGED) && (Boolean)pState.getValue(BlockStateProperties.WATERLOGGED) ? 0 : this.igniteOdds.getInt(pState.getBlock());
     }
 
-    private void tryCatchFire(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, int p_53436_, Direction face) {
-        int i = p_53432_.getBlockState(p_53433_).getFlammability(p_53432_, p_53433_, face);
-        if (p_53435_.nextInt(p_53434_) < i) {
-            BlockState blockstate = p_53432_.getBlockState(p_53433_);
-            blockstate.onCaughtFire(p_53432_, p_53433_, face, (LivingEntity)null);
-            if (p_53435_.nextInt(p_53434_ + 10) < 5 && !p_53432_.isRainingAt(p_53433_)) {
-                int j = Math.min(p_53434_ + p_53435_.nextInt(5) / 4, 15);
-                p_53432_.setBlock(p_53433_, this.getStateWithAge(p_53432_, p_53433_, j), 3);
+    private void tryCatchFire(Level level, BlockPos blockPos, int flammabilityChance, RandomSource random, int fireChanceThreshold, Direction direction) {
+        // Получаем фламмируемость блока на данной позиции в указанном направлении
+        int flammability = level.getBlockState(blockPos).getFlammability(level, blockPos, direction);
+
+        // Удваиваем вероятность возгорания
+        if (random.nextInt(flammabilityChance / 2) < flammability) { // Разделение на 2 уменьшает шанс
+            BlockState blockState = level.getBlockState(blockPos);
+
+            // Поджигаем блок
+            blockState.onCaughtFire(level, blockPos, direction, null);
+
+            // Удваиваем вероятность изменения состояния блока, если не идёт дождь
+            if (random.nextInt((flammabilityChance + 10) / 2) < 5 && !level.isRainingAt(blockPos)) { // Уменьшаем шанс, чтобы он был в 2 раза выше
+                int fireAge = Math.min(flammabilityChance + random.nextInt(5) / 4, 15);
+                level.setBlock(blockPos, this.getStateWithAge(level, blockPos, fireAge), 3);
             } else {
-                p_53432_.removeBlock(p_53433_, false);
+                // Иначе блок удаляется
+                level.removeBlock(blockPos, false);
             }
         }
-
     }
 
     private BlockState getStateWithAge(LevelAccessor pLevel, BlockPos pPos, int pAge) {

@@ -1,11 +1,10 @@
 {
-	"credit": "Made with Blockbench",
-	"parent": "hammer_forge",
 	"ambientocclusion": false,
 	"render_type": "cutout",
 	"texture_size": [64, 64],
 	"textures": {
-		"8": "obsidanum:block/hammer_forge"
+		"8": "obsidanum:block/hammer_forge",
+		"particle": "obsidanum:block/hammer_forge"
 	},
 	"elements": [
 		{

@@ -93,6 +93,15 @@ public class LargeAlchemicalTank extends Block {
                 level.destroyBlock(position, true);
             }
         }
+        // Спавним "сломанный" блок
+        if (!state.getValue(VOID_TANK)) {
+
+            // Спавним "сломанный" блок только для нижней части
+            BlockState brokenTankState = BlocksObs.LARGE_ALCHEMICAL_TANK_BROKEN.get().defaultBlockState();
+            level.setBlockAndUpdate(pos, brokenTankState);
+        }
+
+        // Вызываем стандартный метод удаления
         super.onRemove(state, level, pos, newState, isMoving);
     }
     @Override

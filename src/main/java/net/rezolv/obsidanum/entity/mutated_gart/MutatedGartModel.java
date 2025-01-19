@@ -18,7 +18,7 @@ import net.rezolv.obsidanum.entity.obsidian_elemental.ObsidianElementalAnimation
 
 public class MutatedGartModel<T extends Entity> extends HierarchicalModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "mutated_gart"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("obsidanum", "mutated_gart"), "main");
 	private final ModelPart head;
 	private final ModelPart beard;
 	private final ModelPart bone;

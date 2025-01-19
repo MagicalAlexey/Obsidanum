@@ -1,21 +1,16 @@
 package net.rezolv.obsidanum;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,7 +29,6 @@ import net.rezolv.obsidanum.entity.ModEntities;
 import net.rezolv.obsidanum.entity.ModItemEntities;
 import net.rezolv.obsidanum.entity.gart.GartRenderer;
 import net.rezolv.obsidanum.entity.meat_beetle.MeetBeetleRenderer;
-import net.rezolv.obsidanum.entity.mutated_gart.MutatedGart;
 import net.rezolv.obsidanum.entity.mutated_gart.MutatedGartRenderer;
 import net.rezolv.obsidanum.entity.obsidian_elemental.ObsidianElementalRenderer;
 import net.rezolv.obsidanum.event.BlockBreakEventHandler;
@@ -52,6 +46,8 @@ import net.rezolv.obsidanum.item.item_entity.arrows.obsidian_arrow.ObsidianArrow
 import net.rezolv.obsidanum.particle.ParticlesObs;
 import net.rezolv.obsidanum.recipes.ObsidanRecipes;
 import net.rezolv.obsidanum.sound.SoundsObs;
+import net.rezolv.obsidanum.structures.WDAStructures;
+import net.rezolv.obsidanum.structures.processors.RSProcessors;
 import net.rezolv.obsidanum.tab.CreativeTabObs;
 import net.rezolv.obsidanum.world.wood.ModWoodTypes;
 import org.slf4j.Logger;
@@ -72,12 +68,14 @@ public class Obsidanum {
 
     public Obsidanum() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        RSProcessors.STRUCTURE_PROCESSOR.register(modEventBus);
         // Канал для анимации тотема
         CHANNEL.messageBuilder(TotemAnimationMessage.class, 0)
                 .decoder(TotemAnimationMessage::decode)
                 .encoder(TotemAnimationMessage::encode)
                 .consumerMainThread(TotemAnimationMessage::handle)
                 .add();
+        WDAStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
         ObsidanRecipes.SERIALIZERS.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
         ItemsObs.ITEMS.register(modEventBus);

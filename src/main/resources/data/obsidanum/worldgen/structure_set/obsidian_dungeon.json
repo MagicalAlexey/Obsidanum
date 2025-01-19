@@ -1,0 +1,15 @@
+{
+
+  "structures": [
+    {
+      "structure": "obsidanum:obsidian_dungeon",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 34343442,
+    "spacing": 30,
+    "separation": 10,
+    "type": "minecraft:random_spread"
+  }
+}

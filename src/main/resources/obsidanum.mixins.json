@@ -8,6 +8,8 @@
     "EnchantmentTableBlockMixin",
     "LivingEntityMixin",
     "BaseFireBlockMixin",
+    "StructureProcessorAccessor",
+    "StructureTemplateMixin",
     "PortalShapeMixin"
   ],
   "injectors": {

@@ -45,4 +45,9 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("flame_pipe", () ->
                     BlockEntityType.Builder.of(FlamePipeEntity::new,
                             BlocksObs.FLAME_PIPE.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<HammerForgeEntity>> HAMMER_FORGE =
+            BLOCK_ENTITIES.register("hammer_forge", () ->
+                    BlockEntityType.Builder.of(HammerForgeEntity::new,
+                            BlocksObs.HAMMER_FORGE.get()).build(null));
 }

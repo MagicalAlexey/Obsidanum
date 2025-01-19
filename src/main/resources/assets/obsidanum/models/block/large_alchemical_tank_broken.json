@@ -7,7 +7,7 @@
 		"5": "obsidanum:block/large_alchemical_tank_broken",
 		"particle": "obsidanum:block/large_alchemical_tank_broken"
 	},
-	"render_type": "tripwire",
+	"render_type": "translucent",
 	"elements": [
 		{
 			"from": [1, 0, 1],

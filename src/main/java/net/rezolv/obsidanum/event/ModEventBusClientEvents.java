@@ -16,9 +16,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.rezolv.obsidanum.Obsidanum;
+import net.rezolv.obsidanum.block.entity.HammerForgeEntity;
 import net.rezolv.obsidanum.block.entity.ModBlockEntities;
 import net.rezolv.obsidanum.block.entity.renderer.ForgeCrucibleEntityRenderer;
-import net.rezolv.obsidanum.effect.effects.effect_overlay.ConfusionOverlay;
+import net.rezolv.obsidanum.block.entity.renderer.HammerForgeRenderer;
 import net.rezolv.obsidanum.entity.ModModelLayers;
 import net.rezolv.obsidanum.entity.gart.GartModel;
 import net.rezolv.obsidanum.entity.meat_beetle.MeetBeetleModel;
@@ -75,6 +76,7 @@ public class ModEventBusClientEvents {
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.FORGE_CRUCIBLE.get(), ForgeCrucibleEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.HAMMER_FORGE.get(), HammerForgeRenderer::new);
 
         event.registerBlockEntityRenderer(ModBlockEntities.OBSIDAN_SIGN.get(), SignRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.OBSIDAN_HANGING_SIGN.get(), HangingSignRenderer::new);
