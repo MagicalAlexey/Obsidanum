@@ -26,6 +26,7 @@
   "block.obsidanum.locked_chest_runic": "Locked Runic Chest",
 
   "block.obsidanum.carved_obsidian_bricks": "§4Carved Obsidian Bricks",
+  "item.obsidanum.carved_obsidian_bricks": "§4Carved Obsidian Bricks",
   "block.obsidanum.carved_obsidian_bricks_e": "§4Carved Obsidian Bricks No Eyes",
   "block.obsidanum.cracked_carved_obsidian_bricks": "§4Cracked Carved Obsidian Bricks",
   "block.obsidanum.cracked_carved_obsidian_bricks_e": "§4Cracked Carved Obsidian Bricks No Eyes",
@@ -167,6 +168,8 @@
   "block.obsidanum.stripped_obsidan_wood_log": "Stripped Obsidanwood Log",
   "block.obsidanum.the_gloomy_mycelium": "The Gloomy mycelium",
   "container.chest_obsidian": "Obsidian Chest",
+
+  "creativetab.obsidian_blocks": "Obsidian blocks",
   "creativetab.obsidanum": "Obsidanum",
   "creativetab.scrolls": "§gScrolls",
 

@@ -13,6 +13,7 @@
   "advancements.obsidanum.nether.relict_amethyst_shard.title": "Осколок знаний",
 
   "creativetab.obsidanum": "Obsidanum",
+  "creativetab.obsidian_blocks": "Обсидиановые блоки",
   "creativetab.scrolls": "§gЧертежи",
   "block.obsidanum.flame_banner_baggel": "Баннер ордена Баггеля",
 
@@ -31,6 +32,7 @@
 
 
   "block.obsidanum.carved_obsidian_bricks": "§4Резные обсидиановые кирпичи",
+  "item.obsidanum.carved_obsidian_bricks": "§4Резные обсидиановые кирпичи",
   "block.obsidanum.carved_obsidian_bricks_e": "§4Резные обсидиановые кирпичи обезглазеные",
   "block.obsidanum.cracked_carved_obsidian_bricks": "§4Треснутые резные обсидиановые кирпичи",
   "block.obsidanum.cracked_carved_obsidian_bricks_e": "§4Треснутые резные обсидиановые кирпичи обезглазеные",

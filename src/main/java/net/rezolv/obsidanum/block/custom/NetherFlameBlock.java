@@ -23,6 +23,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.particle.ParticlesObs;
 
 import java.util.Random;
@@ -84,7 +85,7 @@ public class NetherFlameBlock extends LiquidBlock {
                     BlockState blockstate = pLevel.getBlockState(blockpos);
                     if (blockstate.isAir()) {
                         if (this.hasFlammableNeighbours(pLevel, blockpos)) {
-                            pLevel.setBlockAndUpdate(blockpos, ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos, pPos, Blocks.FIRE.defaultBlockState()));
+                            pLevel.setBlockAndUpdate(blockpos, ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos, pPos, BlocksObs.NETHER_FIRE.get().defaultBlockState()));
                             return;
                         }
                     } else if (blockstate.blocksMotion()) {
@@ -99,7 +100,7 @@ public class NetherFlameBlock extends LiquidBlock {
                     }
 
                     if (pLevel.isEmptyBlock(blockpos1.above()) && this.isFlammable(pLevel, blockpos1, Direction.UP)) {
-                        pLevel.setBlockAndUpdate(blockpos1.above(), ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos1.above(), pPos, Blocks.FIRE.defaultBlockState()));
+                        pLevel.setBlockAndUpdate(blockpos1.above(), ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos1.above(), pPos, BlocksObs.NETHER_FIRE.get().defaultBlockState()));
                     }
                 }
             }

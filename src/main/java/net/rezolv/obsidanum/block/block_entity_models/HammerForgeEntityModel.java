@@ -50,8 +50,6 @@ public class HammerForgeEntityModel extends AdvancedEntityModel<Entity> {
 	@Override
 	public void setupAnim(Entity entity, float limbSwing, float lifetime, float down, float netHeadYaw, float headPitch) {
 		this.resetToDefaultPose();
-		this.root.rotationPointY += 4 * down;
-		this.root.rotateAngleY += Math.toRadians(down * 360F);
 	}
 	@Override
 	public Iterable<AdvancedModelBox> getAllParts() {

@@ -17,13 +17,7 @@ public class HammerForgeEntity extends BaseContainerBlockEntity implements World
         super(ModBlockEntities.HAMMER_FORGE.get(), pPos, pBlockState);
 
     }
-    public void startHammerAnimation() {
-        if (level != null && !level.isClientSide) {
-            // Синхронизация с клиентом
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
-            // Логика анимации (например, смена состояния или управление таймером)
-        }
-    }
+
     @Override
     public int[] getSlotsForFace(Direction direction) {
         return new int[0];

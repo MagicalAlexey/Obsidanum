@@ -15,8 +15,4 @@ public final class RSProcessors {
             "waterlogging_fix_processor",
             () -> () -> WaterloggingFixProcessor.CODEC
     );
-
-    private RSProcessors() {
-        // Приватный конструктор, чтобы предотвратить создание экземпляра
-    }
 }
