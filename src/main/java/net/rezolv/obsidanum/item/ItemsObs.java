@@ -174,6 +174,8 @@ public class ItemsObs {
 
     public static final RegistryObject<Item> OBSIDIAN_BRICKS = ITEMS.register("obsidian_bricks",
             () -> new ItemNameBlockItem(BlocksObs.OBSIDIAN_BRICKS.get(), new Item.Properties()));
+    public static final RegistryObject<Item> AZURE_OBSIDIAN_BRICKS = ITEMS.register("azure_obsidian_bricks",
+            () -> new ItemNameBlockItem(BlocksObs.AZURE_OBSIDIAN_BRICKS.get(), new Item.Properties()));
 
     public static final RegistryObject<Item> OBSIDAN_WOOD_LEAVES = ITEMS.register("obsidan_wood_leaves",
             () -> new ItemNameBlockItem(BlocksObs.OBSIDAN_WOOD_LEAVES.get(), new Item.Properties()));

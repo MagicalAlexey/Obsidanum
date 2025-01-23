@@ -13,6 +13,7 @@
   "advancements.obsidanum.nether.relict_amethyst_shard.title": "Осколок знаний",
 
   "creativetab.obsidanum": "Obsidanum",
+  "creativetab.azure_obsidian_blocks": "Лазурные обсидиановые блоки",
   "creativetab.obsidian_blocks": "Обсидиановые блоки",
   "creativetab.scrolls": "§gЧертежи",
   "block.obsidanum.flame_banner_baggel": "Баннер ордена Баггеля",
@@ -30,7 +31,10 @@
 
 
 
-
+  "block.obsidanum.azure_obsidian_bricks": "§4Лазурные обсидиановые кирпичи",
+  "block.obsidanum.chiseled_azure_obsidian_bricks": "§4Резные лазурные обсидиановые кирпичи",
+  "block.obsidanum.azure_obsidian_column": "§4Лазурная обсидиановая колонна",
+  "block.obsidanum.obsidian_bricks": "§4Обсидиановые кирпичи",
   "block.obsidanum.carved_obsidian_bricks": "§4Резные обсидиановые кирпичи",
   "item.obsidanum.carved_obsidian_bricks": "§4Резные обсидиановые кирпичи",
   "block.obsidanum.carved_obsidian_bricks_e": "§4Резные обсидиановые кирпичи обезглазеные",
@@ -63,7 +67,6 @@
   "block.obsidanum.moldy_obsidian_polished_slab": "§4Плесневелая плита из полированного обсидиана",
   "block.obsidanum.moldy_obsidian_polished_stairs": "§4Плесневелые ступеньки из полированного обсидиана",
   "block.obsidanum.moldy_obsidian_polished_wall": "§4Плесневелая ограда из полированного обсидиана",
-  "block.obsidanum.obsidian_bricks": "§4Обсидиановые кирпичи",
   "block.obsidanum.obsidian_bricks_fence": "§4Забор из обсидианового кирпича",
   "block.obsidanum.obsidian_bricks_slab": "§4Плита из обсидианового кирпича",
   "block.obsidanum.obsidian_bricks_stairs": "§4Ступеньки из обсидианового кирпича",
@@ -178,7 +181,8 @@
   "entity.obsidanum.meet_beetle": "Мясной жук",
   "fluid_type.obsidanum.nether_fire_fluid": "Адская жижа",
 
-
+  "item.obsidanum.azure_obsidian_bricks": "§4Лазурные обсидиановые кирпичи",
+  "item.obsidanum.obsidian_bricks": "§4Обсидиановые кирпичи",
   "item.obsidanum.velnarium_ore": "Вельнариумовая руда",
   "item.obsidanum.order_sword": "Меч ордена",
   "item.obsidanum.order_plan": "Чертёж ордена",

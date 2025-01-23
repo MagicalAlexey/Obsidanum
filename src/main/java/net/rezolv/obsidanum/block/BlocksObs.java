@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -188,7 +187,13 @@ public class BlocksObs {
 
 
 
-
+    // Blue OBSIDIAN
+    public static final RegistryObject<Block> AZURE_OBSIDIAN_BRICKS = BLOCKS.register("azure_obsidian_bricks",
+            () -> new Block(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> CHISELED_AZURE_OBSIDIAN_BRICKS = registerBlock("chiseled_azure_obsidian_bricks",
+            () -> new Block(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> AZURE_OBSIDIAN_COLUMN = registerBlock("azure_obsidian_column",
+            () -> new ConnectedPillar(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
 
 
     public static final RegistryObject<Block> ONYX = registerBlock("onyx",
@@ -222,6 +227,9 @@ public class BlocksObs {
             () -> new Block(BlockBehaviour.Properties.of().randomTicks().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> CRACKED_CARVED_OBSIDIAN_BRICKS_E = registerBlock("cracked_carved_obsidian_bricks_e",
             () -> new Block(BlockBehaviour.Properties.of().randomTicks().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+
+
+
 
     public static final RegistryObject<Block> OBSIDIAN_BRICKS = BLOCKS.register("obsidian_bricks",
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));

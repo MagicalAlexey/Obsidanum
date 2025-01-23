@@ -31,12 +31,22 @@ public class CreativeTabObs extends CreativeModeTab {
     }
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Obsidanum.MOD_ID);
-
+    public static final RegistryObject<CreativeModeTab> AZURE_OBSIDIAN_BLOCKS_TAB = CREATIVE_MODE_TABS.register("azure_obsidian_blocks_tab",
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsObs.AZURE_OBSIDIAN_BRICKS.get()))
+                    .title(Component.translatable("creativetab.azure_obsidian_blocks"))
+                    .displayItems((pParameters, pOutput) -> {
+                        pOutput.accept(BlocksObs.CHISELED_AZURE_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.AZURE_OBSIDIAN_COLUMN.get());
+                        pOutput.accept(ItemsObs.AZURE_OBSIDIAN_BRICKS.get());
+                    })
+                    .build());
 
     public static final RegistryObject<CreativeModeTab> OBSIDIAN_BLOCKS_TAB = CREATIVE_MODE_TABS.register("obsidian_blocks_tab",
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsObs.OBSIDIAN_BRICKS.get()))
                     .title(Component.translatable("creativetab.obsidian_blocks"))
                     .displayItems((pParameters, pOutput) -> {
+
+
                         pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS_E.get());
                         pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS_D.get());

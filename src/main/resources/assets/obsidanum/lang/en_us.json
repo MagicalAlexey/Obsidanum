@@ -56,6 +56,9 @@
   "block.obsidanum.moldy_obsidian_polished_slab": "§4Moldy Obsidian Polished Slab",
   "block.obsidanum.moldy_obsidian_polished_stairs": "§4Moldy Obsidian Polished Stairs",
   "block.obsidanum.moldy_obsidian_polished_wall": "§4Moldy Obsidian Polished Wall",
+  "block.obsidanum.chiseled_azure_obsidian_bricks": "§4Chiseled Azure Obsidian Bricks",
+  "block.obsidanum.azure_obsidian_bricks": "§4Azure Obsidian Bricks",
+  "block.obsidanum.azure_obsidian_column": "§4Azure Obsidian Column",
   "block.obsidanum.obsidian_bricks": "§4Obsidian Bricks",
   "block.obsidanum.obsidian_bricks_fence": "§4Obsidian Bricks fence",
   "block.obsidanum.obsidian_bricks_slab": "§4Obsidian Bricks Slab",
@@ -170,6 +173,7 @@
   "container.chest_obsidian": "Obsidian Chest",
 
   "creativetab.obsidian_blocks": "Obsidian blocks",
+  "creativetab.azure_obsidian_blocks": "Azure Obsidian Blocks",
   "creativetab.obsidanum": "Obsidanum",
   "creativetab.scrolls": "§gScrolls",
 
@@ -202,7 +206,8 @@
   "item.velnarium_sword.description.in_nether": "Additional damage is dealt by 4 more",
   "item.velnarium_sword.description.not_in_nether": "Deals additional damage in the nether",
 
-
+  "item.obsidanum.azure_obsidian_bricks": "§4Azure Obsidian Bricks",
+  "item.obsidanum.obsidian_bricks": "§4Obsidian Bricks",
   "item.obsidanum.crucible": "Crucible",
   "item.obsidanum.obsidan_essence": "Obsidan Essence",
   "item.obsidanum.velnarium_ore": "Velnaruim Ore",
