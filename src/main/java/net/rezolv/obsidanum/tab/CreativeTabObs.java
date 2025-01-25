@@ -182,6 +182,10 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(ItemsObs.CAP_GLOOMY_MUSHROOM.get());
                         pOutput.accept(BlocksObs.VELNARIUM_GRID.get());
                         pOutput.accept(BlocksObs.FLAME_BANNER_BAGGEL.get());
+                        pOutput.accept(BlocksObs.DECORATIVE_URN.get());
+                        pOutput.accept(BlocksObs.UNUSUAL_DECORATIVE_URN.get());
+                        pOutput.accept(BlocksObs.RARE_DECORATIVE_URN.get());
+                        pOutput.accept(BlocksObs.LARGE_URN.get());
                     })
                     .build());
 
@@ -253,10 +257,7 @@ public class CreativeTabObs extends CreativeModeTab {
                         //Blocks
 
                         pOutput.accept(BlocksObs.LOCKED_CHEST_RUNIC.get());
-                        pOutput.accept(BlocksObs.DECORATIVE_URN.get());
-                        pOutput.accept(BlocksObs.UNUSUAL_DECORATIVE_URN.get());
-                        pOutput.accept(BlocksObs.RARE_DECORATIVE_URN.get());
-                        pOutput.accept(BlocksObs.LARGE_URN.get());
+
 
 
 
