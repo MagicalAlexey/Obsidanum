@@ -181,6 +181,7 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(BlocksObs.HEAD_HYMENIUM_STEM_GLOOMY_MUSHROOM.get());
                         pOutput.accept(ItemsObs.CAP_GLOOMY_MUSHROOM.get());
                         pOutput.accept(BlocksObs.VELNARIUM_GRID.get());
+                        pOutput.accept(BlocksObs.FLAME_BANNER_BAGGEL.get());
                     })
                     .build());
 
@@ -241,9 +242,6 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(ItemsObs.OBSIDIAN_DOOR_KEY_4.get());
                         pOutput.accept(ItemsObs.VELNARIUM_ORE.get());
                         pOutput.accept(ItemsObs.ORDER_SWORD.get());
-                        pOutput.accept(ItemsObs.ORDER_PLAN.get());
-                        pOutput.accept(ItemsObs.NETHER_PLAN.get());
-                        pOutput.accept(ItemsObs.CATACOMBS_PLAN.get());
                         pOutput.accept(ItemsObs.OBSIDIAN_TOTEM_OF_IMMORTALITY.get());
                         pOutput.accept(ItemsObs.ELEMENTAL_CRUSHER.get());
                         pOutput.accept(ItemsObs.VELNARIUM_MACE.get());
@@ -253,11 +251,6 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(ItemsObs.FIERY_INFUSION_SMITHING_TEMPLATE.get());
 
                         //Blocks
-
-                        pOutput.accept(BlocksObs.FLAME_BANNER_BAGGEL.get());
-
-
-
 
                         pOutput.accept(BlocksObs.LOCKED_CHEST_RUNIC.get());
                         pOutput.accept(BlocksObs.DECORATIVE_URN.get());
