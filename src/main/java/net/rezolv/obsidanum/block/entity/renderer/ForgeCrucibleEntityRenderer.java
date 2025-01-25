@@ -35,7 +35,9 @@ public class ForgeCrucibleEntityRenderer implements BlockEntityRenderer<ForgeCru
         BlockPos pos = pBlockEntity.getBlockPos();
 
         // Проверяем наличие лавы ниже через один блок
-        if (level.getBlockState(pos.below(2)).is(BlocksObs.NETHER_FLAME_BLOCK.get())) {
+        boolean hasValidCondition = level.getBlockState(pos.below(2)).is(BlocksObs.NETHER_FLAME_BLOCK.get());
+
+        if (hasValidCondition) {
             ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 
             // Получаем список ингредиентов
@@ -66,9 +68,9 @@ public class ForgeCrucibleEntityRenderer implements BlockEntityRenderer<ForgeCru
                     break;
             }
 
-            // Рендеринг результата (внизу)
+            // Рендеринг результата (внизу) при соблюдении условий
             ItemStack output = pBlockEntity.getOutput();
-            if (!output.isEmpty()) {
+            if (!output.isEmpty() && !ingredients.isEmpty()) { // Проверяем, что есть результат и ингредиенты
                 pPoseStack.pushPose();
                 pPoseStack.translate(0.0f, -0.6f, 0.0f); // Смещение результата вниз
                 pPoseStack.scale(1.5f, 1.5f, 1.5f); // Увеличение масштаба результата
