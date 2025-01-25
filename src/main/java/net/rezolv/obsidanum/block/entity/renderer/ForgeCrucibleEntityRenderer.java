@@ -66,46 +66,30 @@ public class ForgeCrucibleEntityRenderer implements BlockEntityRenderer<ForgeCru
                     break;
             }
 
-            // Поднимаем золотое яблоко, если есть ингредиенты
-            float appleYOffset = ingredients.isEmpty() ? 0.0f : 2.0f;
-
-            // Отображение выходного предмета, если есть ингредиенты
-            if (!ingredients.isEmpty()) {
+            // Рендеринг результата (внизу)
+            ItemStack output = pBlockEntity.getOutput();
+            if (!output.isEmpty()) {
                 pPoseStack.pushPose();
-                pPoseStack.translate(0.0f, 0.6f + appleYOffset, 0.0f);
-                pPoseStack.scale(1.0f, 1.0f, 1.0f);
-
-                ItemStack output = pBlockEntity.getOutput();
-
-                // Проверяем, есть ли выходной предмет
-                if (!output.isEmpty()) {
-                    itemRenderer.renderStatic(output, ItemDisplayContext.FIXED,
-                            getLightLevel(level, pos),
-                            OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, level, 1);
-                }
-
+                pPoseStack.translate(0.0f, -0.6f, 0.0f); // Смещение результата вниз
+                pPoseStack.scale(1.5f, 1.5f, 1.5f); // Увеличение масштаба результата
+                itemRenderer.renderStatic(output, ItemDisplayContext.FIXED,
+                        getLightLevel(level, pos),
+                        OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, level, 1);
                 pPoseStack.popPose();
             }
 
-            // Параметры размещения
-            float offsetX = -1.8f; // Начальный сдвиг по оси X
-            float offsetY = 1.2f; // Сдвиг по оси Y для следующего ряда (вниз)
-            int itemsPerRow = 4;   // Максимальное количество элементов в ряду
-            int rowCount = 0;      // Счётчик рядов
+            // Рендеринг ингредиентов (в одну линию, выше блока)
+            float itemSpacing = 1.2f;  // Расстояние между предметами
+            float startX = -(ingredients.size() - 1) * itemSpacing / 2; // Центровка ингредиентов по горизонтали
 
-            // Отображаем каждый ингредиент с учётом сдвига
             for (int i = 0; i < ingredients.size(); i++) {
                 ItemStack itemStack = ingredients.get(i);
 
                 pPoseStack.pushPose();
 
-                // Сдвиг по оси X для текущего элемента (в пределах текущего ряда)
-                float rowOffsetX = offsetX + (i % itemsPerRow) * 1.2f;
-                // Сдвиг по оси Y для следующего ряда (сдвигаем на следующую строку, если достигнут лимит по X)
-                float rowOffsetY = (i / itemsPerRow) * offsetY;
-
-                pPoseStack.translate(rowOffsetX, rowOffsetY, 0.0f); // Сдвиг по X и Y
-
+                // Расчёт позиции каждого ингредиента
+                float offsetX = startX + i * itemSpacing;
+                pPoseStack.translate(offsetX, 1.2f, 0.0f); // Смещение ингредиентов выше блока
                 itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED,
                         getLightLevel(level, pos),
                         OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, level, 1);
@@ -115,11 +99,9 @@ public class ForgeCrucibleEntityRenderer implements BlockEntityRenderer<ForgeCru
             pPoseStack.popPose();
         }
     }
-
     private int getLightLevel(Level level, BlockPos pos) {
         int bLight = level.getBrightness(LightLayer.BLOCK, pos);
         int sLight = level.getBrightness(LightLayer.SKY, pos);
         return LightTexture.pack(bLight, sLight);
     }
-
 }

@@ -12,10 +12,10 @@
   "advancements.obsidanum.nether.relict_amethyst_shard.description": "Откопайте реликтовый аметист",
   "advancements.obsidanum.nether.relict_amethyst_shard.title": "Осколок знаний",
 
-  "creativetab.obsidanum": "Obsidanum",
-  "creativetab.azure_obsidian_blocks": "Админские строительные блоки",
-  "creativetab.obsidian_blocks": "Строительные блоки",
-  "creativetab.scrolls": "§gЧертежи",
+  "creativetab.obsidanum": "Obsidanum: Предметы",
+  "creativetab.azure_obsidian_blocks": "Obsidanum: Творческий режим",
+  "creativetab.obsidian_blocks": "Obsidanum: Строительные блоки",
+  "creativetab.scrolls": "Obsidanum: Чертежи",
   "block.obsidanum.flame_banner_baggel": "Баннер ордена Баггеля",
 
   "block.obsidanum.chest_obsidian": "Обсидиановый сундук",
