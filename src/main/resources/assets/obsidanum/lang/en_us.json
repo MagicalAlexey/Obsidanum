@@ -172,8 +172,8 @@
   "block.obsidanum.the_gloomy_mycelium": "The Gloomy mycelium",
   "container.chest_obsidian": "Obsidian Chest",
 
-  "creativetab.obsidian_blocks": "Obsidian blocks",
-  "creativetab.azure_obsidian_blocks": "Azure Obsidian Blocks",
+  "creativetab.obsidian_blocks": "Build",
+  "creativetab.azure_obsidian_blocks": "Admin build",
   "creativetab.obsidanum": "Obsidanum",
   "creativetab.scrolls": "§gScrolls",
 

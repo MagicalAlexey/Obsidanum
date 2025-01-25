@@ -35,9 +35,70 @@ public class CreativeTabObs extends CreativeModeTab {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsObs.AZURE_OBSIDIAN_BRICKS.get()))
                     .title(Component.translatable("creativetab.azure_obsidian_blocks"))
                     .displayItems((pParameters, pOutput) -> {
+                        pOutput.accept(BlocksObs.FLAME_DISPENSER.get());
+                        pOutput.accept(BlocksObs.FLAME_PIPE.get());
                         pOutput.accept(BlocksObs.CHISELED_AZURE_OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.AZURE_OBSIDIAN_COLUMN.get());
                         pOutput.accept(ItemsObs.AZURE_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS_E.get());
+                        pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(ItemsObs.OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_FENCE.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_FENCE.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_FENCE.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_FENCE.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS_E.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_STAIRS.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_SLAB.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_WALL.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_FENCE.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_INLAID_COLUMN.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_INLAID_COLUMN.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_INLAID_COLUMN.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_COLUMN.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_COLUMN.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_WALL.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_WALL.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_WALL.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_COLUMN.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_WALL.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_FENCE.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_WALL.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_WALL.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_FENCE.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_DOOR.get());
+                        pOutput.accept(BlocksObs.CARVED_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_STAIRS.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_STAIRS.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_LECTERN.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_SLAB.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_SLAB.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_SLAB.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_SLAB.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_FENCE.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_SLAB.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_STAIRS.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_STAIRS.get());
+                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_STAIRS.get());
+                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_SLAB.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_STAIRS.get());
+                        pOutput.accept(BlocksObs.CARVED_OBSIDIAN_BRICKS_E.get());
+                        pOutput.accept(BlocksObs.RIGHT_FORGE_SCROLL.get());
+                        pOutput.accept(BlocksObs.FORGE_CRUCIBLE.get());
+                        pOutput.accept(BlocksObs.LEFT_CORNER_LEVEL.get());
+                        pOutput.accept(BlocksObs.WALL_FORGE_L_CORNER.get());
+                        pOutput.accept(BlocksObs.WALL_FORGE_R_CORNER.get());
+                        pOutput.accept(BlocksObs.HAMMER_FORGE.get());
+                        pOutput.accept(BlocksObs.BAGEL_ANVIL_BLOCK.get());
+                        pOutput.accept(BlocksObs.LARGE_ALCHEMICAL_TANK.get());
+                        pOutput.accept(BlocksObs.LARGE_ALCHEMICAL_TANK_BROKEN.get());
                     })
                     .build());
 
@@ -45,103 +106,81 @@ public class CreativeTabObs extends CreativeModeTab {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsObs.OBSIDIAN_BRICKS.get()))
                     .title(Component.translatable("creativetab.obsidian_blocks"))
                     .displayItems((pParameters, pOutput) -> {
+                        pOutput.accept(ItemsObs.OBSIDAN_SIGN.get());
+                        pOutput.accept(ItemsObs.OBSIDAN_HANGING_SIGN.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_SLAB.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_WOOD_DOOR.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_WOOD_TRAPDOOR.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_BUTTON.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_PRESSURE_PLATE.get());
+                        pOutput.accept(ItemsObs.OBSIDAN_SAPLING.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_STAIRS.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_WOOD_LOG.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_WOOD.get());
+                        pOutput.accept(BlocksObs.STRIPPED_OBSIDAN_WOOD_LOG.get());
+                        pOutput.accept(BlocksObs.STRIPPED_OBSIDAN_WOOD.get());
+                        pOutput.accept(ItemsObs.OBSIDAN_WOOD_LEAVES.get());
+                        pOutput.accept(ItemsObs.THE_GLOOMY_MYCELIUM.get());
+                        pOutput.accept(BlocksObs.ONYX.get());
+                        pOutput.accept(BlocksObs.ONYX_SLAB.get());
+                        pOutput.accept(BlocksObs.ONYX_STAIRS.get());
+                        pOutput.accept(BlocksObs.ONYX_BRICKS.get());
+                        pOutput.accept(BlocksObs.ONYX_BRICKS_SLAB.get());
+                        pOutput.accept(BlocksObs.ONYX_BRICKS_STAIRS.get());
+                        pOutput.accept(BlocksObs.POLISHED_ONYX.get());
+                        pOutput.accept(BlocksObs.POLISHED_ONYX_SLAB.get());
+                        pOutput.accept(BlocksObs.POLISHED_ONYX_STAIRS.get());
 
-
-                        pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS.get());
-                        pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS_E.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_TABLET.get());
                         pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS.get());
-                        pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS_E.get());
                         pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS_D.get());
-                        pOutput.accept(ItemsObs.OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_FENCE.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_FENCE_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_FENCE.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_FENCE_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_FENCE.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_FENCE_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_FENCE.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_FENCE_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_STAIRS.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_SLAB.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_WALL.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_FENCE.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_STAIRS_D.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_SLAB_D.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_WALL_D.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_FENCE_D.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_TABLET.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_INLAID_COLUMN.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_INLAID_COLUMN_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_INLAID_COLUMN.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_INLAID_COLUMN_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_INLAID_COLUMN.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_INLAID_COLUMN_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_COLUMN.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_COLUMN_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_COLUMN.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_COLUMN_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_COLUMN.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_COLUMN_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_WALL.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_WALL_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_WALL.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_WALL_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_WALL.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_WALL_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_WALL.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_WALL_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_WALL.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_WALL_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_WALL.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_WALL_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_FENCE.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_FENCE_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_FENCE.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_FENCE_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_FENCE.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_FENCE_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_DOOR.get());
-                        pOutput.accept(BlocksObs.CARVED_OBSIDIAN_BRICKS.get());
-                        pOutput.accept(BlocksObs.CARVED_OBSIDIAN_BRICKS_E.get());
                         pOutput.accept(BlocksObs.CARVED_OBSIDIAN_BRICKS_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_STAIRS.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_STAIRS_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_STAIRS.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_STAIRS_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_STAIRS.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_STAIRS_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_STAIRS.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_STAIRS_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_STAIRS.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_STAIRS_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_STAIRS.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_STAIRS_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_SLAB.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_BRICKS_SLAB_D.get());
-                        pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_SLAB.get());
                         pOutput.accept(BlocksObs.CRACKED_OBSIDIAN_POLISHED_SLAB_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_SLAB.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_POLISHED_SLAB_D.get());
-                        pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_SLAB.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS_SLAB_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_SLAB.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_POLISHED_SLAB_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_SLAB.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_SLAB_D.get());
-                        pOutput.accept(BlocksObs.OBSIDIAN_LECTERN.get());
+                        pOutput.accept(BlocksObs.STEM_GLOOMY_MUSHROOM.get());
+                        pOutput.accept(BlocksObs.HEAD_HYMENIUM_STEM_GLOOMY_MUSHROOM.get());
+                        pOutput.accept(ItemsObs.CAP_GLOOMY_MUSHROOM.get());
+                        pOutput.accept(BlocksObs.VELNARIUM_GRID.get());
                     })
                     .build());
 
@@ -150,7 +189,7 @@ public class CreativeTabObs extends CreativeModeTab {
                     .title(Component.translatable("creativetab.obsidanum"))
                     .displayItems((pParameters, pOutput) -> {
                         //Items
-                        pOutput.accept(ItemsObs.THE_GLOOMY_MYCELIUM.get());
+
                         pOutput.accept(ItemsObs.OBSIDIAN_TEAR.get());
                         pOutput.accept(ItemsObs.FLAME_CROSSBOW.get());
                         pOutput.accept(ItemsObs.FLAME_BOLT.get());
@@ -181,8 +220,7 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(ItemsObs.CRYSTALLIZED_GOLD_ORE.get());
                         pOutput.accept(ItemsObs.CRYSTALLIZED_COPPER_ORE.get());
                         pOutput.accept(ItemsObs.BAGELL_FUEL.get());
-                        pOutput.accept(ItemsObs.OBSIDAN_SIGN.get());
-                        pOutput.accept(ItemsObs.OBSIDAN_HANGING_SIGN.get());
+
                         pOutput.accept(ItemsObs.OBSIDAN_BOAT.get());
                         pOutput.accept(ItemsObs.OBSIDAN_CHEST_BOAT.get());
                         pOutput.accept(ItemsObs.NETHER_FLAME.get());
@@ -214,60 +252,24 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(ItemsObs.OBSIDAN_ESSENCE.get());
                         pOutput.accept(ItemsObs.FIERY_INFUSION_SMITHING_TEMPLATE.get());
 
-
-
                         //Blocks
-                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS.get());
-                        pOutput.accept(BlocksObs.FLAME_DISPENSER.get());
-                        pOutput.accept(BlocksObs.FLAME_PIPE.get());
+
                         pOutput.accept(BlocksObs.FLAME_BANNER_BAGGEL.get());
-                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_SLAB.get());
-                        pOutput.accept(BlocksObs.VELNARIUM_GRID.get());
-                        pOutput.accept(BlocksObs.ONYX.get());
-                        pOutput.accept(BlocksObs.ONYX_SLAB.get());
-                        pOutput.accept(BlocksObs.ONYX_STAIRS.get());
-                        pOutput.accept(BlocksObs.ONYX_BRICKS.get());
-                        pOutput.accept(BlocksObs.ONYX_BRICKS_SLAB.get());
-                        pOutput.accept(BlocksObs.ONYX_BRICKS_STAIRS.get());
-                        pOutput.accept(BlocksObs.POLISHED_ONYX.get());
-                        pOutput.accept(BlocksObs.POLISHED_ONYX_SLAB.get());
-                        pOutput.accept(BlocksObs.POLISHED_ONYX_STAIRS.get());
+
+
+
 
                         pOutput.accept(BlocksObs.LOCKED_CHEST_RUNIC.get());
                         pOutput.accept(BlocksObs.DECORATIVE_URN.get());
                         pOutput.accept(BlocksObs.UNUSUAL_DECORATIVE_URN.get());
                         pOutput.accept(BlocksObs.RARE_DECORATIVE_URN.get());
                         pOutput.accept(BlocksObs.LARGE_URN.get());
-                        pOutput.accept(BlocksObs.OBSIDAN_WOOD_DOOR.get());
-                        pOutput.accept(BlocksObs.OBSIDAN_WOOD_TRAPDOOR.get());
-                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_BUTTON.get());
-                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_PRESSURE_PLATE.get());
-                        pOutput.accept(ItemsObs.OBSIDAN_SAPLING.get());
-                        pOutput.accept(BlocksObs.OBSIDAN_PLANKS_STAIRS.get());
-
-
-                        pOutput.accept(BlocksObs.STEM_GLOOMY_MUSHROOM.get());
-                        pOutput.accept(BlocksObs.HEAD_HYMENIUM_STEM_GLOOMY_MUSHROOM.get());
-                        pOutput.accept(ItemsObs.CAP_GLOOMY_MUSHROOM.get());
 
 
 
-                        pOutput.accept(BlocksObs.OBSIDAN_WOOD_LOG.get());
-                        pOutput.accept(BlocksObs.OBSIDAN_WOOD.get());
-                        pOutput.accept(BlocksObs.STRIPPED_OBSIDAN_WOOD_LOG.get());
-                        pOutput.accept(BlocksObs.STRIPPED_OBSIDAN_WOOD.get());
-                        pOutput.accept(ItemsObs.OBSIDAN_WOOD_LEAVES.get());
 
-                        pOutput.accept(BlocksObs.RIGHT_FORGE_SCROLL.get());
-                        pOutput.accept(BlocksObs.FORGE_CRUCIBLE.get());
-                        pOutput.accept(BlocksObs.LEFT_CORNER_LEVEL.get());
-                        pOutput.accept(BlocksObs.WALL_FORGE_L_CORNER.get());
-                        pOutput.accept(BlocksObs.WALL_FORGE_R_CORNER.get());
-                        pOutput.accept(BlocksObs.HAMMER_FORGE.get());
-                        pOutput.accept(BlocksObs.BAGEL_ANVIL_BLOCK.get());
 
-                        pOutput.accept(BlocksObs.LARGE_ALCHEMICAL_TANK.get());
-                        pOutput.accept(BlocksObs.LARGE_ALCHEMICAL_TANK_BROKEN.get());
+
 
                     })
                     .build());
