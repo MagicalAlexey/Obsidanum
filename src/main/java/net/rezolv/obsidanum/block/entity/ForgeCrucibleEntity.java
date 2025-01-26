@@ -313,6 +313,7 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
         blockEntityNBT.remove("output");       // Удаляем ключ "output"
         blockEntityNBT.remove("type");         // Удаляем ключ "type"
         blockEntityNBT.remove("RecipeResult"); // Удаляем ключ "RecipeResult"
+        blockEntityNBT.remove("originalIngredients"); // Удаляем ключ "RecipeResult"
 
         // Обновить состояние блока
         if (!level.isClientSide()) {

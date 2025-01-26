@@ -1,26 +1,21 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "key": {
-    "A": {
-      "item": "minecraft:obsidian"
+  "type": "obsidanum:forge_scroll_order",
+  "ingredients": [
+    {
+      "item": "obsidanum:obsidian_tear",
+      "count": 1
     },
-    "B": {
-      "item": "minecraft:iron_ingot"
+    {
+      "item": "minecraft:blaze_powder",
+      "count": 2
     },
-    "C": {
-      "item": "minecraft:blaze_powder"
-    },
-    "D": {
-      "item": "obsidanum:obsidian_tear"
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 12
     }
-  },
-  "pattern": [
-    "ABA",
-    "CDC",
-    "ABA"
   ],
-  "result": {
-    "item": "obsidanum:obsidan"
-  },
-  "show_notification": true
+  "output": {
+    "item": "obsidanum:obsidan",
+    "count": 1
+  }
 }

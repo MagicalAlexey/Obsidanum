@@ -315,7 +315,7 @@ public class NetherFireBlock extends BaseFireBlock {
     public static BlockState getState(BlockGetter pReader, BlockPos pPos) {
         BlockPos blockpos = pPos.below();
         BlockState blockstate = pReader.getBlockState(blockpos);
-        return NetherFireBlock.canSurviveOnBlock(blockstate) ? BlocksObs.NETHER_FIRE.get().defaultBlockState() : ((NetherFireBlock)BlocksObs.NETHER_FIRE.get()).getStateForPlacement(pReader, pPos);
+        return NetherFireBlock.canSurviveOnBlock(blockstate) ? BlocksObs.NETHER_FIRE_SOUL.get().defaultBlockState() : ((NetherFireBlock)BlocksObs.NETHER_FIRE.get()).getStateForPlacement(pReader, pPos);
     }
     private void setFlammable(Block pBlock, int pEncouragement, int pFlammability) {
         if (pBlock == Blocks.AIR) {

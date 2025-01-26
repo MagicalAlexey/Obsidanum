@@ -10,7 +10,9 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.rezolv.obsidanum.Obsidanum;
+import net.rezolv.obsidanum.block.ModFlammableBlocks;
 import net.rezolv.obsidanum.effect.EffectsObs;
 import net.rezolv.obsidanum.entity.ModEntities;
 import net.rezolv.obsidanum.entity.gart.Gart;
@@ -28,7 +30,10 @@ public class ModEventBusEvents {
     public static void registerAttributesBeetle(EntityAttributeCreationEvent event) {
         event.put(ModEntities.MEET_BEETLE.get(), MeetBeetle.createAttributes().build());
     }
-
+    @SubscribeEvent
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ModFlammableBlocks::registerFlammableBlocks);
+    }
 
     @SubscribeEvent
     public static void registerAttributesGart(EntityAttributeCreationEvent event) {

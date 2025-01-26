@@ -1,6 +1,5 @@
 package net.rezolv.obsidanum.block.block_entity_models;
 
-
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
@@ -41,20 +40,18 @@ public class HammerForgeEntityModel extends AdvancedEntityModel<Entity> {
 
 		this.updateDefaultPose();
 	}
-
 	@Override
 	public Iterable<BasicModelPart> parts() {
 		return ImmutableList.of(root);
 	}
-
 	@Override
 	public void setupAnim(Entity entity, float limbSwing, float lifetime, float down, float netHeadYaw, float headPitch) {
 		this.resetToDefaultPose();
+
 	}
 	@Override
 	public Iterable<AdvancedModelBox> getAllParts() {
 		return ImmutableList.of(root, piston, hammer,top);
 
 	}
-
 }

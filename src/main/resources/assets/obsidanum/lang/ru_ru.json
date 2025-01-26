@@ -32,6 +32,8 @@
 
 
   "block.obsidanum.azure_obsidian_bricks": "§4Лазурные обсидиановые кирпичи",
+  "block.obsidanum.azure_obsidian_bricks_slab": "§4Плита из лазурных обсидиановых кирпичей",
+  "block.obsidanum.azure_obsidian_bricks_stairs": "§4Ступеньки из лазурных обсидиановых кирпичей",
   "block.obsidanum.chiseled_azure_obsidian_bricks": "§4Резные лазурные обсидиановые кирпичи",
   "block.obsidanum.azure_obsidian_column": "§4Лазурная обсидиановая колонна",
   "block.obsidanum.obsidian_bricks": "§4Обсидиановые кирпичи",
@@ -131,6 +133,8 @@
   "block.obsidanum.mysterious_carved_obsidian_bricks": "Таинственные резные обсидиановые кирпичи",
   "block.obsidanum.obsidian_tablet": "Обсидиановая скрижаль",
 
+  "block.obsidanum.obsidan_fence": "Обсидановый забор",
+  "block.obsidanum.obsidan_fence_gate": "Обсидановая калитка",
   "block.obsidanum.obsidan_hanging_sign": "Подвесная табличка из обсиданового дерева",
   "block.obsidanum.obsidan_planks": "Доски из обсиданового дерева",
   "block.obsidanum.obsidan_planks_button": "Кнопка из обсиданового дерева",
@@ -171,7 +175,7 @@
   "death.attack.obsidian_totem": "%1$s не выдержал тяжёлого возвращения к жизни %2$s через обсидиановый тотем",
   "death.attack.obsidian_totem.player": "Слишком эффектно %2$s вернулся к жизни впечатлив %1$s",
   "effect.obsidanum.inviolability": "Неприкосновенность",
-  "effect.obsidanum.flash": "Замешательство",
+  "effect.obsidanum.flash": "Морок",
   "effect.obsidanum.protection_arrow": "Защита от стрел",
 
   "entity.obsidanum.mod_chest_boat": "Лодка с сундуком из обсиданового дерева",
@@ -189,11 +193,11 @@
   "item.obsidanum.obsidan_essence": "Обсидановая эссенция",
   "item.obsidanum.nether_plan": "Адский чертёж",
   "item.obsidanum.catacombs_plan": "Чертёж катакомб",
-  "item.obsidanum.velnarium_mace": "Вельнариумная булава",
-  "item.obsidanum.demonic_bonecrusher": "Демоническая костоломка",
+  "item.obsidanum.velnarium_mace": "Вельнариумная булава (WIP)",
+  "item.obsidanum.demonic_bonecrusher": "Демоническая костоломка (WIP)",
   "item.obsidanum.spores_of_the_gloomy_mushroom": "Споры сумрачного гриба",
   "item.obsidanum.obsidian_totem_of_immortality": "Обсидиановый тотем возрождения",
-  "item.obsidanum.elemental_crusher": "Элементальный диструктор",
+  "item.obsidanum.elemental_crusher": "Элементальный диструктор (WIP)",
   "item.obsidanum.raw_meet_beetle": "Мясо жука",
   "item.obsidanum.cocked_meet_beetle": "Жареное мясо жука",
   "item.obsidanum.bagell_fuel": "§bТопливо Багелля",

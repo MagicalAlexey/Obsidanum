@@ -43,7 +43,8 @@ public class BlocksObs {
     public static final RegistryObject<Block> WALL_FORGE_R_CORNER = registerBlock("wall_forge_r_corner",
             () -> new WallForge(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> HAMMER_FORGE = registerBlock("hammer_forge",
-            () -> new HammerForge(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+            () -> new HammerForge(BlockBehaviour.Properties.of().noOcclusion().randomTicks()
+                    .strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> BAGEL_ANVIL_BLOCK = registerBlock("bagel_anvil_block",
             () -> new BagelAnvilBlock(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
 
@@ -118,7 +119,10 @@ public class BlocksObs {
             () -> new NetherFireBlock(BlockBehaviour.Properties.of().replaceable().noCollission().instabreak().lightLevel((p_152607_) -> {
                 return 15;
             }).sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY)));
-
+    public static final RegistryObject<Block> NETHER_FIRE_SOUL = registerBlock("nether_fire_soul",
+            () -> new NetherFireSoulBlock(BlockBehaviour.Properties.of().replaceable().noCollission().instabreak().lightLevel((p_152607_) -> {
+                return 15;
+            }).sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY)));
     public static final RegistryObject<Block> VELNARIUM_GRID = registerBlock("velnarium_grid",
             () -> new IronBarsBlock(BlockBehaviour.Properties.of().strength(5.0F, 1200.0F).sound(SoundType.METAL).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> CARVED_OBSIDIAN_BRICKS_D = registerBlock("carved_obsidian_bricks_d",
@@ -190,6 +194,10 @@ public class BlocksObs {
     // Blue OBSIDIAN
     public static final RegistryObject<Block> AZURE_OBSIDIAN_BRICKS = BLOCKS.register("azure_obsidian_bricks",
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> AZURE_OBSIDIAN_BRICKS_SLAB = registerBlock("azure_obsidian_bricks_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> AZURE_OBSIDIAN_BRICKS_STAIRS = registerBlock("azure_obsidian_bricks_stairs",
+            () -> new StairBlock(() -> BlocksObs.AZURE_OBSIDIAN_BRICKS.get().defaultBlockState(),BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> CHISELED_AZURE_OBSIDIAN_BRICKS = registerBlock("chiseled_azure_obsidian_bricks",
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> AZURE_OBSIDIAN_COLUMN = registerBlock("azure_obsidian_column",
@@ -340,6 +348,10 @@ public class BlocksObs {
                     .strength(-1.0F, 3600000.0F).sound(SoundType.STONE)));
     public static final RegistryObject<Block> OBSIDAN_PLANKS = registerBlock("obsidan_planks",
             () -> new FlameBlock(BlockBehaviour.Properties.copy(Blocks.CHERRY_PLANKS).sound(SoundType.CHERRY_WOOD)));
+    public static final RegistryObject<Block> OBSIDAN_FENCE = registerBlock("obsidan_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.copy(Blocks.CHERRY_FENCE).sound(SoundType.CHERRY_WOOD)));
+    public static final RegistryObject<Block> OBSIDAN_FENCE_GATE = registerBlock("obsidan_fence_gate",
+            () -> new FenceGateBlock(BlockBehaviour.Properties.copy(Blocks.CHERRY_FENCE).sound(SoundType.CHERRY_WOOD), ModWoodTypes.OBSIDAN));
     public static final RegistryObject<Block> OBSIDAN_WOOD_DOOR = registerBlock("obsidan_wood_door",
             () -> new DoorBlock(BlockBehaviour.Properties.copy(Blocks.CHERRY_DOOR).sound(SoundType.CHERRY_WOOD),BlockSetType.OAK));
     public static final RegistryObject<Block> OBSIDAN_WOOD_TRAPDOOR = registerBlock("obsidan_wood_trapdoor",

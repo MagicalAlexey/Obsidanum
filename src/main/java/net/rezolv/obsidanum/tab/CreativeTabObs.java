@@ -40,6 +40,8 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(BlocksObs.CHISELED_AZURE_OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.AZURE_OBSIDIAN_COLUMN.get());
                         pOutput.accept(ItemsObs.AZURE_OBSIDIAN_BRICKS.get());
+                        pOutput.accept(BlocksObs.AZURE_OBSIDIAN_BRICKS_SLAB.get());
+                        pOutput.accept(BlocksObs.AZURE_OBSIDIAN_BRICKS_STAIRS.get());
                         pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS_E.get());
                         pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS.get());
@@ -109,6 +111,8 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(ItemsObs.OBSIDAN_SIGN.get());
                         pOutput.accept(ItemsObs.OBSIDAN_HANGING_SIGN.get());
                         pOutput.accept(BlocksObs.OBSIDAN_PLANKS.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_FENCE.get());
+                        pOutput.accept(BlocksObs.OBSIDAN_FENCE_GATE.get());
                         pOutput.accept(BlocksObs.OBSIDAN_PLANKS_SLAB.get());
                         pOutput.accept(BlocksObs.OBSIDAN_WOOD_DOOR.get());
                         pOutput.accept(BlocksObs.OBSIDAN_WOOD_TRAPDOOR.get());
