@@ -13,18 +13,24 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.rezolv.obsidanum.Obsidanum;
 import net.rezolv.obsidanum.block.custom.*;
+import net.rezolv.obsidanum.chests.block.IronChestsTypes;
+import net.rezolv.obsidanum.chests.block.ObsidianChestBlock;
+import net.rezolv.obsidanum.chests.block.RunicObsidianChestBlock;
+import net.rezolv.obsidanum.chests.item.IronChestBlockItem;
 import net.rezolv.obsidanum.fluid.ModFluids;
 import net.rezolv.obsidanum.item.ItemsObs;
 import net.rezolv.obsidanum.world.tree.ObsidanOak;
 import net.rezolv.obsidanum.world.wood.ModWoodTypes;
 
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BlocksObs {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, Obsidanum.MOD_ID);
 
-
+    public static final DeferredRegister<Item> ITEMS = ItemsObs.ITEMS;
     public static final RegistryObject<Block> FLAME_DISPENSER = registerBlock("flame_dispenser",
             () -> new FlameDispenser(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> FLAME_PIPE = registerBlock("flame_pipe",
@@ -71,6 +77,16 @@ public class BlocksObs {
             () -> new ObsidianTablet(BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
                     .strength(20, 500).sound(SoundType.CHERRY_WOOD)
                     .mapColor(MapColor.COLOR_BLACK).requiresCorrectToolForDrops().noOcclusion()));
+
+
+    public static final RegistryObject<ObsidianChestBlock> OBSIDIAN_CHEST = registerChests("obsidian_chest",
+            () -> new ObsidianChestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F)),
+            IronChestsTypes.OBSIDIAN);
+
+    public static final RegistryObject<RunicObsidianChestBlock> RUNIC_OBSIDIAN_CHEST = registerChests("runic_obsidian_chest",
+            () -> new RunicObsidianChestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0F)),
+            IronChestsTypes.RUNIC_OBSIDIAN);
+
 
     public static final RegistryObject<Block> OBSIDIAN_INLAID_COLUMN = registerBlock("obsidian_inlaid_column",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
@@ -457,4 +473,21 @@ public class BlocksObs {
         return ItemsObs.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
+    private static <T extends Block> RegistryObject<T> registerChests(String name, Supplier<? extends T> sup, IronChestsTypes chestType) {
+        return registerChestItem(name, sup, block -> item(block, () -> () -> chestType));
+    }
+
+    private static <T extends Block> RegistryObject<T> registerChestItem(String name, Supplier<? extends T> sup, Function<RegistryObject<T>, Supplier<? extends Item>> itemCreator) {
+        RegistryObject<T> ret = registerNoItem(name, sup);
+        ITEMS.register(name, itemCreator.apply(ret));
+        return ret;
+    }
+
+    private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<? extends T> sup) {
+        return BLOCKS.register(name, sup);
+    }
+
+    private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block, Supplier<Callable<IronChestsTypes>> chestType) {
+        return () -> new IronChestBlockItem(block.get(), new Item.Properties(), chestType);
+    }
 }

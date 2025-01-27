@@ -135,8 +135,13 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(BlocksObs.POLISHED_ONYX.get());
                         pOutput.accept(BlocksObs.POLISHED_ONYX_SLAB.get());
                         pOutput.accept(BlocksObs.POLISHED_ONYX_STAIRS.get());
+                        pOutput.accept(BlocksObs.LOCKED_CHEST_RUNIC.get());
 
                         pOutput.accept(BlocksObs.OBSIDIAN_TABLET.get());
+                        pOutput.accept(BlocksObs.OBSIDIAN_CHEST.get());
+                        pOutput.accept(BlocksObs.RUNIC_OBSIDIAN_CHEST.get());
+
+
                         pOutput.accept(BlocksObs.MOLDY_CARVED_OBSIDIAN_BRICKS_D.get());
                         pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS_D.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_BRICKS_D.get());
@@ -260,7 +265,7 @@ public class CreativeTabObs extends CreativeModeTab {
 
                         //Blocks
 
-                        pOutput.accept(BlocksObs.LOCKED_CHEST_RUNIC.get());
+
 
 
 

@@ -1,9 +1,11 @@
 package net.rezolv.obsidanum;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -23,7 +25,10 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.RegistryObject;
 import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.block.entity.ModBlockEntities;
-import net.rezolv.obsidanum.chests.SCRegistry;
+import net.rezolv.obsidanum.chests.block.entity.IronChestsBlockEntityTypes;
+import net.rezolv.obsidanum.chests.client.render.IronChestRenderer;
+import net.rezolv.obsidanum.chests.client.screen.IronChestScreen;
+import net.rezolv.obsidanum.chests.inventory.IronChestsContainerTypes;
 import net.rezolv.obsidanum.effect.EffectsObs;
 import net.rezolv.obsidanum.entity.ModEntities;
 import net.rezolv.obsidanum.entity.ModItemEntities;
@@ -94,16 +99,11 @@ public class Obsidanum {
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
         MinecraftForge.EVENT_BUS.register(new BlockBreakEventHandler());
-        SCRegistry.register();
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((BuildCreativeModeTabContentsEvent e) -> {
-            if (e.getTabKey() == CreativeTabObs.OBSIDANUM_TAB.getKey()) {
-                SCRegistry.ITEMS.getEntries()
-                        .stream()
-                        .map(RegistryObject::get)
-                        .forEach(e::accept);
-            }
-        });
+        IronChestsBlockEntityTypes.BLOCK_ENTITIES.register(modEventBus);
+        IronChestsContainerTypes.CONTAINERS.register(modEventBus);
+
+
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -132,6 +132,13 @@ public class Obsidanum {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+
+
+
+            MenuScreens.register(IronChestsContainerTypes.OBSIDIAN_CHEST.get(), IronChestScreen::new);
+            BlockEntityRenderers.register(IronChestsBlockEntityTypes.OBSIDIAN_CHEST.get(), IronChestRenderer::new);
+            MenuScreens.register(IronChestsContainerTypes.RUNIC_OBSIDIAN_CHEST.get(), IronChestScreen::new);
+            BlockEntityRenderers.register(IronChestsBlockEntityTypes.RUNIC_OBSIDIAN_CHEST.get(), IronChestRenderer::new);
 
             event.enqueueWork(() -> ModItemProperties.register());
 

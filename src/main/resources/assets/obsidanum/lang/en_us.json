@@ -174,7 +174,11 @@
   "block.obsidanum.stripped_obsidan_wood": "Stripped Obsidanwood",
   "block.obsidanum.stripped_obsidan_wood_log": "Stripped Obsidanwood Log",
   "block.obsidanum.the_gloomy_mycelium": "The Gloomy mycelium",
-  "container.chest_obsidian": "Obsidian Chest",
+
+  "block.obsidanum.obsidian_chest": "Obsidian Chest",
+  "block.obsidanum.runic_obsidian_chest": "Runic Obsidian Chest",
+  "obsidanum.container.obsidian_chest": "Obsidian Chest",
+  "obsidanum.container.runic_obsidian_chest": "Runic Obsidian Chest",
 
   "creativetab.obsidian_blocks": "Build",
   "creativetab.azure_obsidian_blocks": "Admin build",

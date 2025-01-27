@@ -20,6 +20,7 @@ import net.rezolv.obsidanum.block.entity.HammerForgeEntity;
 import net.rezolv.obsidanum.block.entity.ModBlockEntities;
 import net.rezolv.obsidanum.block.entity.renderer.ForgeCrucibleEntityRenderer;
 import net.rezolv.obsidanum.block.entity.renderer.HammerForgeRenderer;
+import net.rezolv.obsidanum.effect.effects.effect_overlay.ConfusionOverlay;
 import net.rezolv.obsidanum.entity.ModModelLayers;
 import net.rezolv.obsidanum.entity.gart.GartModel;
 import net.rezolv.obsidanum.entity.meat_beetle.MeetBeetleModel;
@@ -56,6 +57,8 @@ public class ModEventBusClientEvents {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        new ConfusionOverlay();
+
         ItemProperties.register(ItemsObs.OBSIDAN_SWORD.get(), new ResourceLocation("activated"),
                 (stack, world, entity, seed) -> stack.getItem() instanceof ObsidanSword && ((ObsidanSword) stack.getItem()).isActivated(new ItemStack(ItemsObs.OBSIDAN_SWORD.get())) ? 1.0F : 0.0F);
         ItemProperties.register(ItemsObs.OBSIDAN_SHOVEL.get(), new ResourceLocation("activated"),

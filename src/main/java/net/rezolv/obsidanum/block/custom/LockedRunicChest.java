@@ -3,11 +3,8 @@ package net.rezolv.obsidanum.block.custom;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.CompoundContainer;
-import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -19,17 +16,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.rezolv.obsidanum.chests.SCRegistry;
-import net.rezolv.obsidanum.chests.blocks.EnumStoneChest;
+import net.rezolv.obsidanum.block.BlocksObs;
+import net.rezolv.obsidanum.chests.block.entity.RunicObsidianChestBlockEntity;
 import net.rezolv.obsidanum.item.ItemsObs;
 import net.rezolv.obsidanum.sound.SoundsObs;
-
-import java.util.Optional;
 
 public class LockedRunicChest extends Block {
     public LockedRunicChest(Properties pProperties) {
@@ -67,7 +61,7 @@ public class LockedRunicChest extends Block {
             Direction currentFacing = pState.getValue(LockedRunicChest.FACING);
 
             // Меняем блок на RUNIC с тем же направлением
-            BlockState newState = SCRegistry.chests[EnumStoneChest.RUNIC.ordinal()].get().defaultBlockState()
+            BlockState newState = BlocksObs.RUNIC_OBSIDIAN_CHEST.get().defaultBlockState()
                     .setValue(LockedRunicChest.FACING, currentFacing);
 
             // Устанавливаем новый блок на месте старого сундука
@@ -75,8 +69,8 @@ public class LockedRunicChest extends Block {
 
             // Добавляем лут, аналогичный сундуку крепости Незера
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof ChestBlockEntity) {
-                ChestBlockEntity chestEntity = (ChestBlockEntity) blockEntity;
+            if (blockEntity instanceof RunicObsidianChestBlockEntity) {
+                RunicObsidianChestBlockEntity chestEntity = (RunicObsidianChestBlockEntity) blockEntity;
 
                 // Получаем источник случайных чисел
                 RandomSource randomSource = pLevel.getRandom();
