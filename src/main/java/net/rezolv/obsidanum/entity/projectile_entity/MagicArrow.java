@@ -41,7 +41,9 @@ public class MagicArrow extends ThrowableItemProjectile {
     public void setTarget(LivingEntity target) {
         this.target = target;
     }
-
+    public ItemStack getArrowItem() {
+        return new ItemStack(ItemsObs.MAGIC_ARROW.get()); // Можно заменить на свою кастомную стрелу
+    }
     @Override
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
