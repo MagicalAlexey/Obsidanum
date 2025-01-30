@@ -30,4 +30,8 @@ public class ObsShovel extends ShovelItem {
 
         return true;
     }
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
 }

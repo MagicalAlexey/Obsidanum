@@ -34,6 +34,10 @@ public class SmolderingAxe extends AxeItem {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }
     @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
+    @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity target) {
         boolean retval = super.onLeftClickEntity(stack, player, target);
 

@@ -29,4 +29,8 @@ public class ObsAxe extends AxeItem {
 
         return true;
     }
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
 }

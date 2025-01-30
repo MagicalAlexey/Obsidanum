@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.Random;
 
 public class SmolderingSword extends SwordItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     public SmolderingSword(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }

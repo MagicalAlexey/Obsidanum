@@ -42,4 +42,8 @@ public class ObsSword extends SwordItem {
 
         return true;
     }
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
 }

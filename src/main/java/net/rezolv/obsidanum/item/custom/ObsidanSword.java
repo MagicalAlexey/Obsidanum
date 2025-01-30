@@ -19,7 +19,10 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class ObsidanSword extends SwordItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     private static final long COOLDOWN_DURATION = 80 * 20; // 80 seconds in ticks
     private static final long ACTIVATION_DURATION = 5 * 20; // 5 seconds in ticks
 

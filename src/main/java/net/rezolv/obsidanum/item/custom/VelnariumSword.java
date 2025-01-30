@@ -19,6 +19,10 @@ public class VelnariumSword extends SwordItem {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }
     @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
+    @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (isNetherEntity(target)) {
             // Наносим дополнительный урон существам из Незера

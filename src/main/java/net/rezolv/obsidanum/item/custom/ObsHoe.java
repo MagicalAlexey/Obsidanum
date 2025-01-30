@@ -31,4 +31,8 @@ public class ObsHoe extends HoeItem {
 
         return true;
     }
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
 }

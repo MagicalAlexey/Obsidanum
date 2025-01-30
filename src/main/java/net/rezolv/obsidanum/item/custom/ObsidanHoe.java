@@ -26,7 +26,10 @@ import java.util.List;
 
 
 public class ObsidanHoe extends HoeItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     private static final long COOLDOWN_DURATION = 10 * 20; // 10 seconds in ticks
     private static final long ACTIVATION_DURATION = 5 * 20; // 5 seconds in ticks
     private static final String TAG_ACTIVATED = "Activated";

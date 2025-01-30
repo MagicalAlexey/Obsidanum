@@ -27,7 +27,10 @@ import java.util.List;
 
 
 public class ObsidanPickaxe extends PickaxeItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     private static final long COOLDOWN_DURATION = 120 * 20; // 120 секунд в тиках
     private static final long ACTIVATION_DURATION = 5 * 20; // 5 секунд в тиках
 

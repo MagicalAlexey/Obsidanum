@@ -28,7 +28,10 @@ public class Chakram extends Item {
         getDamage(entity.level(), entity);
         return retval;
     }
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     public static void getDamage(LevelAccessor world, Entity entity) {
         if (entity == null)
             return;

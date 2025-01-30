@@ -38,6 +38,10 @@ public class SmolderingShovel extends ShovelItem {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }
     @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
+    @Override
     public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(itemstack, world, list, flag);
         if(Screen.hasShiftDown()) {

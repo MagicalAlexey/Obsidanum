@@ -35,6 +35,11 @@ public class NetherFlame extends Item {
     }
 
     @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
+
+    @Override
     public boolean isRepairable(ItemStack itemstack) {
         return false;
     }
