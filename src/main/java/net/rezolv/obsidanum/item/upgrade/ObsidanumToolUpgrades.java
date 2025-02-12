@@ -19,7 +19,6 @@ public enum ObsidanumToolUpgrades {
     WOODCUTTER("woodcutter"),
     // Камнелом
     STONE_BREAKER("stone_breaker");
-
     private final String name;
     ObsidanumToolUpgrades(String name) {
         this.name = name;

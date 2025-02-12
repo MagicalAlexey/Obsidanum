@@ -38,6 +38,8 @@ public class ItemsObs {
             () -> new PlansText(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CATACOMBS_PLAN = ITEMS.register("catacombs_plan",
             () -> new PlansText(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> UPGRADE_PLAN = ITEMS.register("upgrade_plan",
+            () -> new UpgradePlansText(new Item.Properties().stacksTo(1)));
 
 
     public static final RegistryObject<Item> OBSIDAN_ESSENCE = ITEMS.register("obsidan_essence",

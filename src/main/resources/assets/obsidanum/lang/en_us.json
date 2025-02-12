@@ -223,6 +223,7 @@
   "item.obsidanum.order_plan": "Order Plan",
   "item.obsidanum.nether_plan": "Nether Plan",
   "item.obsidanum.catacombs_plan": "Catacombs Plan",
+  "item.obsidanum.upgrade_plan": "Upgrade Plan",
   "item.obsidanum.flame_crossbow": "Flame crossbow",
   "item.obsidanum.flame_bolt": "Flame bolt",
   "item.obsidanum.obsidian_totem_of_immortality": "The Obsidian Renaissance Totem",
@@ -300,6 +301,12 @@
   "obsidanum.press_shift2": "Hold down [§fShift§8]§8, to see the description",
 
   "tooltip.scrolls.recipe": "Scrolls recipe",
+  "tooltip.scrolls.upgrade": "Scrolls upgrade",
+  "tooltip.scrolls.tool_types": "Tools types",
+  "tooltip.scrolls.tool_kinds": "Applicable for",
+  "tooltip.scrolls.quantity": "   Quantity",
+  "tooltip.recipe_information": "=== Recipe Information ===",
+  "tooltip.recipe_end": "=======================",
   "tooltip.scrolls.result": "Scrolls result",
   "tooltip.scrolls.ingredients": "Scrolls ingredients"
 }

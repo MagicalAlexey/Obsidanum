@@ -1,28 +1,31 @@
 package net.rezolv.obsidanum.tab;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.rezolv.obsidanum.Obsidanum;
 import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.item.ItemsObs;
-import net.rezolv.obsidanum.recipes.ForgeScrollCatacombsRecipe;
-import net.rezolv.obsidanum.recipes.ForgeScrollNetherRecipe;
-import net.rezolv.obsidanum.recipes.ForgeScrollOrderRecipe;
-import net.rezolv.obsidanum.recipes.ObsidanRecipes;
+import net.rezolv.obsidanum.item.upgrade.ObsidanumToolUpgrades;
+import net.rezolv.obsidanum.recipes.*;
 
 public class CreativeTabObs extends CreativeModeTab {
 
@@ -262,21 +265,8 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(ItemsObs.SPORES_OF_THE_GLOOMY_MUSHROOM.get());
                         pOutput.accept(ItemsObs.OBSIDAN_ESSENCE.get());
                         pOutput.accept(ItemsObs.FIERY_INFUSION_SMITHING_TEMPLATE.get());
-
-                        //Blocks
-
-
-
-
-
-
-
-
-
-
                     })
                     .build());
-
     public static final RegistryObject<CreativeModeTab> SCROLLS_TAB = CREATIVE_MODE_TABS.register("scrolls_tab",
             () -> CreativeModeTab.builder()
                     .icon(() -> new ItemStack(ItemsObs.ORDER_PLAN.get()))
@@ -297,6 +287,8 @@ public class CreativeTabObs extends CreativeModeTab {
                                 result = ItemsObs.ORDER_PLAN.get().getDefaultInstance();
                             } else if (recipe.getType() == ForgeScrollCatacombsRecipe.Type.FORGE_SCROOL_CATACOMBS) {
                                 result = ItemsObs.CATACOMBS_PLAN.get().getDefaultInstance();
+                            } else if (recipe.getType() == ForgeScrollUpgradeRecipe.Type.FORGE_SCROLL_UPGRADE) {
+                                result = ItemsObs.UPGRADE_PLAN.get().getDefaultInstance();
                             }
 
                             if (result != null && !result.isEmpty()) {
@@ -310,8 +302,9 @@ public class CreativeTabObs extends CreativeModeTab {
                                     handleScrollOrderRecipe(result, resultTag, level, forgeScrollOrderRecipe);
                                 } else if (recipe instanceof ForgeScrollCatacombsRecipe forgeScrollCatacombsRecipe) {
                                     handleScrollCatacombsRecipe(result, resultTag, level, forgeScrollCatacombsRecipe);
+                                } else if (recipe instanceof ForgeScrollUpgradeRecipe forgeScrollUpgradeRecipe) {
+                                    handleScrollUpgradeRecipe(result, resultTag, level, forgeScrollUpgradeRecipe);
                                 }
-
                                 result.setCount(1);
 
                                 pOutput.accept(result);
@@ -320,6 +313,50 @@ public class CreativeTabObs extends CreativeModeTab {
                     })
                     .build());
 
+    private static void handleScrollUpgradeRecipe(ItemStack result, CompoundTag resultTag, Level level, ForgeScrollUpgradeRecipe recipe) {
+        resultTag.putString("RecipeId", recipe.getId().toString());
+
+        // Сохраняем инструмент
+        CompoundTag toolTag = new CompoundTag();
+        recipe.getTool().save(toolTag);
+        resultTag.put("Tool", toolTag);
+
+        // Сохраняем результат
+        CompoundTag outputTag = new CompoundTag();
+        recipe.getResultItem(level.registryAccess()).save(outputTag);
+        resultTag.put("Output", outputTag);
+
+        // Сохраняем улучшение
+        resultTag.putString("Upgrade", recipe.getUpgrade());
+
+        // Сохраняем ингредиенты (с поддержкой тегов и альтернатив)
+        ListTag ingredientsTag = new ListTag();
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            ItemStack[] stacks = ingredient.getItems();
+            if (stacks.length > 0) {
+                JsonObject json = new JsonObject();
+                json.addProperty("item", ForgeRegistries.ITEMS.getKey(stacks[0].getItem()).toString());
+                json.addProperty("count", stacks[0].getCount()); // Сохраняем count
+                ingredientsTag.add(StringTag.valueOf(json.toString()));
+            }
+        }
+        resultTag.put("Ingredients", ingredientsTag);
+
+        // Сохраняем tool_types и tool_kinds
+        ListTag toolTypesTag = new ListTag();
+        for (String type : recipe.getToolTypes()) {
+            toolTypesTag.add(StringTag.valueOf(type));
+        }
+        resultTag.put("ToolTypes", toolTypesTag);
+
+        ListTag toolKindsTag = new ListTag();
+        for (String kind : recipe.getToolKinds()) {
+            toolKindsTag.add(StringTag.valueOf(kind));
+        }
+        resultTag.put("ToolKinds", toolKindsTag);
+
+        result.setTag(resultTag);
+    }
     private static void handleScrollNetherRecipe(ItemStack result, CompoundTag resultTag, Level level, ForgeScrollNetherRecipe forgeScrollNetherRecipe) {
         // Получаем количество результата из JSON
         ItemStack outputStack = forgeScrollNetherRecipe.getResultItem(level.registryAccess());

@@ -31,31 +31,25 @@ import org.jetbrains.annotations.Nullable;
 
 public class ForgeCrucible extends BaseEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-
     public ForgeCrucible(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
-
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
-
     @Override
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
-
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
-
     public BlockState rotate(BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
-
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         getIngredients(pLevel, pPos.getX(), pPos.getY(), pPos.getZ(), pPlayer);
@@ -64,7 +58,6 @@ public class ForgeCrucible extends BaseEntityBlock {
         }
         return InteractionResult.SUCCESS;
     }
-
     public static void giveBackIngredients(LevelAccessor world, double x, double y, double z, Entity entity) {
         if (entity == null || !(entity instanceof Player player)) {
             return;

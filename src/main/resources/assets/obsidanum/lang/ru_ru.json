@@ -196,6 +196,7 @@
   "item.obsidanum.obsidan_essence": "Обсидановая эссенция",
   "item.obsidanum.nether_plan": "Адский чертёж",
   "item.obsidanum.catacombs_plan": "Чертёж катакомб",
+  "item.obsidanum.upgrade_plan": "Чертёж обновления",
   "item.obsidanum.velnarium_mace": "Вельнариумная булава (WIP)",
   "item.obsidanum.demonic_bonecrusher": "Демоническая костоломка (WIP)",
   "item.obsidanum.spores_of_the_gloomy_mushroom": "Споры сумрачного гриба",
@@ -282,7 +283,14 @@
   "item.velnarium_sword.description.not_in_nether": "Наносит дополнительный урон в незере",
   "obsidanum.press_shift": "Зажмите [§7Shift§8], чтобы увидеть описание",
   "obsidanum.press_shift2": "Зажмите [§fShift§8], чтобы увидеть описание",
+
+  "tooltip.scrolls.upgrade": "Обновление",
   "tooltip.scrolls.recipe": "Рецепт свитка",
+  "tooltip.scrolls.quantity": "   Количество",
+  "tooltip.scrolls.tool_types": "Типы инструментов",
+  "tooltip.scrolls.tool_kinds": "Применимо для",
+  "tooltip.recipe_information": "=== Информация о рецепте ===",
+  "tooltip.recipe_end": "===========================",
   "tooltip.scrolls.result": "Результат",
-  "tooltip.scrolls.ingredients": "Ингридиенты"
+  "tooltip.scrolls.ingredients": "Необходимо"
 }

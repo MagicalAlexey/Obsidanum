@@ -18,43 +18,60 @@ public class PlansText extends Item {
     public PlansText(Properties pProperties) {
         super(pProperties);
     }
+
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag); // Стандартные подсказки сначала
+
         CompoundTag tag = stack.getTag();
-        if (tag != null) {
-            if (tag.contains("RecipesPlans")) {
-                MutableComponent recipePath = Component.literal(tag.getString("RecipesPlans")).withStyle(ChatFormatting.AQUA);
-                tooltip.add(recipePath);
-            }
+        if (tag == null) return;
+
+        // Добавляем основной заголовок
+        tooltip.add(Component.translatable("tooltip.recipe_information").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 
 
+        // Отображаем результаты
+        if (tag.contains("RecipeResult")) {
 
-            if (tag.contains("RecipeResult")) {
-                tooltip.add(Component.translatable("tooltip.scrolls.result").withStyle(ChatFormatting.GOLD));
+            ListTag resultList = tag.getList("RecipeResult", Tag.TAG_COMPOUND);
+            for (int i = 0; i < resultList.size(); i++) {
+                CompoundTag resultTag = resultList.getCompound(i);
+                ItemStack result = ItemStack.of(resultTag);
+                int count = result.getCount();
 
-                ListTag resultList = tag.getList("RecipeResult", Tag.TAG_COMPOUND);
-                for (int i = 0; i < resultList.size(); i++) {
-                    CompoundTag resultTag = resultList.getCompound(i);
-                    ItemStack result = ItemStack.of(resultTag);
-                    int count = resultTag.getInt("Count");
-                    tooltip.add(Component.literal("- " + result.getHoverName().plainCopy().getString() + " x" + count)
-                            .withStyle(ChatFormatting.AQUA));
-                }
-            }
-            // Добавляем информацию об ингредиентах
-            if (tag.contains("RecipeIngredients")) {
-                tooltip.add(Component.translatable("tooltip.scrolls.ingredients").withStyle(ChatFormatting.GOLD));
+                // Название результата
+                tooltip.add(
+                        result.getHoverName().copy().withStyle(ChatFormatting.WHITE)
+                );
 
-                ListTag ingredientList = tag.getList("RecipeIngredients", Tag.TAG_COMPOUND);
-                for (int i = 0; i < ingredientList.size(); i++) {
-                    CompoundTag ingredientTag = ingredientList.getCompound(i);
-                    ItemStack ingredient = ItemStack.of(ingredientTag);
-                    int count = ingredientTag.getInt("Count");
-                    tooltip.add(Component.literal("- " + ingredient.getHoverName().getString() + " x" + count)
-                            .withStyle(ChatFormatting.GRAY));
-                }
+                // Количество результата
+                tooltip.add(
+                        Component.translatable("tooltip.scrolls.quantity") // Ключ локализации
+                                .withStyle(ChatFormatting.GRAY)
+                                .append(Component.literal(": " + count).withStyle(ChatFormatting.YELLOW))
+                );
             }
         }
-        super.appendHoverText(stack, level, tooltip, flag);
+
+        // Отображаем ингредиенты
+        if (tag.contains("RecipeIngredients")) {
+            tooltip.add(Component.translatable("tooltip.scrolls.ingredients").withStyle(ChatFormatting.GOLD));
+
+            ListTag ingredientList = tag.getList("RecipeIngredients", Tag.TAG_COMPOUND);
+            for (int i = 0; i < ingredientList.size(); i++) {
+                CompoundTag ingredientTag = ingredientList.getCompound(i);
+                ItemStack ingredient = ItemStack.of(ingredientTag);
+                int count = ingredient.getCount();
+
+                tooltip.add(
+                        Component.literal(" - ").withStyle(ChatFormatting.GRAY)
+                                .append(Component.literal(count + "x ").withStyle(ChatFormatting.YELLOW))
+                                .append(ingredient.getHoverName().copy().withStyle(ChatFormatting.WHITE))
+                );
+            }
+        }
+
+        // Добавляем финальный разделитель
+        tooltip.add(Component.translatable("tooltip.recipe_end").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
     }
 }
