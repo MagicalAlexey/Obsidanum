@@ -3,10 +3,16 @@ package net.rezolv.obsidanum.recipes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
@@ -19,7 +25,7 @@ import net.rezolv.obsidanum.item.upgrade.ObsidanumToolUpgrades;
 import javax.annotation.Nullable;
 
 public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
-
+    private final NonNullList<JsonObject> ingredientJsons;
     private final NonNullList<Ingredient> ingredients; // Используем ItemStack для хранения ингредиентов с количеством
     private final ItemStack tool;
     private final NonNullList<String> toolTypes; // Новое поле: типы инструментов
@@ -27,11 +33,15 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final ResourceLocation id;
     private final String upgrade;
-
+    public NonNullList<JsonObject> getIngredientJsons() {
+        return ingredientJsons;
+    }
     public ForgeScrollUpgradeRecipe(NonNullList<Ingredient> ingredients, ItemStack tool,
                                     NonNullList<String> toolTypes, NonNullList<String> toolKinds,
-                                    ItemStack output, ResourceLocation id, String upgrade) {
+                                    ItemStack output, ResourceLocation id, String upgrade,
+                                    NonNullList<JsonObject> ingredientJsons) {
         this.ingredients = ingredients;
+        this.ingredientJsons = ingredientJsons;
         this.tool = tool;
         this.toolTypes = toolTypes;
         this.toolKinds = toolKinds;
@@ -82,7 +92,27 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public ItemStack assemble(SimpleContainer container, RegistryAccess registryAccess) {
-        return output.copy();
+        ItemStack result = output.copy();
+        CompoundTag tag = new CompoundTag();
+
+        // Запись существующих данных
+        tag.putString("Upgrade", this.upgrade);
+
+        ListTag toolTypesTag = new ListTag();
+        this.toolTypes.forEach(t -> toolTypesTag.add(StringTag.valueOf(t)));
+        tag.put("ToolTypes", toolTypesTag);
+
+        ListTag toolKindsTag = new ListTag();
+        this.toolKinds.forEach(k -> toolKindsTag.add(StringTag.valueOf(k)));
+        tag.put("ToolKinds", toolKindsTag);
+
+        // Запись ингредиентов как JSON строк
+        ListTag ingredientsTag = new ListTag();
+        this.ingredientJsons.forEach(json -> ingredientsTag.add(StringTag.valueOf(json.toString())));
+        tag.put("Ingredients", ingredientsTag);
+
+        result.setTag(tag);
+        return result;
     }
 
     @Override
@@ -145,18 +175,26 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
 
             // Чтение ингредиентов
             JsonArray ingredientsJson = GsonHelper.getAsJsonArray(serializedRecipe, "ingredients");
+            NonNullList<JsonObject> ingredientJsons = NonNullList.create();
             NonNullList<Ingredient> ingredients = NonNullList.create();
 
             for (JsonElement element : ingredientsJson) {
                 JsonObject ingredientJson = element.getAsJsonObject();
-                // Создаем ItemStack с учетом count
-                Item item = GsonHelper.getAsItem(ingredientJson, "item");
-                int count = GsonHelper.getAsInt(ingredientJson, "count", 1); // Берём count из JSON
-                ItemStack stack = new ItemStack(item, count);
-                ingredients.add(Ingredient.of(stack));
+                ingredientJsons.add(ingredientJson.deepCopy()); // Сохраняем копию JSON
+
+                Ingredient ingredient;
+                if (ingredientJson.has("tag")) {
+                    ResourceLocation tagId = new ResourceLocation(GsonHelper.getAsString(ingredientJson, "tag"));
+                    TagKey<Item> tag = TagKey.create(Registries.ITEM, tagId);
+                    ingredient = Ingredient.of(tag);
+                } else {
+                    Item item = GsonHelper.getAsItem(ingredientJson, "item");
+                    ingredient = Ingredient.of(item);
+                }
+                ingredients.add(ingredient);
             }
 
-            return new ForgeScrollUpgradeRecipe(ingredients, tool, toolTypes, toolKinds, output, recipeId, upgrade);
+            return new ForgeScrollUpgradeRecipe(ingredients, tool, toolTypes, toolKinds, output, recipeId, upgrade, ingredientJsons);
         }
 
         @Override
@@ -184,10 +222,19 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
                 ingredients.set(i, Ingredient.fromNetwork(buffer));
             }
 
+            // Чтение JSON ингредиентов
+            NonNullList<JsonObject> ingredientJsons = NonNullList.create();
+            int jsonCount = buffer.readVarInt();
+            for (int i = 0; i < jsonCount; i++) {
+                String jsonStr = buffer.readUtf();
+                JsonObject json = JsonParser.parseString(jsonStr).getAsJsonObject();
+                ingredientJsons.add(json);
+            }
+
             ItemStack output = buffer.readItem();
             String upgrade = buffer.readUtf();
 
-            return new ForgeScrollUpgradeRecipe(ingredients, tool, toolTypes, toolKinds, output, recipeId, upgrade);
+            return new ForgeScrollUpgradeRecipe(ingredients, tool, toolTypes, toolKinds, output, recipeId, upgrade, ingredientJsons);
         }
 
         @Override
@@ -210,6 +257,12 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
             buffer.writeInt(recipe.ingredients.size());
             for (Ingredient ingredient : recipe.ingredients) {
                 ingredient.toNetwork(buffer);
+            }
+
+            // Запись JSON ингредиентов
+            buffer.writeVarInt(recipe.ingredientJsons.size());
+            for (JsonObject json : recipe.ingredientJsons) {
+                buffer.writeUtf(json.toString());
             }
 
             buffer.writeItemStack(recipe.output, true);

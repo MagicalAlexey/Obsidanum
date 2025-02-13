@@ -329,26 +329,29 @@ public class CreativeTabObs extends CreativeModeTab {
         // Сохраняем улучшение
         resultTag.putString("Upgrade", recipe.getUpgrade());
 
-        // Сохраняем ингредиенты (с поддержкой тегов и альтернатив)
+        // Сохраняем ингредиенты из оригинальных JSON данных
         ListTag ingredientsTag = new ListTag();
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            ItemStack[] stacks = ingredient.getItems();
-            if (stacks.length > 0) {
-                JsonObject json = new JsonObject();
-                json.addProperty("item", ForgeRegistries.ITEMS.getKey(stacks[0].getItem()).toString());
-                json.addProperty("count", stacks[0].getCount()); // Сохраняем count
-                ingredientsTag.add(StringTag.valueOf(json.toString()));
+        for (JsonObject ingredientJson : recipe.getIngredientJsons()) {
+            // Копируем оригинальный JSON ингредиента
+            JsonObject jsonCopy = ingredientJson.deepCopy();
+
+            // Добавляем count если отсутствует (по умолчанию 1)
+            if (!jsonCopy.has("count")) {
+                jsonCopy.addProperty("count", 1);
             }
+
+            ingredientsTag.add(StringTag.valueOf(jsonCopy.toString()));
         }
         resultTag.put("Ingredients", ingredientsTag);
 
-        // Сохраняем tool_types и tool_kinds
+        // Сохраняем tool_types
         ListTag toolTypesTag = new ListTag();
         for (String type : recipe.getToolTypes()) {
             toolTypesTag.add(StringTag.valueOf(type));
         }
         resultTag.put("ToolTypes", toolTypesTag);
 
+        // Сохраняем tool_kinds
         ListTag toolKindsTag = new ListTag();
         for (String kind : recipe.getToolKinds()) {
             toolKindsTag.add(StringTag.valueOf(kind));
