@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -81,69 +82,130 @@ public class UpgradePlansText extends Item {
 
         // Отображаем ингредиенты
         if (tag.contains("Ingredients")) {
-            tooltip.add(Component.translatable("tooltip.scrolls.ingredients").withStyle(ChatFormatting.GOLD));
-
             ListTag ingredientsTag = tag.getList("Ingredients", Tag.TAG_STRING);
-            for (int i = 0; i < ingredientsTag.size(); i++) {
-                String jsonStr = ingredientsTag.getString(i);
-                JsonObject ingredientJson = JsonParser.parseString(jsonStr).getAsJsonObject();
 
-                // ИСПРАВЛЕНИЕ: Правильное извлечение количества
-                int count = 1;
-                if (ingredientJson.has("count")) {
-                    JsonElement countElement = ingredientJson.get("count");
-                    if (countElement.isJsonPrimitive() && countElement.getAsJsonPrimitive().isNumber()) {
-                        count = countElement.getAsInt();
-                    }
-                }
-
-                MutableComponent line = Component.literal(" - ").withStyle(ChatFormatting.GRAY);
-
-                if (ingredientJson.has("tag")) {
-                    ResourceLocation tagId = new ResourceLocation(ingredientJson.get("tag").getAsString());
-                    line.append(getTagComponent(tagId, count));
-                } else if (ingredientJson.has("item")) {
-                    ResourceLocation itemId = new ResourceLocation(ingredientJson.get("item").getAsString());
-                    line.append(getItemComponent(itemId, count));
-                }
-
-                tooltip.add(line);
+            if (Screen.hasShiftDown()) {
+                addFullIngredientsList(tooltip, ingredientsTag);
+            } else {
+                addCollapsedIngredientsPreview(tooltip, ingredientsTag);
             }
         }
 
         // Добавляем разделитель в конце
         tooltip.add(Component.translatable("tooltip.recipe_end").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
     }
-    private Component getTagComponent(ResourceLocation tagId, int count) {
+    private void addCollapsedIngredientsPreview(List<Component> tooltip, ListTag ingredientsTag) {
+        if (ingredientsTag.isEmpty()) return;
+
+        tooltip.add(Component.translatable("tooltip.scrolls.ingredients").withStyle(ChatFormatting.GOLD));
+
+        int hiddenTags = 0; // Счётчик свёрнутых тегов
+
+        for (int i = 0; i < ingredientsTag.size(); i++) {
+            String jsonStr = ingredientsTag.getString(i);
+            JsonObject ingredientJson = JsonParser.parseString(jsonStr).getAsJsonObject();
+
+            int count = 1;
+            if (ingredientJson.has("count")) {
+                JsonElement countElement = ingredientJson.get("count");
+                if (countElement.isJsonPrimitive() && countElement.getAsJsonPrimitive().isNumber()) {
+                    count = countElement.getAsInt();
+                }
+            }
+
+            MutableComponent line = Component.literal(" - ").withStyle(ChatFormatting.GRAY);
+
+            if (ingredientJson.has("tag")) {
+                ResourceLocation tagId = new ResourceLocation(ingredientJson.get("tag").getAsString());
+                line.append(getTagComponent(tagId, count, false));
+                hiddenTags++; // Увеличиваем счётчик тегов
+            } else if (ingredientJson.has("item")) {
+                ResourceLocation itemId = new ResourceLocation(ingredientJson.get("item").getAsString());
+                line.append(getItemComponent(itemId, count)); // Предметы показываются полностью
+            }
+
+            tooltip.add(line);
+        }
+
+        // Подсказка о Shift только если есть свёрнутые теги
+        if (hiddenTags > 0) {
+            tooltip.add(Component.translatable("obsidanum.press_shift_for_tags")
+                    .withStyle(ChatFormatting.DARK_GRAY));
+        }
+    }
+
+    private void addFullIngredientsList(List<Component> tooltip, ListTag ingredientsTag) {
+        tooltip.add(Component.translatable("tooltip.scrolls.ingredients")
+                .withStyle(ChatFormatting.GOLD));
+
+        for (int i = 0; i < ingredientsTag.size(); i++) {
+            String jsonStr = ingredientsTag.getString(i);
+            JsonObject ingredientJson = JsonParser.parseString(jsonStr).getAsJsonObject();
+
+            int count = 1;
+            if (ingredientJson.has("count")) {
+                JsonElement countElement = ingredientJson.get("count");
+                if (countElement.isJsonPrimitive() && countElement.getAsJsonPrimitive().isNumber()) {
+                    count = countElement.getAsInt();
+                }
+            }
+
+            MutableComponent line = Component.literal(" - ").withStyle(ChatFormatting.GRAY);
+
+            if (ingredientJson.has("tag")) {
+                ResourceLocation tagId = new ResourceLocation(ingredientJson.get("tag").getAsString());
+                line.append(getTagComponent(tagId, count, true)); // Полное отображение тега
+            } else if (ingredientJson.has("item")) {
+                ResourceLocation itemId = new ResourceLocation(ingredientJson.get("item").getAsString());
+                line.append(getItemComponent(itemId, count));
+            }
+
+            tooltip.add(line);
+        }
+    }
+    private Component getTagComponent(ResourceLocation tagId, int count, boolean expanded) {
         TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagId);
         List<Item> items = ForgeRegistries.ITEMS.tags().getTag(tagKey).stream().toList();
 
-        if (!items.isEmpty()) {
-            Item firstItem = items.get(0);
-            ItemStack stack = new ItemStack(firstItem);
-            MutableComponent component = Component.literal(count + "x ").append(stack.getHoverName()).withStyle(ChatFormatting.BLUE);
-
-            // Создаем расширенную подсказку
-            MutableComponent hoverText = Component.literal("Тег: #" + tagId + "\n\nДоступные предметы:")
-                    .append("\n" + items.stream()
-                            .map(item -> new ItemStack(item).getHoverName().getString())
-                            .collect(Collectors.joining("\n")))
-                    .withStyle(ChatFormatting.GRAY);
-
-            return component.withStyle(style -> style
-                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText)));
+        if (items.isEmpty()) {
+            return Component.literal(count + "x #" + tagId).withStyle(ChatFormatting.RED);
         }
 
-        // Если тег пустой, показываем как было
-        return Component.literal(count + "x #" + tagId).withStyle(ChatFormatting.RED);
+        MutableComponent component = Component.literal(count + "x ");
+
+        if (expanded) {
+            // Режим с Shift: показываем все элементы тега
+            component.append(Component.literal("[Тег] ").withStyle(ChatFormatting.DARK_GRAY));
+            for (Item item : items) {
+                component.append("\n   ").append(new ItemStack(item).getHoverName());
+            }
+        } else {
+            // Свёрнутый режим: первый элемент + количество
+            Item firstItem = items.get(0);
+            component.append(firstItem.getDescription())
+                    .append(Component.literal(" +" + (items.size() - 1))
+                            .withStyle(ChatFormatting.DARK_GRAY));
+
+            // Подсказка при наведении
+            MutableComponent hoverContent = Component.literal("Содержимое тега:")
+                    .withStyle(ChatFormatting.GRAY);
+            for (Item item : items) {
+                hoverContent.append("\n• ").append(item.getDescription());
+            }
+
+            component.withStyle(Style.EMPTY
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverContent)));
+        }
+
+        return component;
     }
 
     private Component getItemComponent(ResourceLocation itemId, int count) {
         Item item = ForgeRegistries.ITEMS.getValue(itemId);
         if (item != null) {
             return Component.literal(count + "x ").append(new ItemStack(item).getHoverName());
-        } else {
-            return Component.literal(count + "x " + itemId.toString());
         }
+        return Component.literal(count + "x " + itemId.toString())
+                .withStyle(ChatFormatting.RED);
     }
 }
