@@ -24,8 +24,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UpgradePlansText extends Item {
-    public UpgradePlansText(Properties pProperties) {
+public class UpgradeScrollsText extends Item {
+    public UpgradeScrollsText(Properties pProperties) {
         super(pProperties);
     }
 

@@ -3,9 +3,6 @@
   "tool": {
     "tag": "minecraft:logs"
   },
-  "output": {
-    "item": "minecraft:diamond_sword"
-  },
   "tool_types": [
     "pickaxe",
     "axe"

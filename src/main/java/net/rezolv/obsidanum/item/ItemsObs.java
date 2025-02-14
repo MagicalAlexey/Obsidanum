@@ -8,7 +8,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -17,7 +16,6 @@ import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.entity.ModEntities;
 import net.rezolv.obsidanum.item.custom.*;
 import net.rezolv.obsidanum.item.entity.ModBoatEntity;
-import net.rezolv.obsidanum.item.item_entity.arrows.flame_arrow.FlameArrow;
 import net.rezolv.obsidanum.sound.SoundsObs;
 
 import java.util.List;
@@ -33,13 +31,13 @@ public class ItemsObs {
 
     // Свитки для печи
     public static final RegistryObject<Item> ORDER_PLAN = ITEMS.register("order_plan",
-            () -> new PlansText(new Item.Properties().stacksTo(1)));
+            () -> new ScrollText(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> NETHER_PLAN = ITEMS.register("nether_plan",
-            () -> new PlansText(new Item.Properties().stacksTo(1)));
+            () -> new ScrollText(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CATACOMBS_PLAN = ITEMS.register("catacombs_plan",
-            () -> new PlansText(new Item.Properties().stacksTo(1)));
+            () -> new ScrollText(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> UPGRADE_PLAN = ITEMS.register("upgrade_plan",
-            () -> new UpgradePlansText(new Item.Properties().stacksTo(1)));
+            () -> new UpgradeScrollsText(new Item.Properties().stacksTo(1)));
 
 
     public static final RegistryObject<Item> OBSIDAN_ESSENCE = ITEMS.register("obsidan_essence",
