@@ -12,11 +12,11 @@ public class ObsidanRecipes {
             DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Obsidanum.MOD_ID);
 
     public static final RegistryObject<RecipeSerializer<ForgeScrollNetherRecipe>> FORGE_SCROLL_NETHER_SERIALIZER =
-            SERIALIZERS.register("forge_scroll_nether", () -> ForgeScrollNetherRecipe.Serializer.FORGE_SCROOL_NETHER);
+            SERIALIZERS.register("forge_scroll_nether", () -> ForgeScrollNetherRecipe.Serializer.FORGE_SCROLL_NETHER);
     public static final RegistryObject<RecipeSerializer<ForgeScrollOrderRecipe>> FORGE_SCROLL_ORDER_SERIALIZER =
-            SERIALIZERS.register("forge_scroll_order", () -> ForgeScrollOrderRecipe.Serializer.FORGE_SCROOL_ORDER);
+            SERIALIZERS.register("forge_scroll_order", () -> ForgeScrollOrderRecipe.Serializer.FORGE_SCROLL_ORDER);
     public static final RegistryObject<RecipeSerializer<ForgeScrollCatacombsRecipe>> FORGE_SCROLL_CATACOMBS_SERIALIZER =
-            SERIALIZERS.register("forge_scroll_catacombs", () -> ForgeScrollCatacombsRecipe.Serializer.FORGE_SCROOL_CATACOMBS);
+            SERIALIZERS.register("forge_scroll_catacombs", () -> ForgeScrollCatacombsRecipe.Serializer.FORGE_SCROLL_CATACOMBS);
     public static final RegistryObject<RecipeSerializer<ForgeScrollUpgradeRecipe>> FORGE_SCROLL_UPGRADE_SERIALIZER =
             SERIALIZERS.register("forge_scroll_upgrade", () -> ForgeScrollUpgradeRecipe.Serializer.FORGE_SCROLL_UPGRADE);
 

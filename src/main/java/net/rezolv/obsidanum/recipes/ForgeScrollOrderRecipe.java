@@ -1,52 +1,86 @@
 package net.rezolv.obsidanum.recipes;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.rezolv.obsidanum.Obsidanum;
 
 import javax.annotation.Nullable;
 
 public class ForgeScrollOrderRecipe implements Recipe<SimpleContainer> {
-
-    private final NonNullList<ItemStack> inputItems;
+    private final NonNullList<JsonObject> ingredientJsons;
+    private final NonNullList<Ingredient> ingredients;
     private final ItemStack output;
     private final ResourceLocation id;
-    public ForgeScrollOrderRecipe(NonNullList<ItemStack> inputItems, ItemStack output, ResourceLocation id) {
-        this.inputItems = inputItems;
-        this.output = output;
+
+    public ForgeScrollOrderRecipe(NonNullList<Ingredient> ingredients, ItemStack output, ResourceLocation id, NonNullList<JsonObject> ingredientJsons) {
+        this.ingredients = ingredients;
+        this.output = output != null ? output : ItemStack.EMPTY; // Защита от null
         this.id = id;
+        this.ingredientJsons = ingredientJsons;
     }
-    @Override
-    public boolean matches(SimpleContainer simpleContainer, Level level) {
-        return true;
-    }
-    public NonNullList<ItemStack> getInputItems() {
-        return inputItems;
-    }
-    @Override
-    public ItemStack assemble(SimpleContainer pContainer, RegistryAccess pRegistryAccess) {
-        return output.copy();
+
+    public NonNullList<JsonObject> getIngredientJsons() {
+        return ingredientJsons;
     }
 
     @Override
-    public boolean canCraftInDimensions(int pWidth, int pHeight) {
+    public boolean matches(SimpleContainer container, Level level) {
+        // Проверяем, что все ингредиенты совпадают
+        for (int i = 0; i < ingredients.size(); i++) {
+            Ingredient requiredIngredient = ingredients.get(i);
+            ItemStack stackInSlot = container.getItem(i); // Слоты 0+ — ингредиенты
+
+            if (!requiredIngredient.test(stackInSlot)) {
+                return false;
+            }
+        }
+
         return true;
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+    public NonNullList<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    @Override
+    public ItemStack assemble(SimpleContainer container, RegistryAccess registryAccess) {
+        ItemStack result = output.copy();
+        CompoundTag tag = new CompoundTag();
+
+        // Запись ингредиентов как JSON строк
+        ListTag ingredientsTag = new ListTag();
+        this.ingredientJsons.forEach(json -> ingredientsTag.add(StringTag.valueOf(json.toString())));
+        tag.put("Ingredients", ingredientsTag);
+
+        result.setTag(tag);
+        return result;
+    }
+
+    @Override
+    public boolean canCraftInDimensions(int width, int height) {
+        return true;
+    }
+
+    @Override
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         return output.copy();
     }
 
@@ -57,58 +91,87 @@ public class ForgeScrollOrderRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Serializer.FORGE_SCROOL_ORDER;
+        return ForgeScrollOrderRecipe.Serializer.FORGE_SCROLL_ORDER;
     }
 
     @Override
     public RecipeType<?> getType() {
-        return Type.FORGE_SCROOL_ORDER;
+        return ForgeScrollOrderRecipe.Type.FORGE_SCROLL_ORDER;
     }
+
     public static class Type implements RecipeType<ForgeScrollOrderRecipe> {
-        public static final Type FORGE_SCROOL_ORDER = new Type();
+        public static final ForgeScrollOrderRecipe.Type FORGE_SCROLL_ORDER = new ForgeScrollOrderRecipe.Type();
         public static final String ID = "forge_scroll_order";
     }
+
     public static class Serializer implements RecipeSerializer<ForgeScrollOrderRecipe> {
-        public static final Serializer FORGE_SCROOL_ORDER = new Serializer();
+        public static final ForgeScrollOrderRecipe.Serializer FORGE_SCROLL_ORDER = new ForgeScrollOrderRecipe.Serializer();
         public static final ResourceLocation ID = new ResourceLocation(Obsidanum.MOD_ID, "forge_scroll_order");
 
         @Override
         public ForgeScrollOrderRecipe fromJson(ResourceLocation recipeId, JsonObject serializedRecipe) {
+            // Чтение output
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "output"));
-            JsonObject outputJson = GsonHelper.getAsJsonObject(serializedRecipe, "output");
-            output.setCount(GsonHelper.getAsInt(outputJson, "count", 1)); // Default to 1 if not specified
-            JsonArray ingredients = GsonHelper.getAsJsonArray(serializedRecipe, "ingredients");
-            NonNullList<ItemStack> inputs = NonNullList.create();
 
-            for (int i = 0; i < ingredients.size(); i++) {
-                JsonObject ingredientObject = ingredients.get(i).getAsJsonObject();
-                ItemStack itemStack = ShapedRecipe.itemStackFromJson(ingredientObject);
-                itemStack.setCount(GsonHelper.getAsInt(ingredientObject, "count", 1)); // Устанавливаем количество
-                inputs.add(itemStack);
+            // Чтение ингредиентов
+            JsonArray ingredientsJson = GsonHelper.getAsJsonArray(serializedRecipe, "ingredients");
+            NonNullList<JsonObject> ingredientJsons = NonNullList.create();
+            NonNullList<Ingredient> ingredients = NonNullList.create();
+
+            for (JsonElement element : ingredientsJson) {
+                JsonObject ingredientJson = element.getAsJsonObject();
+                ingredientJsons.add(ingredientJson.deepCopy()); // Сохраняем копию JSON
+
+                Ingredient ingredient;
+                if (ingredientJson.has("tag")) {
+                    ResourceLocation tagId = new ResourceLocation(GsonHelper.getAsString(ingredientJson, "tag"));
+                    TagKey<Item> tag = TagKey.create(Registries.ITEM, tagId);
+                    ingredient = Ingredient.of(tag);
+                } else {
+                    Item item = GsonHelper.getAsItem(ingredientJson, "item");
+                    ingredient = Ingredient.of(item);
+                }
+                ingredients.add(ingredient);
             }
 
-            return new ForgeScrollOrderRecipe(inputs, output, recipeId);
+            return new ForgeScrollOrderRecipe(ingredients, output, recipeId, ingredientJsons);
         }
 
         @Override
         public @Nullable ForgeScrollOrderRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-            int inputSize = buffer.readInt();
-            NonNullList<ItemStack> inputs = NonNullList.withSize(inputSize, ItemStack.EMPTY);
+            // Чтение ингредиентов
+            int ingredientSize = buffer.readInt();
+            NonNullList<Ingredient> ingredients = NonNullList.withSize(ingredientSize, Ingredient.EMPTY);
+            for (int i = 0; i < ingredientSize; i++) {
+                ingredients.set(i, Ingredient.fromNetwork(buffer));
+            }
 
-            for (int i = 0; i < inputSize; i++) {
-                inputs.set(i, buffer.readItem());
+            // Чтение JSON ингредиентов
+            NonNullList<JsonObject> ingredientJsons = NonNullList.create();
+            int jsonCount = buffer.readVarInt();
+            for (int i = 0; i < jsonCount; i++) {
+                String jsonStr = buffer.readUtf();
+                JsonObject json = JsonParser.parseString(jsonStr).getAsJsonObject();
+                ingredientJsons.add(json);
             }
 
             ItemStack output = buffer.readItem();
-            return new ForgeScrollOrderRecipe(inputs, output, recipeId);
+
+            return new ForgeScrollOrderRecipe(ingredients, output, recipeId, ingredientJsons);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buffer, ForgeScrollOrderRecipe recipe) {
-            buffer.writeInt(recipe.inputItems.size());
+            // Запись ингредиентов
+            buffer.writeInt(recipe.ingredients.size());
+            for (Ingredient ingredient : recipe.ingredients) {
+                ingredient.toNetwork(buffer);
+            }
 
-            for (ItemStack stack : recipe.inputItems) {
-                buffer.writeItemStack(stack, false);
+            // Запись JSON ингредиентов
+            buffer.writeVarInt(recipe.ingredientJsons.size());
+            for (JsonObject json : recipe.ingredientJsons) {
+                buffer.writeUtf(json.toString());
             }
 
             buffer.writeItemStack(recipe.output, true);

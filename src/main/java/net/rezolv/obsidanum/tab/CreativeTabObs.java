@@ -1,8 +1,6 @@
 package net.rezolv.obsidanum.tab;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -10,21 +8,14 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.rezolv.obsidanum.Obsidanum;
 import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.item.ItemsObs;
-import net.rezolv.obsidanum.item.upgrade.ObsidanumToolUpgrades;
 import net.rezolv.obsidanum.recipes.*;
 
 public class CreativeTabObs extends CreativeModeTab {
@@ -281,11 +272,11 @@ public class CreativeTabObs extends CreativeModeTab {
                         level.getRecipeManager().getRecipes().forEach(recipe -> {
                             ItemStack result = null;
 
-                            if (recipe.getType() == ForgeScrollNetherRecipe.Type.FORGE_SCROOL_NETHER) {
+                            if (recipe.getType() == ForgeScrollNetherRecipe.Type.FORGE_SCROLL_NETHER) {
                                 result = ItemsObs.NETHER_PLAN.get().getDefaultInstance();
-                            } else if (recipe.getType() == ForgeScrollOrderRecipe.Type.FORGE_SCROOL_ORDER) {
+                            } else if (recipe.getType() == ForgeScrollOrderRecipe.Type.FORGE_SCROLL_ORDER) {
                                 result = ItemsObs.ORDER_PLAN.get().getDefaultInstance();
-                            } else if (recipe.getType() == ForgeScrollCatacombsRecipe.Type.FORGE_SCROOL_CATACOMBS) {
+                            } else if (recipe.getType() == ForgeScrollCatacombsRecipe.Type.FORGE_SCROLL_CATACOMBS) {
                                 result = ItemsObs.CATACOMBS_PLAN.get().getDefaultInstance();
                             } else if (recipe.getType() == ForgeScrollUpgradeRecipe.Type.FORGE_SCROLL_UPGRADE) {
                                 result = ItemsObs.UPGRADE_PLAN.get().getDefaultInstance();
@@ -329,7 +320,7 @@ public class CreativeTabObs extends CreativeModeTab {
         // Сохраняем результат
         CompoundTag outputTag = new CompoundTag();
         recipe.getResultItem(level.registryAccess()).save(outputTag);
-        resultTag.put("Output", outputTag);
+        resultTag.put("RecipeResult", outputTag);
 
         // Сохраняем улучшение
         resultTag.putString("Upgrade", recipe.getUpgrade());
@@ -366,37 +357,38 @@ public class CreativeTabObs extends CreativeModeTab {
         result.setTag(resultTag);
     }
     private static void handleScrollNetherRecipe(ItemStack result, CompoundTag resultTag, Level level, ForgeScrollNetherRecipe forgeScrollNetherRecipe) {
-        // Получаем количество результата из JSON
-        ItemStack outputStack = forgeScrollNetherRecipe.getResultItem(level.registryAccess());
-        int resultCount = outputStack.getCount();
-
-        // Устанавливаем количество для ItemStack результата
-        result.setCount(resultCount);
-
-        // Проверка результата
-        System.out.println("Количество из рецепта: " + resultCount);
+        result.setCount(forgeScrollNetherRecipe.getResultItem(level.registryAccess()).getCount());
 
         // Добавляем ингредиенты рецепта
         ListTag ingredientList = new ListTag();
-        for (ItemStack ingredient : forgeScrollNetherRecipe.getInputItems()) {
+        for (Ingredient ingredient : forgeScrollNetherRecipe.getIngredients()) {
             CompoundTag ingredientTag = new CompoundTag();
-            ingredient.save(ingredientTag);
-            ingredientTag.putInt("Count", ingredient.getCount());
+
+            // Сохраняем JSON ингредиента, чтобы сохранить информацию о тегах
+            JsonObject ingredientJson = forgeScrollNetherRecipe.getIngredientJsons().get(ingredientList.size());
+            ingredientTag.putString("IngredientJson", ingredientJson.toString());
+
+            // Если ингредиент содержит конкретные предметы, сохраняем их
+            if (!ingredient.isEmpty()) {
+                ItemStack[] matchingStacks = ingredient.getItems();
+                if (matchingStacks.length > 0) {
+                    CompoundTag stackTag = new CompoundTag();
+                    matchingStacks[0].save(stackTag); // Сохраняем первый подходящий предмет
+                    ingredientTag.put("ItemStack", stackTag);
+                }
+            }
+
             ingredientList.add(ingredientTag);
         }
-        resultTag.put("RecipeIngredients", ingredientList);
+        resultTag.put("Ingredients", ingredientList);
 
         // Добавляем результат рецепта
         ListTag resultList = new ListTag();
         CompoundTag outputTag = new CompoundTag();
-        outputStack.save(outputTag);
-        outputTag.putInt("Count", resultCount); // Устанавливаем количество в теге
+        forgeScrollNetherRecipe.getResultItem(level.registryAccess()).save(outputTag);
+        outputTag.putInt("Count", result.getCount()); // Обновляем количество
         resultList.add(outputTag);
         resultTag.put("RecipeResult", resultList);
-
-        // Дополнительный отладочный вывод для проверки всех данных
-        System.out.println("ItemStack результата: " + result);
-        System.out.println("Тег результата: " + resultTag);
     }
 
     private static void handleScrollOrderRecipe(ItemStack result, CompoundTag resultTag, Level level, ForgeScrollOrderRecipe forgeScrollOrderRecipe) {
@@ -404,13 +396,26 @@ public class CreativeTabObs extends CreativeModeTab {
 
         // Добавляем ингредиенты рецепта
         ListTag ingredientList = new ListTag();
-        for (ItemStack ingredient : forgeScrollOrderRecipe.getInputItems()) {
+        for (Ingredient ingredient : forgeScrollOrderRecipe.getIngredients()) {
             CompoundTag ingredientTag = new CompoundTag();
-            ingredient.save(ingredientTag);
-            ingredientTag.putInt("Count", ingredient.getCount());
+
+            // Сохраняем JSON ингредиента, чтобы сохранить информацию о тегах
+            JsonObject ingredientJson = forgeScrollOrderRecipe.getIngredientJsons().get(ingredientList.size());
+            ingredientTag.putString("IngredientJson", ingredientJson.toString());
+
+            // Если ингредиент содержит конкретные предметы, сохраняем их
+            if (!ingredient.isEmpty()) {
+                ItemStack[] matchingStacks = ingredient.getItems();
+                if (matchingStacks.length > 0) {
+                    CompoundTag stackTag = new CompoundTag();
+                    matchingStacks[0].save(stackTag); // Сохраняем первый подходящий предмет
+                    ingredientTag.put("ItemStack", stackTag);
+                }
+            }
+
             ingredientList.add(ingredientTag);
         }
-        resultTag.put("RecipeIngredients", ingredientList);
+        resultTag.put("Ingredients", ingredientList);
 
         // Добавляем результат рецепта
         ListTag resultList = new ListTag();
@@ -419,10 +424,6 @@ public class CreativeTabObs extends CreativeModeTab {
         outputTag.putInt("Count", result.getCount()); // Обновляем количество
         resultList.add(outputTag);
         resultTag.put("RecipeResult", resultList);
-
-        // Отладочный вывод для проверки данных
-        System.out.println("Созданный предмет результата (Order): " + result);
-        System.out.println("Тег результата (Order): " + resultTag);
     }
 
     private static void handleScrollCatacombsRecipe(ItemStack result, CompoundTag resultTag, Level level, ForgeScrollCatacombsRecipe forgeScrollCatacombsRecipe) {
@@ -430,13 +431,26 @@ public class CreativeTabObs extends CreativeModeTab {
 
         // Добавляем ингредиенты рецепта
         ListTag ingredientList = new ListTag();
-        for (ItemStack ingredient : forgeScrollCatacombsRecipe.getInputItems()) {
+        for (Ingredient ingredient : forgeScrollCatacombsRecipe.getIngredients()) {
             CompoundTag ingredientTag = new CompoundTag();
-            ingredient.save(ingredientTag);
-            ingredientTag.putInt("Count", ingredient.getCount());
+
+            // Сохраняем JSON ингредиента, чтобы сохранить информацию о тегах
+            JsonObject ingredientJson = forgeScrollCatacombsRecipe.getIngredientJsons().get(ingredientList.size());
+            ingredientTag.putString("IngredientJson", ingredientJson.toString());
+
+            // Если ингредиент содержит конкретные предметы, сохраняем их
+            if (!ingredient.isEmpty()) {
+                ItemStack[] matchingStacks = ingredient.getItems();
+                if (matchingStacks.length > 0) {
+                    CompoundTag stackTag = new CompoundTag();
+                    matchingStacks[0].save(stackTag); // Сохраняем первый подходящий предмет
+                    ingredientTag.put("ItemStack", stackTag);
+                }
+            }
+
             ingredientList.add(ingredientTag);
         }
-        resultTag.put("RecipeIngredients", ingredientList);
+        resultTag.put("Ingredients", ingredientList);
 
         // Добавляем результат рецепта
         ListTag resultList = new ListTag();
@@ -445,10 +459,6 @@ public class CreativeTabObs extends CreativeModeTab {
         outputTag.putInt("Count", result.getCount()); // Обновляем количество
         resultList.add(outputTag);
         resultTag.put("RecipeResult", resultList);
-
-        // Отладочный вывод для проверки данных
-        System.out.println("Созданный предмет результата (Catacombs): " + result);
-        System.out.println("Тег результата (Catacombs): " + resultTag);
     }
 
 
