@@ -26,17 +26,19 @@ import javax.annotation.Nullable;
 
 public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
     private final NonNullList<JsonObject> ingredientJsons;
-    private final NonNullList<Ingredient> ingredients; // Используем ItemStack для хранения ингредиентов с количеством
-    private final ItemStack tool;
-    private final NonNullList<String> toolTypes; // Новое поле: типы инструментов
-    private final NonNullList<String> toolKinds; // Новое поле: виды инструментов
-    private final ItemStack output;
+    private final NonNullList<Ingredient> ingredients;
+    private final Ingredient tool; // Изменено с ItemStack на Ingredient для поддержки тегов
+    private final NonNullList<String> toolTypes;
+    private final NonNullList<String> toolKinds;
+    private ItemStack output;
     private final ResourceLocation id;
     private final String upgrade;
+
     public NonNullList<JsonObject> getIngredientJsons() {
         return ingredientJsons;
     }
-    public ForgeScrollUpgradeRecipe(NonNullList<Ingredient> ingredients, ItemStack tool,
+
+    public ForgeScrollUpgradeRecipe(NonNullList<Ingredient> ingredients, Ingredient tool,
                                     NonNullList<String> toolTypes, NonNullList<String> toolKinds,
                                     ItemStack output, ResourceLocation id, String upgrade,
                                     NonNullList<JsonObject> ingredientJsons) {
@@ -45,7 +47,7 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
         this.tool = tool;
         this.toolTypes = toolTypes;
         this.toolKinds = toolKinds;
-        this.output = output;
+        this.output = output != null ? output : ItemStack.EMPTY; // Защита от null
         this.id = id;
         this.upgrade = upgrade;
     }
@@ -53,7 +55,9 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
     public String getUpgrade() {
         return this.upgrade;
     }
-
+    public void setOutput(ItemStack output) {
+        this.output = output;
+    }
     public NonNullList<String> getToolTypes() {
         return toolTypes;
     }
@@ -64,8 +68,8 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer container, Level level) {
-        // Проверяем, что инструмент совпадает
-        if (!ItemStack.isSameItem(tool, container.getItem(0))) {
+        // Проверяем, что инструмент совпадает (теперь через Ingredient)
+        if (!tool.test(container.getItem(0))) {
             return false;
         }
 
@@ -86,7 +90,8 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
     public NonNullList<Ingredient> getIngredients() {
         return ingredients;
     }
-    public ItemStack getTool() {
+
+    public Ingredient getTool() { // Изменено с ItemStack на Ingredient
         return tool;
     }
 
@@ -151,8 +156,25 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public ForgeScrollUpgradeRecipe fromJson(ResourceLocation recipeId, JsonObject serializedRecipe) {
-            ItemStack tool = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "tool"));
-            ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "output"));
+            // Чтение tool (теперь как Ingredient)
+            Ingredient tool;
+            if (serializedRecipe.has("tool")) {
+                JsonObject toolJson = GsonHelper.getAsJsonObject(serializedRecipe, "tool");
+                if (toolJson.has("tag")) {
+                    ResourceLocation tagId = new ResourceLocation(GsonHelper.getAsString(toolJson, "tag"));
+                    TagKey<Item> tag = TagKey.create(Registries.ITEM, tagId);
+                    tool = Ingredient.of(tag);
+                } else {
+                    Item item = GsonHelper.getAsItem(toolJson, "item");
+                    tool = Ingredient.of(item);
+                }
+            } else {
+                tool = Ingredient.EMPTY;
+            }
+
+            // Убираем чтение output из JSON
+            ItemStack output = ItemStack.EMPTY; // или null, если вы хотите, чтобы output был задан позже
+
             String upgrade = GsonHelper.getAsString(serializedRecipe, "upgrade");
 
             // Чтение tool_types
@@ -199,7 +221,8 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public @Nullable ForgeScrollUpgradeRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-            ItemStack tool = buffer.readItem();
+            // Чтение tool (теперь как Ingredient)
+            Ingredient tool = Ingredient.fromNetwork(buffer);
 
             // Чтение tool_types
             int toolTypesSize = buffer.readVarInt();
@@ -239,7 +262,8 @@ public class ForgeScrollUpgradeRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public void toNetwork(FriendlyByteBuf buffer, ForgeScrollUpgradeRecipe recipe) {
-            buffer.writeItemStack(recipe.tool, false);
+            // Запись tool (теперь как Ingredient)
+            recipe.tool.toNetwork(buffer);
 
             // Запись tool_types
             buffer.writeVarInt(recipe.toolTypes.size());

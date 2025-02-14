@@ -316,9 +316,14 @@ public class CreativeTabObs extends CreativeModeTab {
     private static void handleScrollUpgradeRecipe(ItemStack result, CompoundTag resultTag, Level level, ForgeScrollUpgradeRecipe recipe) {
         resultTag.putString("RecipeId", recipe.getId().toString());
 
-        // Сохраняем инструмент
+        // Сохраняем инструмент (Ingredient)
         CompoundTag toolTag = new CompoundTag();
-        recipe.getTool().save(toolTag);
+        ItemStack[] toolItems = recipe.getTool().getItems(); // Используем getItems() вместо getMatchingStacks()
+        if (toolItems.length > 0) {
+            // Берём первый элемент из ингредиента (предмет или первый предмет из тега)
+            ItemStack toolStack = toolItems[0].copy();
+            toolStack.save(toolTag);
+        }
         resultTag.put("Tool", toolTag);
 
         // Сохраняем результат

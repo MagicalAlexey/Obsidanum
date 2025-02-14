@@ -1,7 +1,7 @@
 {
   "type": "obsidanum:forge_scroll_upgrade",
   "tool": {
-    "item": "minecraft:diamond_sword"
+    "tag": "minecraft:logs"
   },
   "output": {
     "item": "minecraft:diamond_sword"
