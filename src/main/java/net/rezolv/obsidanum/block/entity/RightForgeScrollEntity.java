@@ -24,21 +24,26 @@ public class RightForgeScrollEntity extends BaseContainerBlockEntity implements 
         this.scrollNBT = tag.copy();
         this.setChanged();
     }
+
+    // Изменяем метод saveAdditional
     @Override
     public void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
-        pTag.put("type_scroll", this.scrollNBT); // Save the NBT data
+        pTag.put("ScrollData", this.scrollNBT); // Исправляем ключ для хранения данных
     }
 
+    // Изменяем метод load
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
-        if (pTag.contains("type_scroll")) {
-            this.scrollNBT = pTag.getCompound("type_scroll"); // Load the NBT data
+        if (pTag.contains("ScrollData")) {
+            this.scrollNBT = pTag.getCompound("ScrollData"); // Загружаем по новому ключу
         }
     }
+
+    // Добавляем метод для безопасного получения NBT
     public CompoundTag getScrollNBT() {
-        return this.scrollNBT;
+        return this.scrollNBT.copy(); // Возвращаем копию, чтобы избежать модификаций
     }
     @Override
     protected Component getDefaultName() {

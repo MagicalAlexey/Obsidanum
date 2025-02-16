@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer {
-    private static final int INVENTORY_SIZE = 9; // Количество слотов в инвентаре
-    private List<ItemStack> items = new ArrayList<>(INVENTORY_SIZE);
     private final ItemStackHandler itemHandler = new ItemStackHandler(2) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -39,6 +37,63 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     };
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
+    // граница кода с NBT
+
+    private CompoundTag receivedScrollData = new CompoundTag();
+
+    // Метод для получения данных
+    public CompoundTag getReceivedData() {
+        return this.receivedScrollData.copy();
+    }
+
+    // Метод для приема данных
+    public void receiveScrollData(CompoundTag data) {
+        this.receivedScrollData = data.copy();
+        setChanged();
+        if(level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+    public void clearCrucibleData() {
+        this.receivedScrollData = new CompoundTag();
+        this.setChanged();
+        if(level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+    // Сохраняем данные
+    @Override
+    public void saveAdditional(CompoundTag pTag) {
+        super.saveAdditional(pTag);
+        pTag.put("CrucibleData", receivedScrollData);
+    }
+
+    // Загружаем данные
+    @Override
+    public void load(CompoundTag pTag) {
+        super.load(pTag);
+        if(pTag.contains("CrucibleData")) {
+            receivedScrollData = pTag.getCompound("CrucibleData");
+        }
+    }
+
+    // Добавляем синхронизацию для клиента
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = super.getUpdateTag();
+        tag.put("CrucibleData", receivedScrollData);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) {
+        super.handleUpdateTag(tag);
+        if(tag.contains("CrucibleData")) {
+            receivedScrollData = tag.getCompound("CrucibleData");
+        }
+    }
+
+    // граница кода с NBT
 
     @Override
     public void onLoad() {
@@ -52,19 +107,21 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     }
     public ForgeCrucibleEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.FORGE_CRUCIBLE.get(), pPos, pBlockState);
-        for (int i = 0; i < INVENTORY_SIZE; i++) {
-            items.add(ItemStack.EMPTY); // Инициализация слотов пустыми стеками
-        }
+
+    }
+
+
+
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        return super.getRenderBoundingBox();
     }
 
 
     @Override
     public int[] getSlotsForFace(Direction direction) {
-        int[] slots = new int[INVENTORY_SIZE];
-        for (int i = 0; i < INVENTORY_SIZE; i++) {
-            slots[i] = i;
-        }
-        return slots;
+        return new int[0];
     }
 
     @Override
@@ -79,81 +136,49 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
 
 
 
-    @Override
-    public int getContainerSize() {
-        return INVENTORY_SIZE;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        for (ItemStack stack : items) {
-            if (!stack.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public ItemStack getItem(int i) {
-        return i >= 0 && i < INVENTORY_SIZE ? items.get(i) : ItemStack.EMPTY;
-    }
-
-    @Override
-    public ItemStack removeItem(int i, int count) {
-        if (i >= 0 && i < INVENTORY_SIZE && !items.get(i).isEmpty() && count > 0) {
-            return items.get(i).split(count);
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int i) {
-        if (i >= 0 && i < INVENTORY_SIZE) {
-            ItemStack stack = items.get(i);
-            items.set(i, ItemStack.EMPTY);
-            return stack;
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void setItem(int i, ItemStack itemStack) {
-        if (i >= 0 && i < INVENTORY_SIZE) {
-            items.set(i, itemStack);
-            if (itemStack.getCount() > getMaxStackSize()) {
-                itemStack.setCount(getMaxStackSize());
-            }
-            this.setChanged();
-        }
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
-        return player.distanceToSqr(this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5) <= 64.0;
-    }
-
-    @Override
-    public void clearContent() {
-        items.clear();
-        for (int i = 0; i < INVENTORY_SIZE; i++) {
-            items.add(ItemStack.EMPTY);
-        }
-    }
-
-    @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
-        return tag;
-    }
-    @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        load(tag);
-    }
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public int getContainerSize() {
+        return 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public ItemStack getItem(int i) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeItem(int i, int i1) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int i) {
+        return null;
+    }
+
+    @Override
+    public void setItem(int i, ItemStack itemStack) {
+
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return false;
+    }
+
+    @Override
+    public void clearContent() {
+
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -73,6 +74,13 @@ public class RightForgeScroll extends BaseEntityBlock {
         // Убрать свиток и NBT
         if (pPlayer.isShiftKeyDown() && itemInHand.isEmpty() && currentType != ScrollType.NONE) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            CompoundTag itemTag = itemInHand.getTag(); // Получаем NBT из предмета
+            if (itemTag != null) {
+                if (blockEntity instanceof RightForgeScrollEntity) {
+                    ((RightForgeScrollEntity) blockEntity).setScrollNBT(itemTag); // Сохраняем NBT в блок
+                    System.out.println("[Scroll] Saved NBT to block: " + itemTag); // Отладочный вывод
+                }
+            }
 
             if (blockEntity instanceof RightForgeScrollEntity) {
                 RightForgeScrollEntity scrollEntity = (RightForgeScrollEntity) blockEntity;
@@ -117,8 +125,8 @@ public class RightForgeScroll extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState pState) {
-    return RenderShape.MODEL;
-}
+        return RenderShape.MODEL;
+    }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {

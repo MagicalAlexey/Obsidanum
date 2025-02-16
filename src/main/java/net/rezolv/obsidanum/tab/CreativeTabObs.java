@@ -364,17 +364,21 @@ public class CreativeTabObs extends CreativeModeTab {
         for (Ingredient ingredient : forgeScrollNetherRecipe.getIngredients()) {
             CompoundTag ingredientTag = new CompoundTag();
 
-            // Сохраняем JSON ингредиента, чтобы сохранить информацию о тегах
+            // Сохраняем JSON ингредиента для информации о тегах
             JsonObject ingredientJson = forgeScrollNetherRecipe.getIngredientJsons().get(ingredientList.size());
             ingredientTag.putString("IngredientJson", ingredientJson.toString());
 
-            // Если ингредиент содержит конкретные предметы, сохраняем их
+            // Сохраняем все подходящие предметы ингредиента
             if (!ingredient.isEmpty()) {
                 ItemStack[] matchingStacks = ingredient.getItems();
                 if (matchingStacks.length > 0) {
-                    CompoundTag stackTag = new CompoundTag();
-                    matchingStacks[0].save(stackTag); // Сохраняем первый подходящий предмет
-                    ingredientTag.put("ItemStack", stackTag);
+                    ListTag stacksList = new ListTag();
+                    for (ItemStack stack : matchingStacks) {
+                        CompoundTag stackTag = new CompoundTag();
+                        stack.save(stackTag);
+                        stacksList.add(stackTag);
+                    }
+                    ingredientTag.put("Items", stacksList); // Используем "Items" для списка
                 }
             }
 
@@ -386,7 +390,7 @@ public class CreativeTabObs extends CreativeModeTab {
         ListTag resultList = new ListTag();
         CompoundTag outputTag = new CompoundTag();
         forgeScrollNetherRecipe.getResultItem(level.registryAccess()).save(outputTag);
-        outputTag.putInt("Count", result.getCount()); // Обновляем количество
+        outputTag.putInt("Count", result.getCount());
         resultList.add(outputTag);
         resultTag.put("RecipeResult", resultList);
     }
@@ -399,17 +403,21 @@ public class CreativeTabObs extends CreativeModeTab {
         for (Ingredient ingredient : forgeScrollOrderRecipe.getIngredients()) {
             CompoundTag ingredientTag = new CompoundTag();
 
-            // Сохраняем JSON ингредиента, чтобы сохранить информацию о тегах
+            // Сохраняем JSON ингредиента для информации о тегах
             JsonObject ingredientJson = forgeScrollOrderRecipe.getIngredientJsons().get(ingredientList.size());
             ingredientTag.putString("IngredientJson", ingredientJson.toString());
 
-            // Если ингредиент содержит конкретные предметы, сохраняем их
+            // Сохраняем все подходящие предметы ингредиента
             if (!ingredient.isEmpty()) {
                 ItemStack[] matchingStacks = ingredient.getItems();
                 if (matchingStacks.length > 0) {
-                    CompoundTag stackTag = new CompoundTag();
-                    matchingStacks[0].save(stackTag); // Сохраняем первый подходящий предмет
-                    ingredientTag.put("ItemStack", stackTag);
+                    ListTag stacksList = new ListTag();
+                    for (ItemStack stack : matchingStacks) {
+                        CompoundTag stackTag = new CompoundTag();
+                        stack.save(stackTag);
+                        stacksList.add(stackTag);
+                    }
+                    ingredientTag.put("Items", stacksList); // Используем "Items" для списка
                 }
             }
 
@@ -434,17 +442,21 @@ public class CreativeTabObs extends CreativeModeTab {
         for (Ingredient ingredient : forgeScrollCatacombsRecipe.getIngredients()) {
             CompoundTag ingredientTag = new CompoundTag();
 
-            // Сохраняем JSON ингредиента, чтобы сохранить информацию о тегах
+            // Сохраняем JSON ингредиента для информации о тегах
             JsonObject ingredientJson = forgeScrollCatacombsRecipe.getIngredientJsons().get(ingredientList.size());
             ingredientTag.putString("IngredientJson", ingredientJson.toString());
 
-            // Если ингредиент содержит конкретные предметы, сохраняем их
+            // Сохраняем все подходящие предметы ингредиента
             if (!ingredient.isEmpty()) {
                 ItemStack[] matchingStacks = ingredient.getItems();
                 if (matchingStacks.length > 0) {
-                    CompoundTag stackTag = new CompoundTag();
-                    matchingStacks[0].save(stackTag); // Сохраняем первый подходящий предмет
-                    ingredientTag.put("ItemStack", stackTag);
+                    ListTag stacksList = new ListTag();
+                    for (ItemStack stack : matchingStacks) {
+                        CompoundTag stackTag = new CompoundTag();
+                        stack.save(stackTag);
+                        stacksList.add(stackTag);
+                    }
+                    ingredientTag.put("Items", stacksList); // Используем "Items" для списка
                 }
             }
 
