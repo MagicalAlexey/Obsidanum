@@ -17,6 +17,8 @@ import net.rezolv.obsidanum.block.entity.ForgeCrucibleEntity;
 
 public class RenderResultForgeCrucible {
 
+    private static final float ROTATION_SPEED = 8f; // Скорость вращения (градусов в тик)
+
     public static void renderResult(ForgeCrucibleEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack,
                                     MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
 
@@ -33,17 +35,20 @@ public class RenderResultForgeCrucible {
                     ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
                     Level level = pBlockEntity.getLevel();
                     BlockPos pos = pBlockEntity.getBlockPos();
-                    int count = resultStack.getCount();
 
                     // Анимация плавающего движения
                     float time = (level.getGameTime() + pPartialTick) * 0.05f;
                     float yOffset = (float) Math.sin(time) * 0.04f; // Амплитуда 0.15 блока
 
+                    // Вращение вокруг оси Y
+                    float rotation = (level.getGameTime() + pPartialTick) * ROTATION_SPEED;
+
                     pPoseStack.pushPose();
                     pPoseStack.translate(0.5, 1.5 + yOffset, 0.5); // Стартовая высота 1.35 + анимация
+                    pPoseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(rotation)); // Вращение
                     pPoseStack.scale(0.5f, 0.5f, 0.5f);
 
-                    // Рендер предмета без вращения
+                    // Рендер предмета
                     itemRenderer.renderStatic(
                             resultStack,
                             ItemDisplayContext.GROUND,
@@ -55,7 +60,6 @@ public class RenderResultForgeCrucible {
                             0
                     );
                     pPoseStack.popPose();
-
                 }
             }
         }

@@ -28,6 +28,7 @@ import java.util.List;
 public class RenderIngredientsForgeCrucible {
     private static final int CYCLE_TICKS = 20; // Смена предмета каждую секунду
     private static final float ITEM_SPACING = 0.3f; // Расстояние между предметами
+    private static final float ROTATION_SPEED = 8f; // Скорость вращения (градусов в тик)
 
     public static void renderIngredients(ForgeCrucibleEntity blockEntity, float partialTick,
                                          PoseStack poseStack, MultiBufferSource buffer,
@@ -94,6 +95,12 @@ public class RenderIngredientsForgeCrucible {
 
                 // Фиксированная высота для всех элементов
                 poseStack.translate(0.5 + xPos, 2, 0.5);
+
+                // Вращение вокруг оси Y
+                float rotation = (gameTime + partialTick) * ROTATION_SPEED;
+                poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(rotation));
+
+                // Масштабирование
                 poseStack.scale(0.4f, 0.4f, 0.4f);
 
                 // Рендер предмета
