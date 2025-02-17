@@ -1,4 +1,4 @@
-package net.rezolv.obsidanum.block.forge_crucible.check_use_stick;
+package net.rezolv.obsidanum.block.forge_crucible.update_ingredients;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.rezolv.obsidanum.block.entity.ForgeCrucibleEntity;
 
-public class CheckStickForgeCrucible {
+public class UpdateIngredientsForgeCrucible {
     public static InteractionResult handleUse(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!level.isClientSide() && hand == InteractionHand.MAIN_HAND) {
             ItemStack heldItem = player.getItemInHand(hand);

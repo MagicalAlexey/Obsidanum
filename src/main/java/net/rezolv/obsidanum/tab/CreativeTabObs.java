@@ -18,6 +18,8 @@ import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.item.ItemsObs;
 import net.rezolv.obsidanum.recipes.*;
 
+import java.util.List;
+
 public class CreativeTabObs extends CreativeModeTab {
 
     protected CreativeTabObs(Builder builder) {
@@ -309,9 +311,8 @@ public class CreativeTabObs extends CreativeModeTab {
 
         // Сохраняем инструмент (Ingredient)
         CompoundTag toolTag = new CompoundTag();
-        ItemStack[] toolItems = recipe.getTool().getItems(); // Используем getItems() вместо getMatchingStacks()
+        ItemStack[] toolItems = recipe.getTool().getItems();
         if (toolItems.length > 0) {
-            // Берём первый элемент из ингредиента (предмет или первый предмет из тега)
             ItemStack toolStack = toolItems[0].copy();
             toolStack.save(toolTag);
         }
@@ -325,33 +326,41 @@ public class CreativeTabObs extends CreativeModeTab {
         // Сохраняем улучшение
         resultTag.putString("Upgrade", recipe.getUpgrade());
 
-        // Сохраняем ингредиенты из оригинальных JSON данных
+        // Обрабатываем ингредиенты как в других рецептах
         ListTag ingredientsTag = new ListTag();
-        for (JsonObject ingredientJson : recipe.getIngredientJsons()) {
-            // Копируем оригинальный JSON ингредиента
-            JsonObject jsonCopy = ingredientJson.deepCopy();
+        List<JsonObject> ingredientJsons = recipe.getIngredientJsons();
+        List<Ingredient> ingredients = recipe.getIngredients();
 
-            // Добавляем count если отсутствует (по умолчанию 1)
-            if (!jsonCopy.has("count")) {
-                jsonCopy.addProperty("count", 1);
+        for (int i = 0; i < ingredients.size(); i++) {
+            Ingredient ingredient = ingredients.get(i);
+            JsonObject ingredientJson = ingredientJsons.get(i); // Получаем JSON по индексу
+
+            CompoundTag ingredientTag = new CompoundTag();
+            ingredientTag.putString("IngredientJson", ingredientJson.toString());
+
+            // Сохраняем предметы ингредиента
+            ItemStack[] matchingStacks = ingredient.getItems();
+            if (matchingStacks.length > 0) {
+                ListTag stacksList = new ListTag();
+                for (ItemStack stack : matchingStacks) {
+                    CompoundTag stackTag = new CompoundTag();
+                    stack.save(stackTag);
+                    stacksList.add(stackTag);
+                }
+                ingredientTag.put("Items", stacksList);
             }
 
-            ingredientsTag.add(StringTag.valueOf(jsonCopy.toString()));
+            ingredientsTag.add(ingredientTag);
         }
         resultTag.put("Ingredients", ingredientsTag);
 
-        // Сохраняем tool_types
+        // Сохраняем tool_types и tool_kinds
         ListTag toolTypesTag = new ListTag();
-        for (String type : recipe.getToolTypes()) {
-            toolTypesTag.add(StringTag.valueOf(type));
-        }
+        recipe.getToolTypes().forEach(type -> toolTypesTag.add(StringTag.valueOf(type)));
         resultTag.put("ToolTypes", toolTypesTag);
 
-        // Сохраняем tool_kinds
         ListTag toolKindsTag = new ListTag();
-        for (String kind : recipe.getToolKinds()) {
-            toolKindsTag.add(StringTag.valueOf(kind));
-        }
+        recipe.getToolKinds().forEach(kind -> toolKindsTag.add(StringTag.valueOf(kind)));
         resultTag.put("ToolKinds", toolKindsTag);
 
         result.setTag(resultTag);

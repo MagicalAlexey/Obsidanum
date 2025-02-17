@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.rezolv.obsidanum.block.entity.ForgeCrucibleEntity;
-import net.rezolv.obsidanum.block.forge_crucible.check_use_stick.CheckStickForgeCrucible;
 import net.rezolv.obsidanum.block.forge_crucible.neigbor_changed.AddTagsForgeCrucible;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,10 +41,6 @@ public class ForgeCrucible extends BaseEntityBlock {
     }
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        InteractionResult result = CheckStickForgeCrucible.handleUse(pState, pLevel, pPos, pPlayer, pHand, pHit);
-        if (result != InteractionResult.PASS) {
-            return result;
-        }
         return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
     }
     @Override

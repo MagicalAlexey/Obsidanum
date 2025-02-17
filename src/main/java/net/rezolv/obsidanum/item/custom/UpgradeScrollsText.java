@@ -81,31 +81,37 @@ public class UpgradeScrollsText extends Item {
         if (tag.contains("Ingredients")) {
             tooltip.add(Component.translatable("tooltip.scrolls.ingredients").withStyle(ChatFormatting.GOLD));
 
-            ListTag ingredientsTag = tag.getList("Ingredients", Tag.TAG_STRING);
-            for (int i = 0; i < ingredientsTag.size(); i++) {
-                String jsonStr = ingredientsTag.getString(i);
-                JsonObject ingredientJson = JsonParser.parseString(jsonStr).getAsJsonObject();
+            ListTag ingredientList = tag.getList("Ingredients", Tag.TAG_COMPOUND);
+            for (int i = 0; i < ingredientList.size(); i++) {
+                CompoundTag ingredientTag = ingredientList.getCompound(i);
 
-                // ИСПРАВЛЕНИЕ: Правильное извлечение количества
-                int count = 1;
-                if (ingredientJson.has("count")) {
-                    JsonElement countElement = ingredientJson.get("count");
-                    if (countElement.isJsonPrimitive() && countElement.getAsJsonPrimitive().isNumber()) {
-                        count = countElement.getAsInt();
+                // Проверяем, есть ли JSON ингредиента (для тегов)
+                if (ingredientTag.contains("IngredientJson")) {
+                    JsonObject ingredientJson = JsonParser.parseString(ingredientTag.getString("IngredientJson")).getAsJsonObject();
+                    int count = ingredientJson.has("count") ? ingredientJson.get("count").getAsInt() : 1;
+
+                    MutableComponent line = Component.literal(" - ").withStyle(ChatFormatting.GRAY);
+
+                    if (ingredientJson.has("tag")) {
+                        ResourceLocation tagId = new ResourceLocation(ingredientJson.get("tag").getAsString());
+                        line.append(getTagComponent(tagId, count));
+                    } else if (ingredientJson.has("item")) {
+                        ResourceLocation itemId = new ResourceLocation(ingredientJson.get("item").getAsString());
+                        line.append(getItemComponent(itemId, count));
                     }
+
+                    tooltip.add(line);
+                } else if (ingredientTag.contains("ItemStack")) {
+                    // Если это конкретный предмет
+                    ItemStack ingredient = ItemStack.of(ingredientTag.getCompound("ItemStack"));
+                    int count = ingredient.getCount();
+
+                    tooltip.add(
+                            Component.literal(" - ").withStyle(ChatFormatting.GRAY)
+                                    .append(Component.literal(count + "x ").withStyle(ChatFormatting.YELLOW))
+                                    .append(ingredient.getHoverName().copy().withStyle(ChatFormatting.WHITE))
+                    );
                 }
-
-                MutableComponent line = Component.literal(" - ").withStyle(ChatFormatting.GRAY);
-
-                if (ingredientJson.has("tag")) {
-                    ResourceLocation tagId = new ResourceLocation(ingredientJson.get("tag").getAsString());
-                    line.append(getTagComponent(tagId, count));
-                } else if (ingredientJson.has("item")) {
-                    ResourceLocation itemId = new ResourceLocation(ingredientJson.get("item").getAsString());
-                    line.append(getItemComponent(itemId, count));
-                }
-
-                tooltip.add(line);
             }
         }
 
