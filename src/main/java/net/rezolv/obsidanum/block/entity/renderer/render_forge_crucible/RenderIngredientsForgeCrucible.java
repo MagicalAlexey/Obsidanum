@@ -9,12 +9,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.state.BlockState;
+import net.rezolv.obsidanum.block.custom.ForgeCrucible;
 import net.rezolv.obsidanum.block.entity.ForgeCrucibleEntity;
 
 import java.util.ArrayList;
@@ -40,6 +43,10 @@ public class RenderIngredientsForgeCrucible {
         Level level = blockEntity.getLevel();
         BlockPos pos = blockEntity.getBlockPos();
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+
+        // Получаем направление блока
+        BlockState state = blockEntity.getBlockState();
+        Direction facing = state.getValue(ForgeCrucible.FACING);
 
         List<RenderEntry> renderEntries = new ArrayList<>();
 
@@ -69,7 +76,7 @@ public class RenderIngredientsForgeCrucible {
 
         // Рассчет позиций
         float totalWidth = (renderEntries.size() - 1) * ITEM_SPACING;
-        float startX = -totalWidth / 2;
+        float startOffset = -totalWidth / 2;
         long gameTime = level.getGameTime();
 
         // Рендер каждого элемента
@@ -85,15 +92,47 @@ public class RenderIngredientsForgeCrucible {
 
             poseStack.pushPose();
             try {
-                // Позиционирование
-                float xPos = startX + i * ITEM_SPACING;
+                // Позиционирование в зависимости от направления блока
+                float xOffset = 0;
+                float zOffset = 0;
+
+                switch (facing) {
+                    case NORTH:
+                    case SOUTH:
+                        xOffset = startOffset + i * ITEM_SPACING;
+                        zOffset = 0;
+                        break;
+                    case EAST:
+                    case WEST:
+                        xOffset = 0;
+                        zOffset = startOffset + i * ITEM_SPACING;
+                        break;
+                }
 
                 // Фиксированная высота для всех элементов
-                poseStack.translate(0.5 + xPos, 2, 0.5);
+                poseStack.translate(0.5 + xOffset, 2, 0.5 + zOffset);
 
                 // Вращение вокруг оси Y
                 float rotation = (gameTime + partialTick) * ROTATION_SPEED;
                 poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(rotation));
+
+                // Поворот предмета в соответствии с направлением блока
+                switch (facing) {
+                    case NORTH:
+                        // По умолчанию предмет уже смотрит на север, дополнительный поворот не нужен
+                        break;
+                    case SOUTH:
+                        poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180));
+                        break;
+                    case EAST:
+                        poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90));
+                        break;
+                    case WEST:
+                        poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270));
+                        break;
+                    default:
+                        break;
+                }
 
                 // Масштабирование
                 poseStack.scale(0.4f, 0.4f, 0.4f);

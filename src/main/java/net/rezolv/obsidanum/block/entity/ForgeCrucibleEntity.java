@@ -30,7 +30,6 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
     // граница кода с NBT
-
     private CompoundTag receivedScrollData = new CompoundTag();
 
     // Метод для получения данных
@@ -86,7 +85,6 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     }
 
     // граница кода с NBT
-
     @Override
     public void onLoad() {
         super.onLoad();
@@ -99,10 +97,7 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     }
     public ForgeCrucibleEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.FORGE_CRUCIBLE.get(), pPos, pBlockState);
-
     }
-
-
 
 
     @Override

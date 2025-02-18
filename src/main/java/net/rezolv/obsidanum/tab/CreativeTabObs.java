@@ -31,6 +31,7 @@ public class CreativeTabObs extends CreativeModeTab {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsObs.AZURE_OBSIDIAN_BRICKS.get()))
                     .title(Component.translatable("creativetab.azure_obsidian_blocks"))
                     .displayItems((pParameters, pOutput) -> {
+
                         pOutput.accept(BlocksObs.FLAME_DISPENSER.get());
                         pOutput.accept(BlocksObs.FLAME_PIPE.get());
                         pOutput.accept(BlocksObs.CHISELED_AZURE_OBSIDIAN_BRICKS.get());
@@ -104,6 +105,8 @@ public class CreativeTabObs extends CreativeModeTab {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsObs.OBSIDIAN_BRICKS.get()))
                     .title(Component.translatable("creativetab.obsidian_blocks"))
                     .displayItems((pParameters, pOutput) -> {
+                        pOutput.accept(BlocksObs.PRANA_CRYSTALL.get());
+                        pOutput.accept(BlocksObs.RITUAL_DRUM.get());
                         pOutput.accept(ItemsObs.OBSIDAN_SIGN.get());
                         pOutput.accept(ItemsObs.OBSIDAN_HANGING_SIGN.get());
                         pOutput.accept(BlocksObs.OBSIDAN_PLANKS.get());
