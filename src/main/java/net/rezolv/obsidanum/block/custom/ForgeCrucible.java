@@ -55,6 +55,7 @@ public class ForgeCrucible extends BaseEntityBlock {
     }
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        // Выполняем логику только на сервере
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -71,11 +72,12 @@ public class ForgeCrucible extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
 
-        // В NBT Ingredients – список Compound, где каждый имеет поле "IngredientJson"
+        // Ingredients – список Compound, где каждый элемент содержит ключ "IngredientJson"
         ListTag ingredientsList = data.getList("Ingredients", Tag.TAG_COMPOUND);
         boolean modified = false;
+        int lastUsedIndex = -1;
 
-        // Вывод для отладки: печатаем содержимое каждого ингредиента
+        // Отладочный вывод: печатаем содержимое каждого ингредиента
         for (int i = 0; i < ingredientsList.size(); i++) {
             CompoundTag ingredientCompound = ingredientsList.getCompound(i);
             String jsonStr = ingredientCompound.getString("IngredientJson");
@@ -84,7 +86,7 @@ public class ForgeCrucible extends BaseEntityBlock {
 
         ItemStack heldStack = player.getItemInHand(hand);
 
-        // Если игрок держит предмет – кладём его (удаляем 1 единицу из руки, уменьшаем count)
+        // Если игрок держит предмет – кладём его (уменьшаем count для соответствующего ингредиента)
         if (!heldStack.isEmpty()) {
             for (int i = 0; i < ingredientsList.size(); i++) {
                 CompoundTag ingredientCompound = ingredientsList.getCompound(i);
@@ -96,20 +98,23 @@ public class ForgeCrucible extends BaseEntityBlock {
                     e.printStackTrace();
                     continue;
                 }
-                // Извлекаем ID и count
+                // Извлекаем id и count из JSON
                 String ingrItemId = json.has("item") ? json.get("item").getAsString() : "";
                 int count = json.has("count") ? json.get("count").getAsInt() : 0;
                 ResourceLocation rl = new ResourceLocation(ingrItemId);
                 Item ingredientItem = ForgeRegistries.ITEMS.getValue(rl);
-                // Если предмет в руке соответствует ингредиенту и count > 0
+                // Если предмет в руке совпадает с этим ингредиентом и count > 0
                 if (ingredientItem != null && heldStack.getItem() == ingredientItem) {
                     if (count > 0) {
                         heldStack.shrink(1);
                         json.addProperty("count", count - 1);
                         ingredientCompound.putString("IngredientJson", json.toString());
                         ingredientsList.set(i, ingredientCompound);
+                        // Сохраняем индекс последнего использованного ингредиента
+                        data.putInt("LastUsed", i);
+                        lastUsedIndex = i; // Запоминаем индекс
                         modified = true;
-                        System.out.println("Депозит: уменьшили count для " + ingrItemId + " с " + count + " до " + (count - 1));
+                        System.out.println("Депозит: уменьшили count для " + ingrItemId + " с " + count + " до " + (count - 1) + ", LastUsed=" + i);
                         break;
                     } else {
                         System.out.println("Для " + ingrItemId + " count равен 0");
@@ -117,33 +122,35 @@ public class ForgeCrucible extends BaseEntityBlock {
                 }
             }
         }
-        // Если рука пуста и нажата Shift – возвращаем предмет (увеличиваем count)
+        // Если рука пуста и нажата Shift – возвращаем предмет именно по последнему использованному ингредиенту
         else if (player.isShiftKeyDown()) {
-            for (int i = 0; i < ingredientsList.size(); i++) {
-                CompoundTag ingredientCompound = ingredientsList.getCompound(i);
+            if (lastUsedIndex != -1) {
+                CompoundTag ingredientCompound = ingredientsList.getCompound(lastUsedIndex);
                 String jsonStr = ingredientCompound.getString("IngredientJson");
                 JsonObject json;
                 try {
                     json = JsonParser.parseString(jsonStr).getAsJsonObject();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    continue;
+                    return InteractionResult.PASS;
                 }
                 String ingrItemId = json.has("item") ? json.get("item").getAsString() : "";
                 int count = json.has("count") ? json.get("count").getAsInt() : 0;
                 ResourceLocation rl = new ResourceLocation(ingrItemId);
                 Item ingredientItem = ForgeRegistries.ITEMS.getValue(rl);
-                if (ingredientItem != null) {
-                    json.addProperty("count", count + 1);
-                    ingredientCompound.putString("IngredientJson", json.toString());
-                    ingredientsList.set(i, ingredientCompound);
-                    modified = true;
-                    ItemStack returnStack = new ItemStack(ingredientItem, 1);
+                if (ingredientItem != null && count < json.get("count").getAsInt()) {
+                    int amountToReturn = json.get("count").getAsInt() - count; // Количество для возврата
+                    ItemStack returnStack = new ItemStack(ingredientItem, amountToReturn);
+
                     if (!player.getInventory().add(returnStack)) {
                         player.drop(returnStack, false);
                     }
-                    System.out.println("Выдача: увеличили count для " + ingrItemId + " с " + count + " до " + (count + 1));
-                    break;
+                    // Уменьшаем count в NBT данных
+                    json.addProperty("count", 0); // Сбрасываем count после возврата
+                    ingredientCompound.putString("IngredientJson", json.toString());
+                    ingredientsList.set(lastUsedIndex, ingredientCompound);
+                    modified = true;
+                    System.out.println("Выдача: вернули " + amountToReturn + " предметов для " + ingrItemId);
                 }
             }
         }
