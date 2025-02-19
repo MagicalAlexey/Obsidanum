@@ -45,6 +45,8 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
 
     // Метод для приема данных
     public void receiveScrollData(CompoundTag data) {
+        this.depositedItems.clear();
+
         this.receivedScrollData = data.copy();
         this.depositedItems.clear(); // Очищаем при новом рецепте
         setChanged();
@@ -109,18 +111,38 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
+
+        // Сохраняем ВСЕ данные
         tag.put("CrucibleData", receivedScrollData);
         tag.putInt("LastUsedIndex", lastUsedIndex);
+
+        // Добавляем depositedItems
+        ListTag depositedList = new ListTag();
+        for (ItemStack stack : depositedItems) {
+            CompoundTag itemTag = new CompoundTag();
+            stack.save(itemTag);
+            depositedList.add(itemTag);
+        }
+        tag.put("DepositedItems", depositedList);
+
         return tag;
     }
-
-
 
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         super.handleUpdateTag(tag);
-        if(tag.contains("CrucibleData")) {
+
+        // Загружаем ВСЕ данные
+        if (tag.contains("CrucibleData")) {
             receivedScrollData = tag.getCompound("CrucibleData");
+        }
+        lastUsedIndex = tag.getInt("LastUsedIndex");
+
+        // Загружаем depositedItems
+        depositedItems.clear();
+        ListTag depositedList = tag.getList("DepositedItems", Tag.TAG_COMPOUND);
+        for (int i = 0; i < depositedList.size(); i++) {
+            depositedItems.add(ItemStack.of(depositedList.getCompound(i)));
         }
     }
 
