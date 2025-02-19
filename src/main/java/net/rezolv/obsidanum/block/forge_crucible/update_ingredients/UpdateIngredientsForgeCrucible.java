@@ -61,14 +61,35 @@ public class UpdateIngredientsForgeCrucible {
 
     private static boolean processIngredient(ForgeCrucibleEntity crucible, ItemStack stack,
                                              ItemStack stackCopy, JsonObject json) {
-        Ingredient ingredient = Ingredient.fromJson(json);
-        if (!ingredient.test(stackCopy)) return false;
-
+        // Проверка наличия count
+        if (!json.has("count")) {
+            Obsidanum.LOGGER.error("Ingredient missing 'count' field");
+            return false;
+        }
         int required = json.get("count").getAsInt();
+
+        // Игнорируем прочность при проверке
+        ItemStack stackToCheck = stackCopy.copy();
+        if (stackToCheck.isDamaged()) {
+            stackToCheck.setDamageValue(0); // Сбрасываем урон
+        }
+
+        // Проверка соответствия ингредиенту
+        Ingredient ingredient = Ingredient.fromJson(json);
+        if (!ingredient.test(stackToCheck)) return false;
+
+        // Подсчёт текущего количества (игнорируя прочность)
         long current = crucible.depositedItems.stream()
-                .filter(s -> ItemStack.isSameItemSameTags(s, stackCopy))
+                .filter(s -> {
+                    ItemStack depositedCopy = s.copy();
+                    if (depositedCopy.isDamaged()) {
+                        depositedCopy.setDamageValue(0);
+                    }
+                    return ItemStack.isSameItemSameTags(depositedCopy, stackToCheck);
+                })
                 .count();
 
+        // Добавляем оригинальный предмет (с прочностью)
         if (current < required) {
             crucible.depositedItems.add(stackCopy.copy());
             return true;

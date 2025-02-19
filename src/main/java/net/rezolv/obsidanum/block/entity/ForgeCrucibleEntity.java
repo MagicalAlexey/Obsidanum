@@ -58,21 +58,18 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     }
     public void clearCrucibleData() {
         if (level != null && !level.isClientSide()) {
-            // Выбрасываем все предметы в мир
+            // Выбрасываем все предметы (включая повреждённые)
             for (ItemStack stack : depositedItems) {
-                if (!stack.isEmpty()) {
-                    double x = worldPosition.getX() + 0.5;
-                    double y = worldPosition.getY() + 1.2; // Выше блока
-                    double z = worldPosition.getZ() + 0.5;
-
-                    ItemEntity itemEntity = new ItemEntity(
-                            level, x, y, z, stack.copy()
-                    );
-                    itemEntity.setDefaultPickUpDelay();
-                    level.addFreshEntity(itemEntity);
-                }
+                ItemEntity itemEntity = new ItemEntity(
+                        level,
+                        worldPosition.getX() + 0.5,
+                        worldPosition.getY() + 1.2,
+                        worldPosition.getZ() + 0.5,
+                        stack.copy()
+                );
+                level.addFreshEntity(itemEntity);
             }
-            depositedItems.clear(); // Очищаем список
+            depositedItems.clear();
         }
 
         this.receivedScrollData = new CompoundTag();
@@ -131,34 +128,22 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-
         // Сохраняем ВСЕ данные
         tag.put("CrucibleData", receivedScrollData);
-        tag.putInt("LastUsedIndex", lastUsedIndex);
-
-        // Добавляем depositedItems
         ListTag depositedList = new ListTag();
         for (ItemStack stack : depositedItems) {
             CompoundTag itemTag = new CompoundTag();
-            stack.save(itemTag);
+            stack.save(itemTag); // Сохраняем с прочностью
             depositedList.add(itemTag);
         }
         tag.put("DepositedItems", depositedList);
-
         return tag;
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         super.handleUpdateTag(tag);
-
         // Загружаем ВСЕ данные
-        if (tag.contains("CrucibleData")) {
-            receivedScrollData = tag.getCompound("CrucibleData");
-        }
-        lastUsedIndex = tag.getInt("LastUsedIndex");
-
-        // Загружаем depositedItems
         depositedItems.clear();
         ListTag depositedList = tag.getList("DepositedItems", Tag.TAG_COMPOUND);
         for (int i = 0; i < depositedList.size(); i++) {

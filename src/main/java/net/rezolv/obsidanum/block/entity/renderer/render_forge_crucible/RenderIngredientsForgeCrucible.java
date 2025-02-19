@@ -59,20 +59,19 @@ public class RenderIngredientsForgeCrucible {
             String ingredientJson = entry.getString("IngredientJson");
             JsonObject json = JsonParser.parseString(ingredientJson).getAsJsonObject();
 
-            // Проверка выполнения ингредиента
-            int requiredCount = json.get("count").getAsInt();
+            // Игнорируем прочность при подсчёте
             long currentCount = blockEntity.depositedItems.stream()
                     .filter(stack -> {
-                        Ingredient ingredient = Ingredient.fromJson(json);
-                        return ingredient.test(stack)
-                                && ItemStack.isSameItemSameTags(stack, ingredient.getItems()[0]);
+                        ItemStack checkStack = stack.copy();
+                        if (checkStack.isDamaged()) {
+                            checkStack.setDamageValue(0);
+                        }
+                        return Ingredient.fromJson(json).test(checkStack);
                     })
                     .count();
 
-// Добавьте проверку на пустоту ингредиента
-            if (currentCount >= requiredCount || requiredCount == 0) {
-                continue;
-            }
+            int requiredCount = json.get("count").getAsInt();
+            if (currentCount >= requiredCount) continue; // Пропускаем выполненные
 
             List<ItemStack> stacks = new ArrayList<>();
             if (json.has("item")) {
