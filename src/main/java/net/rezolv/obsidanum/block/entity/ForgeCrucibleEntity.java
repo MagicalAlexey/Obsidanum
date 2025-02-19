@@ -3,6 +3,8 @@ package net.rezolv.obsidanum.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -15,7 +17,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.rezolv.obsidanum.Obsidanum;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer {
     private final ItemStackHandler itemHandler = new ItemStackHandler(2) {
@@ -29,21 +35,23 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     };
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
-    // граница кода с NBT
-    private CompoundTag receivedScrollData = new CompoundTag();
+    public List<ItemStack> depositedItems = new ArrayList<>(); // Новое поле для хранения истории
 
     // Метод для получения данных
-    public CompoundTag getReceivedData() {
-        return this.receivedScrollData.copy();
+
+    public void debugDepositedItems(String action) {
+        Obsidanum.LOGGER.info("Deposited items after {}: {}", action, depositedItems);
     }
 
     // Метод для приема данных
     public void receiveScrollData(CompoundTag data) {
         this.receivedScrollData = data.copy();
+        this.depositedItems.clear(); // Очищаем при новом рецепте
         setChanged();
         if(level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
+        debugDepositedItems("receiveScrollData");
     }
     public void clearCrucibleData() {
         this.receivedScrollData = new CompoundTag();
@@ -53,28 +61,60 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
         }
     }
     // Сохраняем данные
+    private CompoundTag receivedScrollData = new CompoundTag();
+    public int lastUsedIndex = -1; // Сохраняем последний использованный индекс
+
+    // Метод для получения данных
+    public CompoundTag getReceivedData() {
+        return this.receivedScrollData.copy();
+    }
+
+    // Метод для сохранения последнего индекса
+    public void setLastUsedIndex(int index) {
+        this.lastUsedIndex = index;
+        setChanged();
+    }
+
+    // Обновлённый метод сохранения
     @Override
     public void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
         pTag.put("CrucibleData", receivedScrollData);
+
+        ListTag depositedList = new ListTag();
+        for (ItemStack stack : depositedItems) {
+            CompoundTag itemTag = new CompoundTag();
+            stack.save(itemTag);
+            depositedList.add(itemTag);
+        }
+        pTag.put("DepositedItems", depositedList);
     }
 
-    // Загружаем данные
+    // Обновлённый метод загрузки
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
-        if(pTag.contains("CrucibleData")) {
+        if (pTag.contains("CrucibleData")) {
             receivedScrollData = pTag.getCompound("CrucibleData");
+        }
+
+        depositedItems.clear();
+        ListTag depositedList = pTag.getList("DepositedItems", Tag.TAG_COMPOUND);
+        for (int i = 0; i < depositedList.size(); i++) {
+            depositedItems.add(ItemStack.of(depositedList.getCompound(i)));
         }
     }
 
-    // Добавляем синхронизацию для клиента
+    // Обновлённая синхронизация
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
         tag.put("CrucibleData", receivedScrollData);
+        tag.putInt("LastUsedIndex", lastUsedIndex);
         return tag;
     }
+
+
 
     @Override
     public void handleUpdateTag(CompoundTag tag) {
