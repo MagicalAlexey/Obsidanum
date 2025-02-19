@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -56,9 +57,28 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
         debugDepositedItems("receiveScrollData");
     }
     public void clearCrucibleData() {
+        if (level != null && !level.isClientSide()) {
+            // Выбрасываем все предметы в мир
+            for (ItemStack stack : depositedItems) {
+                if (!stack.isEmpty()) {
+                    double x = worldPosition.getX() + 0.5;
+                    double y = worldPosition.getY() + 1.2; // Выше блока
+                    double z = worldPosition.getZ() + 0.5;
+
+                    ItemEntity itemEntity = new ItemEntity(
+                            level, x, y, z, stack.copy()
+                    );
+                    itemEntity.setDefaultPickUpDelay();
+                    level.addFreshEntity(itemEntity);
+                }
+            }
+            depositedItems.clear(); // Очищаем список
+        }
+
         this.receivedScrollData = new CompoundTag();
         this.setChanged();
-        if(level != null) {
+
+        if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
