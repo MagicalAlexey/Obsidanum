@@ -6,15 +6,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.rezolv.obsidanum.Obsidanum;
 import net.rezolv.obsidanum.block.entity.ForgeCrucibleEntity;
 
+import java.util.List;
 import java.util.ListIterator;
 
 public class UpdateIngredientsForgeCrucible {
@@ -32,7 +36,6 @@ public class UpdateIngredientsForgeCrucible {
 
     private static InteractionResult handleItemDeposit(Level level, Player player, ItemStack stack,
                                                        ForgeCrucibleEntity crucible, BlockPos pos, BlockState state) {
-        Obsidanum.LOGGER.info("Trying to deposit: {}", stack);
         CompoundTag data = crucible.getReceivedData();
         if (!data.contains("Ingredients", Tag.TAG_LIST)) {
             Obsidanum.LOGGER.warn("No ingredients found");
@@ -40,72 +43,112 @@ public class UpdateIngredientsForgeCrucible {
         }
 
         ListTag ingredients = data.getList("Ingredients", Tag.TAG_COMPOUND);
-        ItemStack stackCopy = stack.copyWithCount(1);
+        boolean modified = false;
 
         for (int i = 0; i < ingredients.size(); i++) {
             CompoundTag ingTag = ingredients.getCompound(i);
             try {
                 JsonObject json = JsonParser.parseString(ingTag.getString("IngredientJson")).getAsJsonObject();
-                if (processIngredient(crucible, stack, stackCopy, json)) {
+                if (processIngredient(crucible, stack, json)) {
                     stack.shrink(1);
-                    crucible.setChanged();
-                    level.sendBlockUpdated(pos, state, state, 3);
-                    return InteractionResult.SUCCESS;
+                    modified = true;
+                    break; // Предмет добавлен, выходим из цикла
                 }
             } catch (Exception e) {
-                Obsidanum.LOGGER.error("Parsing error: {}", e.getMessage());
+                Obsidanum.LOGGER.error("Error parsing ingredient: {}", e.getMessage());
             }
+        }
+
+        if (modified) {
+            crucible.setChanged();
+            level.sendBlockUpdated(pos, state, state, 3);
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
 
-    private static boolean processIngredient(ForgeCrucibleEntity crucible, ItemStack stack,
-                                             ItemStack stackCopy, JsonObject json) {
-        // Проверка наличия count
+    private static boolean processIngredient(ForgeCrucibleEntity crucible, ItemStack stack, JsonObject json) {
         if (!json.has("count")) {
-            Obsidanum.LOGGER.error("Ingredient missing 'count' field");
+            System.out.println("Missing 'count' in ingredient");
             return false;
         }
         int required = json.get("count").getAsInt();
 
+        // Определяем тип ингредиента (тег или предмет)
+        boolean isTag = json.has("tag");
+        Ingredient ingredient = Ingredient.fromJson(json);
+
         // Игнорируем прочность при проверке
-        ItemStack stackToCheck = stackCopy.copy();
+        ItemStack stackToCheck = stack.copy();
         if (stackToCheck.isDamaged()) {
-            stackToCheck.setDamageValue(0); // Сбрасываем урон
+            stackToCheck.setDamageValue(0);
         }
 
-        // Проверка соответствия ингредиенту
-        Ingredient ingredient = Ingredient.fromJson(json);
+        // Проверяем соответствие ингредиенту
         if (!ingredient.test(stackToCheck)) return false;
+        ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(stack.getItem());
 
-        // Подсчёт текущего количества (игнорируя прочность)
+        // Считаем текущее количество (игнорируя прочность)
         long current = crucible.depositedItems.stream()
-                .filter(s -> {
-                    ItemStack depositedCopy = s.copy();
+                .filter(deposited -> {
+                    ItemStack depositedCopy = deposited.copy();
                     if (depositedCopy.isDamaged()) {
                         depositedCopy.setDamageValue(0);
                     }
-                    return ItemStack.isSameItemSameTags(depositedCopy, stackToCheck);
+                    // Для тегов: проверяем принадлежность к тегу
+                    if (isTag) {
+                        return ingredient.test(depositedCopy);
+                    }
+                    // Для предметов: точное совпадение
+                    else {
+                        return ItemStack.isSameItemSameTags(depositedCopy, stackToCheck);
+                    }
                 })
                 .count();
 
-        // Добавляем оригинальный предмет (с прочностью)
-        if (current < required) {
-            crucible.depositedItems.add(stackCopy.copy());
-            return true;
+        // Если достигнут лимит, не добавляем
+        if (current >= required) {
+            System.out.println("Ingredient limit reached: " + current + "/" + required);
+            return false;
         }
-        return false;
+
+        // Добавляем предмет с обнуленной прочностью
+        ItemStack stackToAdd = stack.copy();
+        if (stackToAdd.isDamaged()) {
+            stackToAdd.setDamageValue(0); // Игнорируем прочность при добавлении
+        }
+        stackToAdd.setCount(1); // Убедимся, что добавляется только 1 предмет
+        crucible.depositedItems.add(stackToAdd);
+
+        // Логирование для отладки
+
+        System.out.println("Current count: " + (current + 1) + "/" + required);
+
+        // Обновляем данные и синхронизируем с клиентом
+        crucible.setChanged();
+        if (crucible.getLevel() != null) {
+            crucible.getLevel().sendBlockUpdated(crucible.getBlockPos(), crucible.getBlockState(), crucible.getBlockState(), 3);
+        }
+        return true;
     }
 
     private static InteractionResult handleItemWithdrawal(Level level, Player player,
                                                           ForgeCrucibleEntity crucible, BlockPos pos, BlockState state) {
         if (crucible.depositedItems.isEmpty()) return InteractionResult.PASS;
 
+        // Извлекаем в обратном порядке (последние добавленные первыми)
         ListIterator<ItemStack> iterator = crucible.depositedItems.listIterator(crucible.depositedItems.size());
+
         while (iterator.hasPrevious()) {
             ItemStack stack = iterator.previous();
+
             if (!stack.isEmpty()) {
-                giveOrDropItem(player, stack.copy());
+                // Возвращаем ровно 1 предмет
+                ItemStack returnStack = stack.copy();
+                returnStack.setCount(1); // Убедимся, что возвращается только 1 предмет
+                giveOrDropItem(player, returnStack);
+
+                // Удаляем только 1 предмет из списка
                 iterator.remove();
                 crucible.setChanged();
                 level.sendBlockUpdated(pos, state, state, 3);
@@ -117,7 +160,14 @@ public class UpdateIngredientsForgeCrucible {
 
     private static void giveOrDropItem(Player player, ItemStack stack) {
         if (!player.getInventory().add(stack)) {
-            player.drop(stack, false);
+            // Если инвентарь полон, выбрасываем ровно 1 предмет
+            ItemEntity itemEntity = new ItemEntity(
+                    player.level(),
+                    player.getX(), player.getY() + 0.5, player.getZ(),
+                    stack.copy()
+            );
+            itemEntity.setDefaultPickUpDelay();
+            player.level().addFreshEntity(itemEntity);
         }
     }
 }

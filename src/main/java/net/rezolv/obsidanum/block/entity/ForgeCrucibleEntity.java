@@ -46,8 +46,6 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
 
     // Метод для приема данных
     public void receiveScrollData(CompoundTag data) {
-        this.depositedItems.clear();
-
         this.receivedScrollData = data.copy();
         this.depositedItems.clear(); // Очищаем при новом рецепте
         setChanged();
@@ -58,18 +56,20 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     }
     public void clearCrucibleData() {
         if (level != null && !level.isClientSide()) {
-            // Выбрасываем все предметы (включая повреждённые)
+            // Возвращаем все предметы, выбрасывая их на землю
             for (ItemStack stack : depositedItems) {
-                ItemEntity itemEntity = new ItemEntity(
-                        level,
-                        worldPosition.getX() + 0.5,
-                        worldPosition.getY() + 1.2,
-                        worldPosition.getZ() + 0.5,
-                        stack.copy()
-                );
-                level.addFreshEntity(itemEntity);
+                if (!stack.isEmpty()) {
+                    // Создаем предмет на земле
+                    ItemEntity itemEntity = new ItemEntity(
+                            level,
+                            worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, // Позиция над тиглем
+                            stack.copy() // Создаем копию стека, чтобы не изменять оригинал
+                    );
+                    itemEntity.setDefaultPickUpDelay(); // Устанавливаем задержку перед подбором
+                    level.addFreshEntity(itemEntity); // Добавляем предмет в мир
+                }
             }
-            depositedItems.clear();
+            depositedItems.clear(); // Очищаем список
         }
 
         this.receivedScrollData = new CompoundTag();
@@ -77,6 +77,18 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
 
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+    private void giveOrDropItem(Player player, ItemStack stack) {
+        if (!player.getInventory().add(stack)) {
+            // Если инвентарь полон, выбрасываем предмет на землю
+            ItemEntity itemEntity = new ItemEntity(
+                    player.level(),
+                    player.getX(), player.getY() + 0.5, player.getZ(),
+                    stack
+            );
+            itemEntity.setDefaultPickUpDelay();
+            player.level().addFreshEntity(itemEntity);
         }
     }
     // Сохраняем данные
@@ -128,6 +140,7 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
+        saveAdditional(tag);
         // Сохраняем ВСЕ данные
         tag.put("CrucibleData", receivedScrollData);
         ListTag depositedList = new ListTag();
@@ -144,6 +157,7 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
     public void handleUpdateTag(CompoundTag tag) {
         super.handleUpdateTag(tag);
         // Загружаем ВСЕ данные
+        load(tag); // Загружаем данные из тега
         depositedItems.clear();
         ListTag depositedList = tag.getList("DepositedItems", Tag.TAG_COMPOUND);
         for (int i = 0; i < depositedList.size(); i++) {

@@ -38,7 +38,6 @@ public class RenderIngredientsForgeCrucible {
     public static void renderIngredients(ForgeCrucibleEntity blockEntity, float partialTick,
                                          PoseStack poseStack, MultiBufferSource buffer,
                                          int packedLight) {
-
         CompoundTag crucibleData = blockEntity.getReceivedData();
         if (!crucibleData.contains("Ingredients")) return;
 
@@ -51,28 +50,32 @@ public class RenderIngredientsForgeCrucible {
         BlockState state = blockEntity.getBlockState();
         Direction facing = state.getValue(ForgeCrucible.FACING);
 
-        // Инициализация списка ДО использования
         List<RenderEntry> renderEntries = new ArrayList<>();
 
         for (int i = 0; i < ingredients.size(); i++) {
             CompoundTag entry = ingredients.getCompound(i);
-            String ingredientJson = entry.getString("IngredientJson");
-            JsonObject json = JsonParser.parseString(ingredientJson).getAsJsonObject();
+            JsonObject json = JsonParser.parseString(entry.getString("IngredientJson")).getAsJsonObject();
 
-            // Игнорируем прочность при подсчёте
-            long currentCount = blockEntity.depositedItems.stream()
+            boolean isTag = json.has("tag");
+            int required = json.get("count").getAsInt();
+
+            // Считаем все подходящие предметы для тегов
+            long current = blockEntity.depositedItems.stream()
                     .filter(stack -> {
-                        ItemStack checkStack = stack.copy();
-                        if (checkStack.isDamaged()) {
-                            checkStack.setDamageValue(0);
-                        }
-                        return Ingredient.fromJson(json).test(checkStack);
+                        Ingredient ing = Ingredient.fromJson(json);
+                        return isTag ? ing.test(stack) : ItemStack.isSameItemSameTags(stack, ing.getItems()[0]);
                     })
                     .count();
 
-            int requiredCount = json.get("count").getAsInt();
-            if (currentCount >= requiredCount) continue; // Пропускаем выполненные
+            // Логирование для отладки
+            System.out.println("Checking ingredient: " + json +
+                    " (current: " + current +
+                    ", required: " + required + ")");
 
+            // Пропускаем выполненные ингредиенты
+            if (current >= required) continue;
+
+            // Генерация вариантов для рендера
             List<ItemStack> stacks = new ArrayList<>();
             if (json.has("item")) {
                 Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(json.get("item").getAsString()));
@@ -91,6 +94,7 @@ public class RenderIngredientsForgeCrucible {
 
         if (renderEntries.isEmpty()) return;
 
+        // Рендер ингредиентов
         float totalWidth = (renderEntries.size() - 1) * ITEM_SPACING;
         float startOffset = -totalWidth / 2;
         long gameTime = level.getGameTime();

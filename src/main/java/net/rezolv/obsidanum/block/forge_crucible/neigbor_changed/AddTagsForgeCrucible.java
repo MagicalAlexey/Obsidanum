@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,6 +15,7 @@ import net.rezolv.obsidanum.block.entity.RightForgeScrollEntity;
 import net.rezolv.obsidanum.block.enum_blocks.ScrollType;
 
 public class AddTagsForgeCrucible {
+
     public static void handleNeighborUpdate(BlockState state, Level level, BlockPos pos, BlockPos fromPos) {
         Direction facing = state.getValue(ForgeCrucible.FACING);
         BlockPos expectedRightPos = switch (facing) {
@@ -35,8 +37,11 @@ public class AddTagsForgeCrucible {
 
                 if (crucibleEntity instanceof ForgeCrucibleEntity crucible) {
                     if (scrollType == ScrollType.NONE) {
-                        // Очищаем данные если свиток деактивирован
-                        crucible.clearCrucibleData();
+                        // Очищаем данные, если свиток деактивирован
+                        Player player = level.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10, null);
+                        if (player != null) {
+                            crucible.clearCrucibleData();
+                        }
                         System.out.println("[Crucible] Scroll removed. Data cleared!");
                     } else {
                         // Старая логика копирования данных
@@ -45,15 +50,15 @@ public class AddTagsForgeCrucible {
                             CompoundTag scrollNBT = scrollEntity.getScrollNBT();
 
                             CompoundTag dataToSend = new CompoundTag();
-                            if(scrollNBT.contains("Ingredients", Tag.TAG_LIST)) {
+                            if (scrollNBT.contains("Ingredients", Tag.TAG_LIST)) {
                                 dataToSend.put("Ingredients", scrollNBT.getList("Ingredients", Tag.TAG_COMPOUND));
                             }
 
-                            if(scrollNBT.contains("RecipeResult", Tag.TAG_LIST)) {
+                            if (scrollNBT.contains("RecipeResult", Tag.TAG_LIST)) {
                                 dataToSend.put("RecipeResult", scrollNBT.getList("RecipeResult", Tag.TAG_COMPOUND));
                             }
 
-                            if(scrollNBT.contains("RecipesPlans", Tag.TAG_STRING)) {
+                            if (scrollNBT.contains("RecipesPlans", Tag.TAG_STRING)) {
                                 dataToSend.putString("RecipesPlans", scrollNBT.getString("RecipesPlans"));
                             }
 
