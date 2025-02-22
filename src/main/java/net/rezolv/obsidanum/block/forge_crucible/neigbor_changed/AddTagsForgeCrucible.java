@@ -42,7 +42,6 @@ public class AddTagsForgeCrucible {
                         if (player != null) {
                             crucible.clearCrucibleData();
                         }
-                        System.out.println("[Crucible] Scroll removed. Data cleared!");
                     } else {
                         // Старая логика копирования данных
                         BlockEntity rightEntity = level.getBlockEntity(expectedRightPos);

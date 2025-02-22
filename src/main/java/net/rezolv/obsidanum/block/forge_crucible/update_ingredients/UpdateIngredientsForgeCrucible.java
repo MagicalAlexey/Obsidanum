@@ -62,7 +62,6 @@ public class UpdateIngredientsForgeCrucible {
                 }
 
             } catch (Exception e) {
-                Obsidanum.LOGGER.error("Error processing ingredient", e);
                 return InteractionResult.FAIL;
             }
         }
@@ -102,7 +101,6 @@ public class UpdateIngredientsForgeCrucible {
 
     private static boolean processIngredient(ForgeCrucibleEntity crucible, ItemStack stack, JsonObject json) {
         if (!json.has("count")) {
-            System.out.println("Missing 'count' in ingredient");
             return false;
         }
         int required = json.get("count").getAsInt();
@@ -141,7 +139,6 @@ public class UpdateIngredientsForgeCrucible {
 
         // Если достигнут лимит, не добавляем
         if (current >= required) {
-            System.out.println("Ingredient limit reached: " + current + "/" + required);
             return false;
         }
 
@@ -152,10 +149,6 @@ public class UpdateIngredientsForgeCrucible {
         }
         stackToAdd.setCount(1); // Убедимся, что добавляется только 1 предмет
         crucible.depositedItems.add(stackToAdd);
-
-        // Логирование для отладки
-
-        System.out.println("Current count: " + (current + 1) + "/" + required);
 
         // Обновляем данные и синхронизируем с клиентом
         crucible.setChanged();

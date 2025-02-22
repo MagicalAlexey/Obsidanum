@@ -107,30 +107,41 @@ public class ForgeCrucible extends BaseEntityBlock {
 
         // Проверяем выполнение всех условий рецепта
         if (!validateIngredients(crucible, data)) {
-            // Можно добавить звук/эффект ошибки
-            Obsidanum.LOGGER.info("Не все ингредиенты собраны!");
             return;
         }
-        if (validateIngredients(crucible, data)) {
-            // Выдаем результат
-            ListTag results = data.getList("RecipeResult", Tag.TAG_COMPOUND);
-            for (int i = 0; i < results.size(); i++) {
-                CompoundTag resultTag = results.getCompound(i);
-                ItemStack resultStack = ItemStack.of(resultTag);
 
-                ItemEntity itemEntity = new ItemEntity(
+        ListTag results = data.getList("RecipeResult", Tag.TAG_COMPOUND);
+        for (int i = 0; i < results.size(); i++) {
+            CompoundTag resultTag = results.getCompound(i);
+            ItemStack resultStack = ItemStack.of(resultTag);
+
+            // Основной результат
+            ItemEntity itemEntity = new ItemEntity(
+                    level,
+                    pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                    resultStack.copy()
+            );
+            itemEntity.setDefaultPickUpDelay();
+            level.addFreshEntity(itemEntity);
+
+            // Дополнительный шанс выпадения (если count > 1)
+            if (resultStack.getCount() > 1 && level.getRandom().nextFloat() < 0.3f) {
+                int extraCount = 1 + level.getRandom().nextInt(3); // от 1 до 3
+                ItemStack extraStack = resultStack.copy();
+                extraStack.setCount(extraCount);
+                ItemEntity extraEntity = new ItemEntity(
                         level,
                         pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-                        resultStack.copy()
+                        extraStack
                 );
-                itemEntity.setDefaultPickUpDelay();
-                level.addFreshEntity(itemEntity);
+                extraEntity.setDefaultPickUpDelay();
+                level.addFreshEntity(extraEntity);
             }
-
-            // Сбрасываем только при успешном выполнении
-            resetIngredients(crucible);
-            level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 3);
         }
+
+        // Сбрасываем ингредиенты после успешного выполнения рецепта
+        resetIngredients(crucible);
+        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 3);
     }
 
     // Метод проверки ингредиентов
@@ -151,12 +162,10 @@ public class ForgeCrucible extends BaseEntityBlock {
                         .count();
 
                 if (matches < required) {
-                    Obsidanum.LOGGER.debug("Не хватает: {}/{}", matches, required);
                     return false;
                 }
 
             } catch (Exception e) {
-                Obsidanum.LOGGER.error("Ошибка проверки ингредиента: {}", e.getMessage());
                 return false;
             }
         }
