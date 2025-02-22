@@ -38,34 +38,67 @@ public class UpdateIngredientsForgeCrucible {
                                                        ForgeCrucibleEntity crucible, BlockPos pos, BlockState state) {
         CompoundTag data = crucible.getReceivedData();
         if (!data.contains("Ingredients", Tag.TAG_LIST)) {
-            Obsidanum.LOGGER.warn("No ingredients found");
             return InteractionResult.PASS;
         }
 
         ListTag ingredients = data.getList("Ingredients", Tag.TAG_COMPOUND);
-        boolean modified = false;
+        boolean allRequirementsMet = true;
+        boolean itemUsed = false;
 
+        // Проверяем все ингредиенты
         for (int i = 0; i < ingredients.size(); i++) {
             CompoundTag ingTag = ingredients.getCompound(i);
             try {
                 JsonObject json = JsonParser.parseString(ingTag.getString("IngredientJson")).getAsJsonObject();
                 if (processIngredient(crucible, stack, json)) {
                     stack.shrink(1);
-                    modified = true;
-                    break; // Предмет добавлен, выходим из цикла
+                    itemUsed = true;
+                    break;
                 }
+
+                // Проверяем выполнение требований для каждого ингредиента
+                if (!checkIngredientRequirement(crucible, json)) {
+                    allRequirementsMet = false;
+                }
+
             } catch (Exception e) {
-                Obsidanum.LOGGER.error("Error parsing ingredient: {}", e.getMessage());
+                Obsidanum.LOGGER.error("Error processing ingredient", e);
+                return InteractionResult.FAIL;
             }
         }
 
-        if (modified) {
+        if (itemUsed) {
             crucible.setChanged();
             level.sendBlockUpdated(pos, state, state, 3);
+
+            // Проверяем выполнение всех требований после добавления
+            if (allRequirementsMet) {
+                crucible.markReadyForCrafting();
+            }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
+    private static boolean checkIngredientRequirement(ForgeCrucibleEntity crucible, JsonObject json) {
+        int required = json.get("count").getAsInt();
+        boolean isTag = json.has("tag");
+        Ingredient ingredient = Ingredient.fromJson(json);
+
+        long currentCount = crucible.depositedItems.stream()
+                .filter(stack -> {
+                    ItemStack copy = stack.copy();
+                    if (copy.isDamaged()) copy.setDamageValue(0);
+                    return isTag ?
+                            ingredient.test(copy) :
+                            ItemStack.isSameItemSameTags(copy, copy);
+                })
+                .count();
+
+        return currentCount >= required;
+    }
+
+    // В классе ForgeCrucibleEntity
+
 
     private static boolean processIngredient(ForgeCrucibleEntity crucible, ItemStack stack, JsonObject json) {
         if (!json.has("count")) {

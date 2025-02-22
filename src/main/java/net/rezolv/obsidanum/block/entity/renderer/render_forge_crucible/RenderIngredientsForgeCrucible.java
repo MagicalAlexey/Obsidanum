@@ -66,12 +66,6 @@ public class RenderIngredientsForgeCrucible {
                         return isTag ? ing.test(stack) : ItemStack.isSameItemSameTags(stack, ing.getItems()[0]);
                     })
                     .count();
-
-            // Логирование для отладки
-            System.out.println("Checking ingredient: " + json +
-                    " (current: " + current +
-                    ", required: " + required + ")");
-
             // Пропускаем выполненные ингредиенты
             if (current >= required) continue;
 

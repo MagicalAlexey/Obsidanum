@@ -79,20 +79,14 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
-    private void giveOrDropItem(Player player, ItemStack stack) {
-        if (!player.getInventory().add(stack)) {
-            // Если инвентарь полон, выбрасываем предмет на землю
-            ItemEntity itemEntity = new ItemEntity(
-                    player.level(),
-                    player.getX(), player.getY() + 0.5, player.getZ(),
-                    stack
-            );
-            itemEntity.setDefaultPickUpDelay();
-            player.level().addFreshEntity(itemEntity);
-        }
+    public boolean isCraftingReady = false;
+
+    public void markReadyForCrafting() {
+        this.isCraftingReady = true;
+        setChanged();
     }
     // Сохраняем данные
-    private CompoundTag receivedScrollData = new CompoundTag();
+    public CompoundTag receivedScrollData = new CompoundTag();
     public int lastUsedIndex = -1; // Сохраняем последний использованный индекс
 
     // Метод для получения данных
@@ -100,11 +94,7 @@ public class ForgeCrucibleEntity extends BlockEntity implements WorldlyContainer
         return this.receivedScrollData.copy();
     }
 
-    // Метод для сохранения последнего индекса
-    public void setLastUsedIndex(int index) {
-        this.lastUsedIndex = index;
-        setChanged();
-    }
+
 
     // Обновлённый метод сохранения
     @Override

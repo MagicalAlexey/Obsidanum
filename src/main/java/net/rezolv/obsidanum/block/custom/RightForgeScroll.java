@@ -74,44 +74,27 @@ public class RightForgeScroll extends BaseEntityBlock {
         // Убрать свиток и NBT
         if (pPlayer.isShiftKeyDown() && itemInHand.isEmpty() && currentType != ScrollType.NONE) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            CompoundTag itemTag = itemInHand.getTag(); // Получаем NBT из предмета
-            if (itemTag != null) {
-                if (blockEntity instanceof RightForgeScrollEntity) {
-                    ((RightForgeScrollEntity) blockEntity).setScrollNBT(itemTag); // Сохраняем NBT в блок
-                    System.out.println("[Scroll] Saved NBT to block: " + itemTag); // Отладочный вывод
-                }
-            }
-
-            if (blockEntity instanceof RightForgeScrollEntity) {
-                RightForgeScrollEntity scrollEntity = (RightForgeScrollEntity) blockEntity;
+            if (blockEntity instanceof RightForgeScrollEntity scrollEntity) {
                 CompoundTag storedNBT = scrollEntity.getScrollNBT();
-
                 if (!storedNBT.isEmpty()) {
                     ItemStack scrollItem = null;
                     switch (currentType) {
-                        case NETHER:
-                            scrollItem = ItemsObs.NETHER_PLAN.get().getDefaultInstance();
-                            break;
-                        case ORDER:
-                            scrollItem = ItemsObs.ORDER_PLAN.get().getDefaultInstance();
-                            break;
-                        case CATACOMBS:
-                            scrollItem = ItemsObs.CATACOMBS_PLAN.get().getDefaultInstance();
-                            break;
-                        case UPDATE:
-                            scrollItem = ItemsObs.UPGRADE_PLAN.get().getDefaultInstance();
-                            break;
+                        case NETHER -> scrollItem = ItemsObs.NETHER_PLAN.get().getDefaultInstance();
+                        case ORDER -> scrollItem = ItemsObs.ORDER_PLAN.get().getDefaultInstance();
+                        case CATACOMBS -> scrollItem = ItemsObs.CATACOMBS_PLAN.get().getDefaultInstance();
+                        case UPDATE -> scrollItem = ItemsObs.UPGRADE_PLAN.get().getDefaultInstance();
                     }
 
                     if (scrollItem != null) {
+                        // Устанавливаем сохранённый NBT в свиток
                         scrollItem.setTag(storedNBT);
-
-                        if (!pPlayer.addItem(scrollItem)) {
-                            pPlayer.drop(scrollItem, false);
+                        // Сначала пытаемся добавить свиток в инвентарь игрока, если не получилось – бросаем в мир
+                        if (!pPlayer.addItem(scrollItem.copy())) {
+                            pPlayer.drop(scrollItem.copy(), false);
                         }
-                        scrollEntity.setScrollNBT(new CompoundTag()); // Стираем NBT
+                        // После успешной выдачи очищаем данные в блоке
+                        scrollEntity.setScrollNBT(new CompoundTag());
                         pLevel.setBlock(pPos, pState.setValue(TYPE_SCROLL, ScrollType.NONE), 3);
-
                         // Обновление соседних блоков
                         pLevel.updateNeighborsAt(pPos, this);
                         return InteractionResult.sidedSuccess(pLevel.isClientSide());
