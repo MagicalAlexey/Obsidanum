@@ -25,6 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.rezolv.obsidanum.Obsidanum;
 import net.rezolv.obsidanum.block.entity.ForgeCrucibleEntity;
 import net.rezolv.obsidanum.block.enum_blocks.ScrollType;
+import net.rezolv.obsidanum.block.forge_crucible.neigbor_changed.RecipeByComplete;
 import net.rezolv.obsidanum.block.forge_crucible.update_ingredients.UpdateIngredientsForgeCrucible;
 import net.rezolv.obsidanum.block.forge_crucible.neigbor_changed.AddTagsForgeCrucible;
 import org.jetbrains.annotations.Nullable;
@@ -71,109 +72,7 @@ public class ForgeCrucible extends BaseEntityBlock {
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
         AddTagsForgeCrucible.handleNeighborUpdate(state, level, pos, fromPos);
-
-        Direction facing = state.getValue(ForgeCrucible.FACING);
-        BlockPos expectedRightPos = switch (facing) {
-            case NORTH -> pos.east();
-            case SOUTH -> pos.west();
-            case EAST -> pos.south();
-            case WEST -> pos.north();
-            default -> null;
-        };
-
-        if (expectedRightPos != null && expectedRightPos.equals(fromPos)) {
-            BlockState leftBlockState = level.getBlockState(expectedRightPos);
-            BlockEntity crucibleEntity = level.getBlockEntity(pos);
-
-            if (leftBlockState.getBlock() instanceof LeftCornerLevel
-                    && leftBlockState.hasProperty(LeftCornerLevel.IS_PRESSED)) {
-
-                boolean isPressed = leftBlockState.getValue(LeftCornerLevel.IS_PRESSED);
-                if (isPressed && crucibleEntity instanceof ForgeCrucibleEntity crucible) {
-                    // Вызываем метод для обработки результата
-                    handleResult(level, pos, crucible);
-                }
-            }
-        }
-    }
-
-    private void handleResult(Level level, BlockPos pos, ForgeCrucibleEntity crucible) {
-        CompoundTag data = crucible.getReceivedData();
-
-        // Проверяем наличие необходимых данных
-        if (!data.contains("RecipeResult", Tag.TAG_LIST) || !data.contains("Ingredients", Tag.TAG_LIST)) {
-            return;
-        }
-
-        // Проверяем выполнение всех условий рецепта
-        if (!validateIngredients(crucible, data)) {
-            return;
-        }
-
-        ListTag results = data.getList("RecipeResult", Tag.TAG_COMPOUND);
-        for (int i = 0; i < results.size(); i++) {
-            CompoundTag resultTag = results.getCompound(i);
-            ItemStack resultStack = ItemStack.of(resultTag);
-
-            // Основной результат
-            ItemEntity itemEntity = new ItemEntity(
-                    level,
-                    pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-                    resultStack.copy()
-            );
-            itemEntity.setDefaultPickUpDelay();
-            level.addFreshEntity(itemEntity);
-
-            // Дополнительный шанс выпадения (если count > 1)
-            if (resultStack.getCount() > 1 && level.getRandom().nextFloat() < 0.3f) {
-                int extraCount = 1 + level.getRandom().nextInt(3); // от 1 до 3
-                ItemStack extraStack = resultStack.copy();
-                extraStack.setCount(extraCount);
-                ItemEntity extraEntity = new ItemEntity(
-                        level,
-                        pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-                        extraStack
-                );
-                extraEntity.setDefaultPickUpDelay();
-                level.addFreshEntity(extraEntity);
-            }
-        }
-
-        // Сбрасываем ингредиенты после успешного выполнения рецепта
-        resetIngredients(crucible);
-        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 3);
-    }
-
-    // Метод проверки ингредиентов
-    private boolean validateIngredients(ForgeCrucibleEntity crucible, CompoundTag data) {
-        ListTag ingredients = data.getList("Ingredients", Tag.TAG_COMPOUND);
-
-        for (int i = 0; i < ingredients.size(); i++) {
-            CompoundTag ingTag = ingredients.getCompound(i);
-            try {
-                JsonObject json = JsonParser.parseString(ingTag.getString("IngredientJson")).getAsJsonObject();
-                int required = json.get("count").getAsInt();
-                // Создаем ингредиент из JSON
-                Ingredient ingredient = Ingredient.fromJson(json);
-
-                // Подсчитываем совпадения без сброса повреждения
-                long matches = crucible.depositedItems.stream()
-                        .filter(stack -> ingredient.test(stack))
-                        .count();
-
-                if (matches < required) {
-                    return false;
-                }
-
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return true;
-    }
-    public static void resetIngredients(ForgeCrucibleEntity crucible) {
-        crucible.depositedItems.clear();
-        crucible.setChanged();
+        RecipeByComplete.recipeByComplete(state, level, pos, fromPos);
     }
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
