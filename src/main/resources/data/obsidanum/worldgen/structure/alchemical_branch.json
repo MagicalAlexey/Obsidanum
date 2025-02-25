@@ -1,7 +1,7 @@
 {
   "type": "obsidanum:generic_structures",
   "start_pool": "obsidanum:alchemical_branch/start_pool",
-  "size": 15,
+  "size": 20,
   "max_distance_from_center": 400,
   "biomes": "#obsidanum:has_structure/alchemical_branch",
   "step": "surface_structures",
