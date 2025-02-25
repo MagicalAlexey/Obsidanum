@@ -1,0 +1,78 @@
+{
+  "name": "obsidanum:alchemical_branch/side_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_c_corridor_forge",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_c_corridor",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_end",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_c_corridor_forge_adapter",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_c_forge",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_c_splitter_t_left_forge",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_c_splitter_t_right_forge",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "obsidanum:alchemical_branch/ab_c_stairs",
+        "processors": "obsidanum:waterlogged",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

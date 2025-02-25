@@ -29,6 +29,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -61,7 +63,13 @@ public class ObsidianTablet extends Block {
     public static final BooleanProperty EXPERIENCED = BooleanProperty.create("experienced");
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty ENCHANTER = BooleanProperty.create("enchanter");
+    public BlockState rotate(BlockState state, Rotation rot) {
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+    }
 
+    public BlockState mirror(BlockState state, Mirror mirrorIn) {
+        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
+    }
 
     public ObsidianTablet(Properties properties) {
         super(properties);

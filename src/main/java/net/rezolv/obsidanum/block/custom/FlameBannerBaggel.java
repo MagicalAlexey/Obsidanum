@@ -134,22 +134,24 @@ public class FlameBannerBaggel extends Block {
     private void destroyBlockChain(LevelAccessor level, BlockPos pos) {
         BlockPos currentPos = pos;
 
-        // Удаляем блоки вниз по цепочке с дропом
-        while (level.getBlockState(currentPos).is(this)) {
+        // Обрабатываем текущий блок до проверки на прикрепление
+        while (true) {
             BlockState blockState = level.getBlockState(currentPos);
+            if (!blockState.is(this)) break; // Выходим, если блок не наш
 
-            // Проверяем, не прикреплён ли блок к стене или потолку
-            if (isAttachedToWallOrCeiling(level, currentPos, blockState.getValue(FACING))) {
-                // Прерываем цепочку, если блок прикреплён к стене или потолку
-                break;
-            }
-
+            // Дроп предмета для текущего блока
             if (level instanceof Level) {
-                // Вызываем метод для дропа предметов
                 Block.popResource((Level) level, currentPos, this.asItem().getDefaultInstance());
             }
-            level.destroyBlock(currentPos, false); // Удаляем блок без дропа стандартных ресурсов
+            level.destroyBlock(currentPos, false); // Удаляем блок
+
+            // Проверяем прикрепление СЛЕДУЮЩЕГО блока перед переходом
             currentPos = currentPos.below();
+            BlockState nextBlockState = level.getBlockState(currentPos);
+            if (!nextBlockState.is(this))break;
+            if (isAttachedToWallOrCeiling(level, currentPos, nextBlockState.getValue(FACING))) {
+                break;
+            }
         }
     }
     @Override

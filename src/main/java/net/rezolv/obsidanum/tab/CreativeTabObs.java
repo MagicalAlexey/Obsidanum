@@ -51,6 +51,7 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(BlocksObs.CRACKED_CARVED_OBSIDIAN_BRICKS_E.get());
                         pOutput.accept(BlocksObs.MOLDY_OBSIDIAN_BRICKS.get());
                         pOutput.accept(BlocksObs.OBSIDIAN.get());
+                        pOutput.accept(BlocksObs.AZURE_OBSIDIAN.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_STAIRS.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_SLAB.get());
                         pOutput.accept(BlocksObs.OBSIDIAN_WALL.get());
@@ -93,6 +94,7 @@ public class CreativeTabObs extends CreativeModeTab {
                         pOutput.accept(BlocksObs.FORGE_CRUCIBLE.get());
                         pOutput.accept(BlocksObs.LEFT_CORNER_LEVEL.get());
                         pOutput.accept(BlocksObs.WALL_FORGE_L_CORNER.get());
+                        pOutput.accept(BlocksObs.SIDE_FORGE.get());
                         pOutput.accept(BlocksObs.WALL_FORGE_R_CORNER.get());
                         pOutput.accept(BlocksObs.HAMMER_FORGE.get());
                         pOutput.accept(BlocksObs.BAGEL_ANVIL_BLOCK.get());

@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "obsidanum:block/carved_obsidian_bricks"
+      "model": "obsidanum:block/flame_pipe"
     }
   }
 }

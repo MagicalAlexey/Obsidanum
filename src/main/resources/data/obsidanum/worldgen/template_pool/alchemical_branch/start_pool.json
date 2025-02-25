@@ -1,6 +1,6 @@
 {
 
-  "name": "obsidanum:obsidian_dungeon/start_pool",
+  "name": "obsidanum:alchemical_branch/start_pool",
 
   "fallback": "minecraft:empty",
 
@@ -13,7 +13,7 @@
       "element": {
 
 
-        "location": "obsidanum:obsidian_dungeon",
+        "location": "obsidanum:alchemical_branch/ab_enter",
 
 
         "processors": "obsidanum:waterlogged",

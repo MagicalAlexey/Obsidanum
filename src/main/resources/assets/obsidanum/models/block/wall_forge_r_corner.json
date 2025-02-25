@@ -4,8 +4,8 @@
     64
   ],
   "textures": {
-    "2": "obsidanum:block/wall_forge",
-    "particle": "obsidanum:block/wall_forge"
+    "2": "obsidanum:block/forge_crucible",
+    "particle": "obsidanum:block/forge_crucible"
   },
   "render_type": "cutout",
   "elements": [
