@@ -1,4 +1,5 @@
 package net.rezolv.obsidanum.block.custom;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -60,27 +61,25 @@ public class SpreadingSnowyAlchemicalDirtBlock extends SnowyAlchemicalDirtBlock 
             if (!level.isAreaLoaded(pos, 3)) return;
 
             // Распространение при достаточном освещении
-            if (level.getMaxLocalRawBrightness(pos.above()) >= 9) {
-                BlockState targetState = this.defaultBlockState();
+            BlockState targetState = this.defaultBlockState();
 
-                // 4 попытки распространения в случайные стороны
-                for (int i = 0; i < 4; i++) {
-                    // Случайное смещение в пределах [-1,1] по X/Z и [-3,1] по Y
-                    BlockPos spreadPos = pos.offset(
-                            random.nextInt(3) - 1, // -1, 0, +1
-                            random.nextInt(5) - 3, // -3, -2, -1, 0, +1
-                            random.nextInt(3) - 1
+            // 4 попытки распространения в случайные стороны
+            for (int i = 0; i < 4; i++) {
+                // Случайное смещение в пределах [-1,1] по X/Z и [-3,1] по Y
+                BlockPos spreadPos = pos.offset(
+                        random.nextInt(3) - 1, // -1, 0, +1
+                        random.nextInt(5) - 3, // -3, -2, -1, 0, +1
+                        random.nextInt(3) - 1
+                );
+
+                // Если найден блок грязи и можно распространиться
+                if (level.getBlockState(spreadPos).is(BlocksObs.ALCHEMICAL_DIRT.get())
+                        && canPropagate(targetState, level, spreadPos)) {
+                    // Устанавливаем новый блок с учетом снега сверху
+                    level.setBlockAndUpdate(spreadPos,
+                            targetState.setValue(SNOWY,
+                                    level.getBlockState(spreadPos.above()).is(Blocks.SNOW))
                     );
-
-                    // Если найден блок грязи и можно распространиться
-                    if (level.getBlockState(spreadPos).is(BlocksObs.ALCHEMICAL_DIRT.get())
-                            && canPropagate(targetState, level, spreadPos)) {
-                        // Устанавливаем новый блок с учетом снега сверху
-                        level.setBlockAndUpdate(spreadPos,
-                                targetState.setValue(SNOWY,
-                                        level.getBlockState(spreadPos.above()).is(Blocks.SNOW))
-                        );
-                    }
                 }
             }
         }
