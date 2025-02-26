@@ -29,8 +29,19 @@ import java.util.function.Supplier;
 public class BlocksObs {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, Obsidanum.MOD_ID);
-
     public static final DeferredRegister<Item> ITEMS = ItemsObs.ITEMS;
+
+    public static final RegistryObject<Block> CRIMSON_GRASS = registerBlock("crimson_grass",
+            () -> new TallCrimsonGrassBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).replaceable().noCollission()
+                    .instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XYZ).ignitedByLava().pushReaction(PushReaction.DESTROY)));
+    public static final RegistryObject<Block> CRIMSON_GRASS_BLOCK = registerBlock("crimson_grass_block",
+            () -> new CrimsonGrassBlock(BlockBehaviour.Properties.of().mapColor(MapColor.GRASS).randomTicks()
+                    .strength(0.6F).sound(SoundType.GRASS)));
+    public static final RegistryObject<Block> ALCHEMICAL_DIRT = registerBlock("alchemical_dirt",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DIRT).strength(0.5F).sound(SoundType.GRAVEL)));
+
+
     public static final RegistryObject<Block> FLAME_DISPENSER = registerBlock("flame_dispenser",
             () -> new FlameDispenser(BlockBehaviour.Properties.of().noOcclusion().strength(-1.0F, 3600000.0F).sound(SoundType.STONE).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> FLAME_PIPE = registerBlock("flame_pipe",

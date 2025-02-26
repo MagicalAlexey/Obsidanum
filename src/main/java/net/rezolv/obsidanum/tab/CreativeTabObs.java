@@ -107,6 +107,12 @@ public class CreativeTabObs extends CreativeModeTab {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsObs.OBSIDIAN_BRICKS.get()))
                     .title(Component.translatable("creativetab.obsidian_blocks"))
                     .displayItems((pParameters, pOutput) -> {
+
+                        pOutput.accept(BlocksObs.CRIMSON_GRASS.get());
+                        pOutput.accept(BlocksObs.CRIMSON_GRASS_BLOCK.get());
+                        pOutput.accept(BlocksObs.ALCHEMICAL_DIRT.get());
+
+
                         pOutput.accept(BlocksObs.PRANA_CRYSTALL.get());
                         pOutput.accept(BlocksObs.RITUAL_DRUM.get());
                         pOutput.accept(ItemsObs.OBSIDAN_SIGN.get());
