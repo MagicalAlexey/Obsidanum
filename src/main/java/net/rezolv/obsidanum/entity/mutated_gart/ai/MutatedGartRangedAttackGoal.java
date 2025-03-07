@@ -2,69 +2,76 @@ package net.rezolv.obsidanum.entity.mutated_gart.ai;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.Level;
-import net.rezolv.obsidanum.entity.ModItemEntities;
 import net.rezolv.obsidanum.entity.mutated_gart.MutatedGart;
-import net.rezolv.obsidanum.entity.projectile_entity.MagicArrow;
-
-import java.util.EnumSet;
 
 public class MutatedGartRangedAttackGoal extends Goal {
-    private final MutatedGart entity;
-    private final double minDistance;
-    private double attackCooldown = 25;
+    private final MutatedGart mob;
+    private final float attackRadiusSq;
+    private int attackCooldown = 0;
+    private int animationProgress = 0;
+    private static final int ATTACK_DELAY = 20; // Тиков до выстрела
+    private static final int RECHARGE_DELAY = 20; // Тиков перезарядки
 
-    public MutatedGartRangedAttackGoal(MutatedGart entity, double minDistance) {
-        this.entity = entity;
-
-        this.minDistance = minDistance;
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-    }
-
-    @Override
-    public void start() {
-        super.start();
-        if (entity.attackAnimationMagicArrowTimeout <= 0) {
-            this.entity.setAttackingMagicArrow(true);
-        }
+    public MutatedGartRangedAttackGoal(MutatedGart mob, double speed, float radius) {
+        this.mob = mob;
+        this.attackRadiusSq = radius * radius;
     }
 
     @Override
     public boolean canUse() {
-        LivingEntity target = this.entity.getTarget();
-        return target != null && target.isAlive() && this.entity.distanceTo(target) > minDistance;
+        LivingEntity target = mob.getTarget();
+        return target != null
+                && mob.distanceToSqr(target) <= attackRadiusSq
+                && mob.hasLineOfSight(target);
     }
 
+    @Override
+    public boolean canContinueToUse() {
+        return mob.getTarget() != null;
+    }
+
+    @Override
+    public void start() {
+        mob.getNavigation().stop();
+        mob.setMagicAttacking(true);
+        animationProgress = 0;
+    }
 
     @Override
     public void tick() {
-        LivingEntity target = this.entity.getTarget();
+        LivingEntity target = mob.getTarget();
         if (target == null) return;
 
-        Level level = this.entity.level();
-        this.entity.getLookControl().setLookAt(target, 30.0F, 30.0F);
+        mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-        // Decrease cooldown
-        if (--attackCooldown <= 0) {
-            attackCooldown = 25;
-
-            MagicArrow magicArrow = new MagicArrow(ModItemEntities.MAGIC_ARROW_NETHER_FLAME_ENTITY.get(), level);
-
-            magicArrow.setOwner(this.entity);
-            magicArrow.setTarget(target);
-            magicArrow.setPos(this.entity.getX(), this.entity.getEyeY() - 0.2, this.entity.getZ());
-            magicArrow.shoot(target.getX() - this.entity.getX(),
-                    target.getEyeY() - magicArrow.getY(),
-                    target.getZ() - this.entity.getZ(),
-                    1.5F, 1.0F);
-
-            level.addFreshEntity(magicArrow);
+        // Если кулдаун активен, уменьшаем его
+        if (attackCooldown > 0) {
+            attackCooldown--;
+        } else {
+            // Продвигаем анимацию атаки, если кулдауна нет
+            animationProgress++;
+            if (animationProgress == ATTACK_DELAY) {
+                // На момент ATTACK_DELAY выполняем дальний выстрел
+                mob.performRangedAttack(target, 1.0F);
+            }
+            if (animationProgress >= RECHARGE_DELAY) {
+                // По окончании цикла сбрасываем анимацию и устанавливаем кулдаун,
+                // после чего цикл повторится, как только кулдаун обнулится.
+                mob.magicAttackAnimationState.stop();
+                attackCooldown = RECHARGE_DELAY;
+                animationProgress = 0;
+            }
         }
     }
 
     @Override
     public void stop() {
-        super.stop();
-        this.entity.setAttackingMagicArrow(false);
+        mob.setMagicAttacking(false);
+        animationProgress = 0;
+    }
+
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
     }
 }

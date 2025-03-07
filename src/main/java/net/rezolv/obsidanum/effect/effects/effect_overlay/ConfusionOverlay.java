@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -22,7 +21,7 @@ public class ConfusionOverlay {
             new ResourceLocation("obsidanum", "textures/overlay/flash5.png")
     };
 
-    private static final int TICK_INTERVAL = 1; // Смена картинки каждые 5 тиков
+    private static final int TICK_INTERVAL = 2; // Смена картинки каждые 5 тиков
     private int currentIndex = 0; // Текущая текстура
     private int tickCounter = 0; // Счетчик тиков
 
@@ -41,24 +40,26 @@ public class ConfusionOverlay {
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
         int screenHeight = minecraft.getWindow().getGuiScaledHeight();
 
-        // Включение текстур и настроек прозрачности
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
 
-        RenderSystem.defaultBlendFunc(); // Стандартное смешивание
-        RenderSystem.setShaderTexture(1, OVERLAY_TEXTURES[currentIndex]);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.7f);
-        // Отрисовка с прозрачностью
-        guiGraphics.blit(OVERLAY_TEXTURES[currentIndex], 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight);
+        // Установите альфа-канал и нарисуйте текстуру
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.7f); // Альфа = 0.7
+        guiGraphics.blit(
+                OVERLAY_TEXTURES[currentIndex],
+                0, 0,
+                0, 0,
+                screenWidth, screenHeight,
+                screenWidth, screenHeight
+        );
 
-        // Отключение смешивания для других элементов интерфейса
+        // Сбросьте настройки
         RenderSystem.disableBlend();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f); // Важно!
     }
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
-
+        if (event.phase != TickEvent.Phase.END) return;
         tickCounter++;
         if (tickCounter >= TICK_INTERVAL) {
             tickCounter = 0;

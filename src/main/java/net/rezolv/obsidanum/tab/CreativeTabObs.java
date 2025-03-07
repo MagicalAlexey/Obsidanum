@@ -492,7 +492,4 @@ public class CreativeTabObs extends CreativeModeTab {
         resultList.add(outputTag);
         resultTag.put("RecipeResult", resultList);
     }
-
-
-
 }

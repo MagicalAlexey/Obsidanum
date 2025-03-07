@@ -192,7 +192,7 @@ public class MutatedGartAnimation {
             ))
             .build();
 
-        public static final AnimationDefinition punch = AnimationDefinition.Builder.withLength(0.625F)
+        public static final AnimationDefinition punch = AnimationDefinition.Builder.withLength(0.75F).looping()
                 .addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                         new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
                         new Keyframe(0.25F, KeyframeAnimations.degreeVec(-17.5845F, 7.9306F, 5.3439F), AnimationChannel.Interpolations.LINEAR),
@@ -286,7 +286,7 @@ public class MutatedGartAnimation {
                 ))
                 .build();
 
-    public static final AnimationDefinition magic_punch = AnimationDefinition.Builder.withLength(1.75F)
+    public static final AnimationDefinition magic_punch = AnimationDefinition.Builder.withLength(1.75F).looping()
             .addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
                     new Keyframe(0.5F, KeyframeAnimations.degreeVec(5.0F, -10.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),

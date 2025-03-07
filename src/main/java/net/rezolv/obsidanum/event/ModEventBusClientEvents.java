@@ -49,6 +49,7 @@ public class ModEventBusClientEvents {
         event.registerSpriteSet(ParticlesObs.NETHER_FLAME_PARTICLES.get(), NetherFlameProjectileParticle.Provider::new);
         event.registerSpriteSet(ParticlesObs.GLINT_PURPLE_PARTICLES.get(), GlintPurple.Provider::new);
         event.registerSpriteSet(ParticlesObs.GLINT_BLUE_PARTICLES.get(), GlintBlue.Provider::new);
+        event.registerSpriteSet(ParticlesObs.GLINT_CRIMSON_PARTICLES.get(), GlintBlue.Provider::new);
         event.registerSpriteSet(ParticlesObs.NETHER_FLAME_PROJECTILE_PARTICLES.get(), NetherFlameProjectileParticle.Provider::new);
         event.registerSpriteSet(ParticlesObs.NETHER_FLAME2_PARTICLES.get(), Nether2FlameParticle.Provider::new);
         event.registerSpriteSet(ParticlesObs.BAGELL_FLAME_PARTICLES.get(), BagellFlameParticle.Provider::new);

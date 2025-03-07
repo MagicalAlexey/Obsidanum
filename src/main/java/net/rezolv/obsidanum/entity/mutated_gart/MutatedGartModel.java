@@ -163,15 +163,22 @@ public class MutatedGartModel<T extends Entity> extends HierarchicalModel<T> {
 		this.head.yRot = pNetHeadYaw * ((float)Math.PI / 180F);
 		this.head.xRot = pHeadPitch * ((float)Math.PI / 180F);
 	}
-	
+
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.applyHeadRotation(netHeadYaw, headPitch, ageInTicks);
-		this.animate(((MutatedGart) entity).attackAnimationState, MutatedGartAnimation.punch, ageInTicks, 1f);
-		this.animate(((MutatedGart) entity).attackAnimationMagicArrowState, MutatedGartAnimation.magic_punch, ageInTicks, 1f);
 
-		this.animateWalk(MutatedGartAnimation.walk, limbSwing, limbSwingAmount, 2f, 2.5f);
-		this.animate(((MutatedGart) entity).idleAnimationState, MutatedGartAnimation.idle, ageInTicks, 1f);
+		MutatedGart gart = (MutatedGart) entity;
+
+		if (gart.isMagicAttacking()) {
+			this.animate(gart.magicAttackAnimationState, MutatedGartAnimation.magic_punch, ageInTicks, 1f);
+		} else if (gart.attackAnimationState.isStarted()) {
+			this.animate(gart.attackAnimationState, MutatedGartAnimation.punch, ageInTicks, 1f);
+		} else if (gart.isMoving()) {
+			this.animateWalk(MutatedGartAnimation.walk, limbSwing, limbSwingAmount, 2f, 2.5f);
+		} else {
+			this.animate(gart.idleAnimationState, MutatedGartAnimation.idle, ageInTicks, 1f);
+		}
 	}
 }

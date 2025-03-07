@@ -20,12 +20,9 @@ public class MutatedGartRenderer extends MobRenderer<MutatedGart, MutatedGartMod
     public MutatedGartRenderer(EntityRendererProvider.Context context) {
         super(context, new MutatedGartModel<>(context.bakeLayer(ModModelLayers.MUTATED_GART)), 0.5f);
         this.addLayer(new RenderLayer<MutatedGart, MutatedGartModel<MutatedGart>>(this) {
-            final ResourceLocation MUTATED_GART_EYES = new ResourceLocation(Obsidanum.MOD_ID, "textures/entity/mutated_gart/mutated_gart_eyes.png");
 
             @Override
             public void render(PoseStack poseStack, MultiBufferSource bufferSource, int light, MutatedGart entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-                VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.eyes(MUTATED_GART_EYES));
-                this.getParentModel().renderToBuffer(poseStack, vertexConsumer, light, LivingEntityRenderer.getOverlayCoords(entity, 1), 1, 1, 1, 1);
             }
         });
     }
