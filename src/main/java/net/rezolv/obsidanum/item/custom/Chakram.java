@@ -1,7 +1,6 @@
 package net.rezolv.obsidanum.item.custom;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -29,7 +28,10 @@ public class Chakram extends Item {
         getDamage(entity.level(), entity);
         return retval;
     }
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     public static void getDamage(LevelAccessor world, Entity entity) {
         if (entity == null)
             return;

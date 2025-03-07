@@ -1,30 +1,29 @@
 package net.rezolv.obsidanum.item.custom;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.rezolv.obsidanum.fluid.ModFluids;
+import net.rezolv.obsidanum.block.custom.FlameDispenser;
+import net.rezolv.obsidanum.entity.ModItemEntities;
+import net.rezolv.obsidanum.entity.projectile_entity.NetherFlameEntityMini;
+import net.rezolv.obsidanum.item.projectile_functions.StrikeNetherFlame;
+
 @Mod.EventBusSubscriber
 public class NetherFlame extends Item {
     public NetherFlame(Properties pProperties) {
@@ -33,6 +32,11 @@ public class NetherFlame extends Item {
     @Override
     public boolean hasCraftingRemainingItem() {
         return true;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
     }
 
     @Override
@@ -48,6 +52,86 @@ public class NetherFlame extends Item {
             return ItemStack.EMPTY;
         }
         return retval;
+    }
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        // Получаем информацию о блоке, на который кликают
+        Block block = context.getLevel().getBlockState(context.getClickedPos()).getBlock();
+
+        // Проверяем, является ли блок стеклом
+        if (block instanceof FlameDispenser) {
+            return InteractionResult.FAIL; // Возвращаем FAIL, если это стекло
+        }
+
+        // В остальных случаях вызываем реализацию родительского метода
+        return super.useOn(context);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player entity, InteractionHand hand) {
+        entity.startUsingItem(hand);
+
+
+        if (!level.isClientSide) {
+            Vec3 hitDirection = new Vec3(0, 1, 0);
+            if (level.random.nextFloat() < 0.1) {
+                // Первая группа снарядов (поблизости, по кругу)
+                int miniProjectileCount = 10 + entity.getRandom().nextInt(25);
+                for (int i = 0; i < miniProjectileCount; i++) {
+                    NetherFlameEntityMini miniProjectile = new NetherFlameEntityMini(ModItemEntities.NETHER_FLAME_ENTITY_MINI.get(), level);
+                    miniProjectile.setOwner(entity);
+                    miniProjectile.setPos(entity.getX(), entity.getY(), entity.getZ());
+                    entity.hurt(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.IN_FIRE)), 10);
+                    entity.setSecondsOnFire(6); // Поджигаем на 6 секунд
+                    double angle = 2 * Math.PI * i / miniProjectileCount;
+                    double offsetX = Math.cos(angle) * 0.5;
+                    double offsetZ = Math.sin(angle) * 0.5;
+                    double offsetY = 0.2 + entity.getRandom().nextDouble() * 0.3;
+
+                    Vec3 scatterDirection = new Vec3(offsetX, offsetY, offsetZ).add(hitDirection);
+                    scatterDirection = scatterDirection.normalize().scale(0.6 + entity.getRandom().nextDouble() * 0.4);
+
+                    miniProjectile.shoot(scatterDirection.x, scatterDirection.y, scatterDirection.z, 0.45f, 0.1f);
+                    level.addFreshEntity(miniProjectile);
+                }
+                level.explode(entity, entity.getX(), entity.getY(), entity.getZ(), 4.0f, Level.ExplosionInteraction.NONE);
+                entity.setItemInHand(hand, ItemStack.EMPTY);
+                // Вторая группа снарядов (дальше, тоже по кругу)
+                int outerProjectileCount = 30 + entity.getRandom().nextInt(40);
+                for (int i = 0; i < outerProjectileCount; i++) {
+                    NetherFlameEntityMini outerProjectile = new NetherFlameEntityMini(ModItemEntities.NETHER_FLAME_ENTITY_MINI.get(), level);
+                    outerProjectile.setOwner(entity);
+                    outerProjectile.setPos(entity.getX(), entity.getY(), entity.getZ());
+
+                    double angle = 2 * Math.PI * i / outerProjectileCount;
+                    double offsetX = Math.cos(angle) * 1.5; // Увеличиваем радиус
+                    double offsetZ = Math.sin(angle) * 1.5;
+                    double offsetY = 0.1 + entity.getRandom().nextDouble() * 0.2;
+
+                    Vec3 outerDirection = new Vec3(offsetX, offsetY, offsetZ);
+                    outerDirection = outerDirection.normalize().scale(1.0 + entity.getRandom().nextDouble() * 0.5); // Дальше и чуть больше разброс
+
+                    outerProjectile.shoot(outerDirection.x, outerDirection.y, outerDirection.z, 0.7f, 0.2f); // Немного быстрее
+                    level.addFreshEntity(outerProjectile);
+                }
+
+                // Звук
+                level.playSound(
+                        null,
+                        entity.getX(), entity.getY(), entity.getZ(),
+                        SoundEvents.LAVA_POP,
+                        SoundSource.PLAYERS,
+                        1.0f,
+                        0.8f + entity.getRandom().nextFloat() * 0.4f
+                );
+            }
+            else {
+                StrikeNetherFlame.execute(entity, level, entity.getX(), entity.getY(), entity.getZ());
+            }
+        }
+        // Кулдаун
+        entity.getCooldowns().addCooldown(this, 100);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, entity.getItemInHand(hand));
     }
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -67,46 +151,5 @@ public class NetherFlame extends Item {
                 }
             }
         }
-    }
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        // Получаем необходимые объекты из контекста использования
-        Player player = context.getPlayer();
-        Level world = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        InteractionHand hand = context.getHand();
-        ItemStack itemStack = context.getItemInHand();
-        Direction clickedFace = context.getClickedFace();
-
-        // Проверяем, есть ли игрок и является ли предмет `NetherFlame`
-        if (player != null && itemStack.getItem() == this) {
-            // Определяем позицию для установки лавы
-            BlockPos posBelow = pos.relative(clickedFace);
-
-            // Проверяем, можно ли установить текучую лаву на указанном месте
-            if (world.isEmptyBlock(posBelow) && world instanceof ServerLevel) {
-                // Создайте FluidState текучей лавы
-                FluidState lavaFluidState = ModFluids.FLOWING_NETHER_FIRE_LAVA.get().getFlowing(7, false);  // 1 - уровень жидкости
-
-                // Преобразуйте FluidState в BlockState
-                BlockState lavaBlockState = lavaFluidState.createLegacyBlock();
-
-                // Установите текучую лаву (BlockState) на выбранной позиции
-                ((ServerLevel) world).setBlockAndUpdate(posBelow, lavaBlockState);
-
-                // Уменьшите прочность предмета
-                itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
-
-                // Проиграйте анимацию руки игрока
-                player.swing(hand);
-                world.playSound(null, posBelow, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
-
-                // Верните успешный результат
-                return InteractionResult.SUCCESS;
-            }
-        }
-
-        // Если ничего не выполнено, возвращаем стандартный результат использования
-        return InteractionResult.PASS;
     }
 }

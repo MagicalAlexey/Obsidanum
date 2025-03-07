@@ -15,6 +15,17 @@ public class ParticlesObs {
 
     public static final RegistryObject<SimpleParticleType> NETHER_FLAME_PARTICLES =
             PARTICLE_TYPES.register("nether_flame_particles", () -> new SimpleParticleType(true));
+
+    public static final RegistryObject<SimpleParticleType> GLINT_PURPLE_PARTICLES =
+            PARTICLE_TYPES.register("glint_purple_particles", () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> GLINT_BLUE_PARTICLES =
+            PARTICLE_TYPES.register("glint_blue_particles", () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> GLINT_CRIMSON_PARTICLES =
+            PARTICLE_TYPES.register("glint_crimson_particles", () -> new SimpleParticleType(true));
+
+    public static final RegistryObject<SimpleParticleType> NETHER_FLAME_PROJECTILE_PARTICLES =
+            PARTICLE_TYPES.register("nether_flame_projectile_particles", () -> new SimpleParticleType(true));
+
     public static final RegistryObject<SimpleParticleType> BAGELL_FLAME_PARTICLES =
             PARTICLE_TYPES.register("bagell_flame_particles", () -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> NETHER_FLAME2_PARTICLES =

@@ -3,7 +3,6 @@ package net.rezolv.obsidanum.item.custom;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -21,15 +20,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ObsidanHoe extends HoeItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     private static final long COOLDOWN_DURATION = 10 * 20; // 10 seconds in ticks
     private static final long ACTIVATION_DURATION = 5 * 20; // 5 seconds in ticks
     private static final String TAG_ACTIVATED = "Activated";
@@ -70,19 +70,35 @@ public class ObsidanHoe extends HoeItem {
             Blocks.WARPED_ROOTS.defaultBlockState(),
             Blocks.FIRE.defaultBlockState(),
             Blocks.LARGE_FERN.defaultBlockState(),
-            Blocks.NETHER_SPROUTS.defaultBlockState()
+            Blocks.NETHER_SPROUTS.defaultBlockState(),
+            Blocks.SCULK.defaultBlockState(),
+            Blocks.SCULK_VEIN.defaultBlockState(),
+            Blocks.SCULK_SENSOR.defaultBlockState(),
+            Blocks.SCULK_SHRIEKER.defaultBlockState(),
+            Blocks.KELP.defaultBlockState(),
+            Blocks.KELP_PLANT.defaultBlockState(),
+            Blocks.LILY_PAD.defaultBlockState(),
+            Blocks.MOSS_BLOCK.defaultBlockState(),
+            Blocks.CAVE_VINES.defaultBlockState(),
+            Blocks.CAVE_VINES_PLANT.defaultBlockState(),
+            Blocks.MOSS_CARPET.defaultBlockState(),
+            Blocks.SPORE_BLOSSOM.defaultBlockState(),
+            Blocks.GLOW_LICHEN.defaultBlockState()
     };
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, net.minecraft.world.entity.LivingEntity entity) {
         if (!level.isClientSide && isActivated(stack)) {
             for (BlockState targetBlock : TARGET_BLOCKS) {
-                if (state.getBlock() == targetBlock.getBlock()) {
+                if (state.is(targetBlock.getBlock())) {
                     BlockPos playerPos = entity.blockPosition();
-                    // Destroy blocks in the radius
                     for (BlockPos blockPos : BlockPos.betweenClosed(playerPos.offset(-20, -20, -20), playerPos.offset(20, 20, 20))) {
-                        if (level.isLoaded(blockPos) && TARGET_BLOCKS[0].getBlock() == level.getBlockState(blockPos).getBlock()) {
-                            level.destroyBlock(blockPos, true);
+                        BlockState targetState = level.getBlockState(blockPos);
+                        for (BlockState targetBlockInner : TARGET_BLOCKS) {
+                            if (targetState.is(targetBlockInner.getBlock())) {
+                                level.destroyBlock(blockPos, true);
+                                break;
+                            }
                         }
                     }
                     deactivate(stack, (Player) entity);

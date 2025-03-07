@@ -29,4 +29,8 @@ public class ObsPickaxe extends PickaxeItem {
 
         return true;
     }
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
 }

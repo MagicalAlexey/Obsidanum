@@ -4,11 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Random;
@@ -30,5 +28,9 @@ public class ObsAxe extends AxeItem {
         }
 
         return true;
+    }
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
     }
 }

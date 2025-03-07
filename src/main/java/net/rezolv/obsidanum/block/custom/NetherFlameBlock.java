@@ -11,11 +11,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +23,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.rezolv.obsidanum.block.BlocksObs;
 import net.rezolv.obsidanum.particle.ParticlesObs;
 
 import java.util.Random;
@@ -43,7 +42,11 @@ public class NetherFlameBlock extends LiquidBlock {
         // Увеличиваем счетчик каждый тик
 
     }
-
+    @Override
+    public ItemStack pickupBlock(LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
+        // Disable bucket interaction by returning an empty ItemStack
+        return ItemStack.EMPTY;
+    }
     @Override
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
         BlockPos blockpos = pPos.above();
@@ -82,7 +85,7 @@ public class NetherFlameBlock extends LiquidBlock {
                     BlockState blockstate = pLevel.getBlockState(blockpos);
                     if (blockstate.isAir()) {
                         if (this.hasFlammableNeighbours(pLevel, blockpos)) {
-                            pLevel.setBlockAndUpdate(blockpos, ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos, pPos, Blocks.FIRE.defaultBlockState()));
+                            pLevel.setBlockAndUpdate(blockpos, ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos, pPos, BlocksObs.NETHER_FIRE.get().defaultBlockState()));
                             return;
                         }
                     } else if (blockstate.blocksMotion()) {
@@ -97,7 +100,7 @@ public class NetherFlameBlock extends LiquidBlock {
                     }
 
                     if (pLevel.isEmptyBlock(blockpos1.above()) && this.isFlammable(pLevel, blockpos1, Direction.UP)) {
-                        pLevel.setBlockAndUpdate(blockpos1.above(), ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos1.above(), pPos, Blocks.FIRE.defaultBlockState()));
+                        pLevel.setBlockAndUpdate(blockpos1.above(), ForgeEventFactory.fireFluidPlaceBlockEvent(pLevel, blockpos1.above(), pPos, BlocksObs.NETHER_FIRE.get().defaultBlockState()));
                     }
                 }
             }
@@ -122,11 +125,6 @@ public class NetherFlameBlock extends LiquidBlock {
         return false;
     }
 
-    /** @deprecated */
-    @Deprecated
-    private boolean isFlammable(LevelReader pLevel, BlockPos pPos) {
-        return pPos.getY() >= pLevel.getMinBuildHeight() && pPos.getY() < pLevel.getMaxBuildHeight() && !pLevel.hasChunkAt(pPos) ? false : pLevel.getBlockState(pPos).ignitedByLava();
-    }
 
     private boolean isFlammable(LevelReader level, BlockPos pos, Direction face) {
         return pos.getY() >= level.getMinBuildHeight() && pos.getY() < level.getMaxBuildHeight() && !level.hasChunkAt(pos) ? false : level.getBlockState(pos).isFlammable(level, pos, face);
@@ -135,7 +133,9 @@ public class NetherFlameBlock extends LiquidBlock {
     public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
         super.entityInside(state, world, pos, entity);
 
-        // Если сущность не имеет иммунитета к огню, зажгите ее
+        if (entity instanceof ItemEntity && !entity.fireImmune()) {
+            world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
+        }
         if (!entity.fireImmune()) {
             entity.setSecondsOnFire(15);
             entity.hurt(new DamageSource(world.registryAccess().

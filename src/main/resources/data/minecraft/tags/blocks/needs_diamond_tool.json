@@ -1,7 +1,8 @@
 {
   "values": [
     "obsidanum:obsidian_tablet",
-    "obsidanum:chest_obsidian",
+    "obsidanum:obsidian_chest",
+    "obsidanum:runic_obsidian_chest",
 
     "obsidanum:obsidian_inlaid_column_d",
     "obsidanum:cracked_obsidian_inlaid_column_d",
@@ -38,10 +39,15 @@
     "obsidanum:obsidian_bricks_d",
     "obsidanum:cracked_obsidian_bricks_d",
     "obsidanum:moldy_obsidian_bricks_d",
+    "obsidanum:obsidian_stairs_d",
+    "obsidanum:obsidian_slab_d",
+    "obsidanum:obsidian_wall_d",
+    "obsidanum:obsidian_fence_d",
 
     "obsidanum:moldy_obsidian_inlaid_column_d",
     "obsidanum:obsidian_column_d",
     "obsidanum:cracked_obsidian_column_d",
-    "obsidanum:moldy_obsidian_column_d"
+    "obsidanum:moldy_obsidian_column_d",
+    "obsidanum:obsidian_lectern"
   ]
 }

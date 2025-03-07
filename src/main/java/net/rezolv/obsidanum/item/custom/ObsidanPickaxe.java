@@ -27,7 +27,10 @@ import java.util.List;
 
 
 public class ObsidanPickaxe extends PickaxeItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     private static final long COOLDOWN_DURATION = 120 * 20; // 120 секунд в тиках
     private static final long ACTIVATION_DURATION = 5 * 20; // 5 секунд в тиках
 
@@ -77,7 +80,7 @@ public class ObsidanPickaxe extends PickaxeItem {
                 pLevel.destroyBlock(pPos, false);
 
                 // Шанс выпадения алмаза
-                if (pLevel.random.nextFloat() < 0.15f) {
+                if (pLevel.random.nextFloat() < 0.2f) {
                     ItemStack diamond = new ItemStack(Items.DIAMOND);
                     Block.popResource(pLevel, pPos, diamond);
                 }

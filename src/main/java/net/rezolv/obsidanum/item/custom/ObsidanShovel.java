@@ -26,7 +26,10 @@ import java.util.List;
 
 
 public class ObsidanShovel extends ShovelItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     private static final long COOLDOWN_DURATION = 50 * 20; // 60 секунд в тиках
     private static final long ACTIVATION_DURATION = 5 * 20; // 5 секунд в тиках
 

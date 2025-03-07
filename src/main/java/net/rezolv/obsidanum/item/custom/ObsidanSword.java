@@ -19,14 +19,26 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class ObsidanSword extends SwordItem {
-
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return false;
+    }
     private static final long COOLDOWN_DURATION = 80 * 20; // 80 seconds in ticks
     private static final long ACTIVATION_DURATION = 5 * 20; // 5 seconds in ticks
 
     public ObsidanSword(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }
-
+    @Override
+    public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
+        super.appendHoverText(itemstack, world, list, flag);
+        if (Screen.hasShiftDown()) {
+            list.add(Component.translatable("obsidanum.press_shift2").withStyle(ChatFormatting.DARK_GRAY));
+            list.add(Component.translatable("item.obsidan.description.sword").withStyle(ChatFormatting.DARK_GRAY));
+        } else {
+            list.add(Component.translatable("obsidanum.press_shift").withStyle(ChatFormatting.DARK_GRAY));
+        }
+    }
     public boolean isActivated(ItemStack stack) {
         return stack.getOrCreateTag().getBoolean("Activated");
     }
